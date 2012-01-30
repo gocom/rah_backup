@@ -1,0 +1,32 @@
+h1. rah_backup
+
+p. A plugin for "Textpattern CMS":http://www.textpattern.com. Takes and restores site backups.
+
+h2(#requirements). Requirements
+
+p. Rah_backups' minimum requirements:
+
+* Textpattern 4.4.1+
+* PHP 4.3+
+** Access to "system()":http://php.net/manual/en/function.system.php function.
+* Installed and access to console applications:
+** MySQL
+** MySQLdump
+
+p. Additionally, optionally access to console applications:
+
+* TAR - required if rah_backup is used to backup filesystem.
+* Gzip - required if Gzip compression is used.
+
+h2(#preferences). Preferences and configuration
+
+p. After a successful installation you can find rah_backup's interface under _Extensions/Backup_. The interface is divided to three main areas; to the list view listing all stored backups, _Take Backup_ and _Preferences_.
+
+h3. Path to MySQL dump.
+
+p. Common paths:
+
+* @mysqldump@
+* @/usr/bin/mysqldump@
+* XAMPP on Windows: @C:\XAMPP\mysql\bin\mysqldump.exe@.
+* MAMP on Mac: @/Applications/MAMP/Library/bin/mysqldump@.
