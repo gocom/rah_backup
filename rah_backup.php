@@ -18,13 +18,19 @@
 	if(@txpinterface == 'admin') {
 		rah_backup_install();
 		add_privs('rah_backup', '1,2');
+		add_privs('rah_backup_create', '1,2');
+		add_privs('rah_backup_restore', '1');
+		add_privs('rah_backup_download', '1,2');
+		add_privs('rah_backup_delete', '1');
+		add_privs('rah_backup_preferences', '1');
 		add_privs('plugin_prefs.rah_backup', '1,2');
 		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
 		register_callback('rah_backup_page', 'rah_backup');
 		register_callback('rah_backup_head', 'admin_side','head_end');
 		register_callback('rah_backup_prefs', 'plugin_prefs.rah_backup');
 		register_callback('rah_backup_install', 'plugin_lifecycle.rah_backup');
-	} else
+	}
+	else 
 		register_callback('rah_backup_do', 'textpattern');
 
 /**
@@ -46,21 +52,6 @@
 			
 			return;
 		}
-		
-		/*
-			Add privs
-		*/
-		
-		foreach(
-			array(
-				'create' => '1,2',
-				'restore' => '1',
-				'download' => '1,2',
-				'delete' => '1',
-				'preferences' => '1',
-			) as $perm => $privs
-		)
-			add_privs('rah_backup_'.$perm, $privs);
 		
 		$version = '0.1';
 		
