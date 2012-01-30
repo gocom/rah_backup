@@ -19,7 +19,7 @@
 		rah_backup_install();
 		add_privs('rah_backup', '1,2');
 		add_privs('plugin_prefs.rah_backup', '1,2');
-		register_tab('extensions', 'rah_backup', gTxt('rah_backup') == 'rah_backup' ? 'Backup' : gTxt('rah_backup'));
+		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
 		register_callback('rah_backup_page', 'rah_backup');
 		register_callback('rah_backup_head', 'admin_side','head_end');
 		register_callback('rah_backup_prefs', 'plugin_prefs.rah_backup');
@@ -35,6 +35,8 @@
 
 	function rah_backup_install($event='', $step='') {
 		
+		global $prefs;
+		
 		if($step == 'deleted') {
 			
 			safe_delete(
@@ -43,82 +45,6 @@
 			);
 			
 			return;
-		}
-		
-		global $textarray, $prefs;
-		
-		/*
-			Make sure language strings are set
-		*/
-		
-		foreach(
-			array(
-				'' => 'Backups',
-				'create' => 'Take a new backup',
-				'preferences' => 'Preferences',
-				'filename' => 'Filename',
-				'date' => 'Created',
-				'download' => 'Download',
-				'restore' => 'Restore',
-				'size' => 'Size',
-				'units_b' => 'B',
-				'units_k' => 'KB',
-				'units_m' => 'MB',
-				'units_g' => 'GB',
-				'units_t' => 'TB',
-				'units_p' => 'PB',
-				'units_e' => 'EB',
-				'units_z' => 'ZB',
-				'units_y' => 'YB',
-				'dateformat' => '%b %d, %Y %H:%M:%S',
-				'gzip_level_n_1' => '1 : Fastest',
-				'gzip_level_n_2' => '2',
-				'gzip_level_n_3' => '3',
-				'gzip_level_n_4' => '4',
-				'gzip_level_n_5' => '5',
-				'gzip_level_n_6' => '6',
-				'gzip_level_n_7' => '7',
-				'gzip_level_n_8' => '8',
-				'gzip_level_n_9' => '9 : Best compression',
-				'with_selected' => 'With selected...',
-				'delete' => 'Delete',
-				'removed' => 'Selected items removed.',
-				'no_backups' => 'No backups created yet.',
-				'select_something' => 'Nothing selected',
-				'overwrite' => 'Only keep the latest backup?',
-				'gzip_level' => 'Level of compression Gzip applies',
-				'database_will_be_overwriten' => 'Are you sure? All data in the database will be replaced with the backup, and newer changes will be lost.',
-				'inprogress' => 'Doing backup, please wait...',
-				'confirm_backup' => 'Are you sure, take a new backup of the site? Taking backup might take couple minutes or more.',
-				'restoring' => 'Restoring...',
-				'restored' => 'Restored',
-				'done' => 'Backup done.',
-				'path' => 'Absolute filesystem path to a directory used to store backups',
-				'mysqldump' => 'MySQL dump command and/or path to the application',
-				'key' => 'Security key for the public callback',
-				'callback' => 'Enable public callback access?',
-				'compress' => 'Create additional Gzip compressed files?',
-				'mysql' => 'Path to the MySQL application',
-				'tar' => 'TAR command and/or path to the application',
-				'gzip' => 'Gzip command and/or path to the application',
-				'copy_paths' => 'Directories to backup (comma-separated)',
-				'maintenance' => 'Run optional maintenance script?',
-				'sqlscript' => 'Path to optional maintenance SQL script that is run after restoring',
-				'allow_restore' => 'Allow restoring database backups?',
-				'can_not_download' => 'Can not download the selected file.',
-				'define_preferences' => 'Some settings need to be set before backups can be made. {start_by}.',
-				'backup_dir_not_found' => 'Backup directory not found. Make sure you have created the directory, and  the path used in the preferences is correct. If the message still persists make sure that the location is accessible by PHP; check that directory is within <a href="http://www.php.net/manual/en/ini.core.php#ini.open-basedir">open_basedir</a> and doc_root if safe mode is on.',
-				'backup_dir_not_readable' => 'Backup directory is not readable. Make sure you set the directory\'s permissions so that it\'s readable by PHP. Depending how your server is set up, you may have to use different permissions. Try CHMOD 600, 660 and so on up to 775 until you find something that hopefully works for you. Try to avoid anything looser than 775 if you are on shared hosting. If the message still persists make sure that the location is accessible by PHP; check that directory is within <a href="http://www.php.net/manual/en/ini.core.php#ini.open-basedir">open_basedir</a>, and doc_root if safe mode is on.',
-				'backup_dir_not_writable' => 'Backup directory is not writable. Make sure you set the directory\'s permissions so that it\'s writable by PHP. Depending how your server is set up, you may have to use different permissions. Try CHMOD 600, 660 and so on up to 775 until you find something that hopefully works for you. Try to avoid anything looser than 775 if you are on shared hosting. If the message still persists make sure that the location is accessible by PHP; check that directory is within <a href="http://www.php.net/manual/en/ini.core.php#ini.open-basedir">open_basedir</a>, and doc_root if safe mode is on.',
-				'exec_func_unavailable' => '<a href="http://php.net/manual/en/function.exec.php">Exec</a> function is disabled. The plugin requires that the function is enabled and can not work without it.',
-				'start_by' => 'Start by defining mandatory settings at Preferences pane',
-				'safe_mode_no_exec_access' => 'Sorry, safe mode prevents commands from being ran correctly. If safe mode is on, please make sure the paths, the database name, the username and the password do not contain backslashes, pipe characters, dollar signs or double dots (<code>..</code>), and that all the paths are absolute, not relative. You could also turn safe-mode off, or update to PHP 5.3 or newer.',
-			) as $string => $translation
-		) {
-			$name = $string ? 'rah_backup_'.$string : 'rah_backup';
-			
-			if(!isset($textarray[$name]))
-				$textarray[$name] = $translation;
 		}
 		
 		/*
