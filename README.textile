@@ -6,10 +6,10 @@ h2(#requirements). Requirements
 
 p. Rah_backups' minimum requirements:
 
-* Textpattern 4.4.1+
-* PHP 4.3+
+* Textpattern 4.4.1 or newer.
+* PHP 5.2.0 or newer.
 ** Access to "system()":http://php.net/manual/en/function.system.php function.
-* Installed and access to console applications:
+* Access to console applications:
 ** MySQL
 ** MySQLdump
 
