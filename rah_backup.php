@@ -30,7 +30,7 @@
 		register_callback('rah_backup_prefs', 'plugin_prefs.rah_backup');
 		register_callback('rah_backup_install', 'plugin_lifecycle.rah_backup');
 	}
-	else 
+	elseif(@txpinterface == 'public')
 		register_callback('rah_backup_do', 'textpattern');
 
 /**
@@ -62,10 +62,6 @@
 			return;
 		
 		$position = 250;
-		
-		/*
-			Add preference strings
-		*/
 		
 		foreach(
 			array(
@@ -121,10 +117,6 @@
 			
 			$position++;
 		}
-		
-		/*
-			Set version
-		*/
 		
 		set_pref('rah_backup_version',$version,'rah_backup',2,'',0);
 		$prefs['rah_backup_version'] = $version;
