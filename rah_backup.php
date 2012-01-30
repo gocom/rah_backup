@@ -17,13 +17,13 @@
 
 	if(@txpinterface == 'admin') {
 		rah_backup_install();
-		add_privs('rah_backup','1,2');
-		add_privs('plugin_prefs.rah_backup','1,2');
-		register_tab('extensions','rah_backup',gTxt('rah_backup') == 'rah_backup' ? 'Backup' : gTxt('rah_backup'));
-		register_callback('rah_backup_page','rah_backup');
-		register_callback('rah_backup_head','admin_side','head_end');
-		register_callback('rah_backup_prefs','plugin_prefs.rah_backup');
-		register_callback('rah_backup_install','plugin_lifecycle.rah_backup');
+		add_privs('rah_backup', '1,2');
+		add_privs('plugin_prefs.rah_backup', '1,2');
+		register_tab('extensions', 'rah_backup', gTxt('rah_backup') == 'rah_backup' ? 'Backup' : gTxt('rah_backup'));
+		register_callback('rah_backup_page', 'rah_backup');
+		register_callback('rah_backup_head', 'admin_side','head_end');
+		register_callback('rah_backup_prefs', 'plugin_prefs.rah_backup');
+		register_callback('rah_backup_install', 'plugin_lifecycle.rah_backup');
 	} else
 		register_callback('rah_backup_do', 'textpattern');
 
@@ -33,7 +33,7 @@
  * @param string $step Admin-side, plugin-lifecycle step.
  */
 
-	function rah_backup_install($event='',$step='') {
+	function rah_backup_install($event='', $step='') {
 		
 		if($step == 'deleted') {
 			
@@ -1142,7 +1142,7 @@ EOF;
  * @return HTML select field.
  */
 
-	function rah_backup_gzip_level($name,$val) {
+	function rah_backup_gzip_level($name, $val) {
 		
 		foreach(range(1,9) as $level)
 			$out[$level] = gTxt('rah_backup_gzip_level_n_'.$level);
@@ -1215,7 +1215,7 @@ EOF;
  * @param string $message The activity message.
  */
 
-	function rah_backup_header($content,$message) {
+	function rah_backup_header($content, $message) {
 		
 		global $event;
 		
