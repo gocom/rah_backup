@@ -8,7 +8,7 @@
  * @license GNU GPLv2
  * @link https://github.com/gocom/rah_backup
  *
- * Requires Textpattern v4.4.1 or newer.
+ * Requires Textpattern v4.4.1 or newer and PHP 5.2.0 or newer.
  *
  * Copyright (C) 2012 Jukka Svahn <http://rahforum.biz>
  * Licensed under GNU Genral Public License version 2
@@ -118,7 +118,7 @@
 			$position++;
 		}
 		
-		set_pref('rah_backup_version',$version,'rah_backup',2,'',0);
+		set_pref('rah_backup_version', $version, 'rah_backup', 2, '', 0);
 		$prefs['rah_backup_version'] = $version;
 	}
 
@@ -159,7 +159,7 @@
 		$pfx = 'rah_backup';
 		
 		$js = 
-			rah_backup_jse(
+			json_encode(
 				array(
 					'database_will_be_overwriten' => gTxt('rah_backup_database_will_be_overwriten'),
 					'inprogress' => gTxt('rah_backup_inprogress'),
@@ -1057,65 +1057,6 @@ EOF;
 			$out[$level] = gTxt('rah_backup_gzip_level_n_'.$level);
 		
 		return selectInput($name, $out, $val, '', '', $name);
-	}
-
-/**
- * Returns valid JSON map
- * @param mixed $input String or array to encode.
- * @return string JavaScript object.
- */
-
-	function rah_backup_jse($input) {
-		
-		if(is_scalar($input)) {
-			
-			if(is_string($input)) {
-				$from = array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"');
-				$to = array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"');
-				return '"' . str_replace($from, $to, $input) . '"';
-      		}
-      		
-      		return $input;
-      	}
-      	
-      	elseif(!is_array($input))
-      		return;
-		
-		$obj = array();
-		$associative = false;
-		$index = 0;
-		
-		/*
-			Check if the array is associative
-		*/
-		
-		foreach($input as $key => $value) {
-			if($key !== $index) {
-				$associative = true;
-				break;
-			}
-			$index++;
-		}
-		
-		/*
-			Build an associative array
-		*/
-		
-		if($associative) {
-			foreach($input as $key => $value)
-				$obj[] = rah_backup_jse($key).':'.rah_backup_jse($value);
-			
-			return '{' . implode(',',$obj) . '}';
-		}
-		
-		/*
-			Build an indexed array
-		*/
-		
-		foreach($input as $value)
-			$obj[] = rah_backup_jse($value);
-			
-		return '[' . implode(',',$obj) . ']';		
 	}
 
 /**
