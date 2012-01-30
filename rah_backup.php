@@ -41,7 +41,7 @@
 			
 			safe_delete(
 				'txp_prefs',
-				"name like 'rah_backup_%'"
+				"name like 'rah\_backup\_%'"
 			);
 			
 			return;
