@@ -1,15 +1,19 @@
-<?php	##################
-	#
-	#	rah_backup-plugin for Textpattern
-	#	version 0.1
-	#	by Jukka Svahn
-	#	http://rahforum.biz
-	#
-	#	Copyright (C) 2011 Jukka Svahn <http://rahforum.biz>
-	#	Licensed under GNU Genral Public License version 2
-	#	http://www.gnu.org/licenses/gpl-2.0.html
-	#
-	##################
+<?php
+
+/**
+ * Rah_backup plugin for Textpattern CMS.
+ *
+ * @author Jukka Svahn
+ * @date 2012-
+ * @license GNU GPLv2
+ * @link https://github.com/gocom/rah_backup
+ *
+ * Requires Textpattern v4.4.1 or newer.
+ *
+ * Copyright (C) 2012 Jukka Svahn <http://rahforum.biz>
+ * Licensed under GNU Genral Public License version 2
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ */
 
 	if(@txpinterface == 'admin') {
 		rah_backup_install();
@@ -24,10 +28,10 @@
 		register_callback('rah_backup_do', 'textpattern');
 
 /**
-	Installer
-	@param $event string Admin-side event.
-	@param $step string Admin-side, plugin-lifecycle step.
-*/
+ * Installer
+ * @param string $event Admin-side event.
+ * @param string $step Admin-side, plugin-lifecycle step.
+ */
 
 	function rah_backup_install($event='',$step='') {
 		
@@ -117,7 +121,7 @@
 				$textarray[$name] = $translation;
 		}
 		
-		/**
+		/*
 			Add privs
 		*/
 		
@@ -210,8 +214,8 @@
 	}
 
 /**
-	Deliver panel
-*/
+ * Deliver panel
+ */
 
 	function rah_backup_page() {
 		require_privs('rah_backup');
@@ -234,8 +238,8 @@
 	}
 
 /**
-	Adds the panel's CSS to the head segment.
-*/
+ * Adds the panel's CSS to the head segment.
+ */
 
 	function rah_backup_head() {
 		global $event, $step;
@@ -478,9 +482,9 @@ EOF;
 	}
 
 /**
-	The main listing
-	@param $message string Activity message.
-*/
+ * The main listing
+ * @param string $message Activity message.
+ */
 
 	function rah_backup_list($message='') {
 	
@@ -620,9 +624,9 @@ EOF;
 	}
 	
 /**
-	Does dump from the database
-	@param $event string Callback event.
-*/
+ * Does dump from the database
+ * @param string $event Callback event.
+ */
 
 	function rah_backup_do($event='') {
 		
@@ -793,8 +797,8 @@ EOF;
 	}
 
 /**
-	Restore backup
-*/
+ * Restore backup
+ */
 
 	function rah_backup_restore() {
 		
@@ -870,8 +874,8 @@ EOF;
 	}
 
 /**
-	Downloads backup file
-*/
+ * Downloads backup file
+ */
 
 	function rah_backup_download() {
 
@@ -931,8 +935,8 @@ EOF;
 	}
 
 /**
-	Deletes a backup file
-*/
+ * Deletes a backup file
+ */
 
 	function rah_backup_delete() {
 		
@@ -976,10 +980,10 @@ EOF;
 	}
 
 /**
-	Checks for errors/problems that could prevent commands from running.
-	@param $cmd_check bool Wheter check exec() access and for safe-mode restrictions.
-	@return string Language string or false when no issues are found.
-*/
+ * Checks for errors/problems that could prevent commands from running.
+ * @param bool $cmd_check Wheter check exec() access and for safe-mode restrictions.
+ * @return string Language string or false when no issues are found.
+ */
 
 	function rah_backup_er($cmd_check=true) {
 		
@@ -1037,11 +1041,11 @@ EOF;
 	}
 
 /**
-	Execute shell command
-	@param $command string The program to run.
-	@param $args array The arguments passed to the application.
-	@return bool False on error.
-*/
+ * Execute shell command
+ * @param string $command The program to run.
+ * @param array $args The arguments passed to the application.
+ * @return bool
+ */
 
 	function rah_backup_exec($command, $args) {
 
@@ -1079,20 +1083,21 @@ EOF;
 	}
 
 /**
-	Checks whether function is disabled
-	@param $func string
-	@return bool
-*/
+ * Checks whether function is disabled
+ * @param string $func
+ * @return bool
+ */
 
 	function rah_backup_is_disabled($func) {
 		return is_disabled($func) || !function_exists($func);
 	}
 
 /**
-	Return paths
-	@param $item string Path to return.
-	@pram $pref bool Is $item preference string or path.
-*/
+ * Return paths
+ * @param string $item Path to return.
+ * @param bool $pref Is $item preference string or path.
+ * @return string
+ */
 
 	function rah_backup_path($item, $pref=true) {
 
@@ -1114,10 +1119,10 @@ EOF;
 	}
 
 /**
-	Format filesize
-	@param $bytes int Size in bytes.
-	@return string Formatted size.
-*/
+ * Format filesize
+ * @param int $bytes Size in bytes.
+ * @return string Formatted size.
+ */
 
 	function rah_backup_size($bytes) {
 		$units = array('b', 'k', 'm', 'g', 't', 'p', 'e', 'z', 'y');
@@ -1131,11 +1136,11 @@ EOF;
 	}
 
 /**
-	Gzip compression level option
-	@param $name string Field name.
-	@param $val int Current value.
-	@return HTML select field.
-*/
+ * Gzip compression level option
+ * @param string $name Field name.
+ * @param int $val Current value.
+ * @return HTML select field.
+ */
 
 	function rah_backup_gzip_level($name,$val) {
 		
@@ -1146,10 +1151,10 @@ EOF;
 	}
 
 /**
-	Returns valid JSON map
-	@param $input mixed String or array to encode.
-	@return string JavaScript object.
-*/
+ * Returns valid JSON map
+ * @param mixed $input String or array to encode.
+ * @return string JavaScript object.
+ */
 
 	function rah_backup_jse($input) {
 		
@@ -1205,10 +1210,10 @@ EOF;
 	}
 
 /**
-	Echoes the panels and header
-	@param $content string Pane's HTML markup.
-	@param $message string The activity message.
-*/
+ * Echoes the panels and header
+ * @param string $content Pane's HTML markup.
+ * @param string $message The activity message.
+ */
 
 	function rah_backup_header($content,$message) {
 		
@@ -1248,8 +1253,8 @@ EOF;
 	}
 
 /**
-	Redirect to the admin-side interface
-*/
+ * Redirect to the admin-side interface
+ */
 
 	function rah_backup_prefs() {
 		header('Location: ?event=rah_backup');
