@@ -57,7 +57,7 @@
 		
 		global $rah_backup__module_ftp_offsite;
 		
-		if(!function_exists('ftp_connect'))
+		if(!function_exists('ftp_connect') || is_disabled('ftp_connect'))
 			return false;
 		
 		foreach((array) $rah_backup__module_ftp_offsite as $cfg) {
