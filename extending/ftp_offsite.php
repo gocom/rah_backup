@@ -13,20 +13,20 @@
  */
 
 /**
- * @global $rah_backup__module_ftp_offsite array
+ * @global array $rah_backup__module_ftp_offsite
  */
 
 	global $rah_backup__module_ftp_offsite;
 
 /**
  * Your configuration. Used to connect to remote server.
- * @global $host string FTP server's address (i.e. domain.ltd or IP).
- * @global $port int Remote server's FTP port
- * @global $user string Remote server's username.
- * @global $pass string Remote server's password.
- * @global $path string Path to directory used to store the backups on the remote server.
- * @global $passive bool Turns passive mode on or off.
- * @global $as_binary bool Transfer files in binary mode. If FALSE, ASCII mode is used instead.
+ * @global string $host FTP server's address (i.e. domain.ltd or IP).
+ * @global int $port Remote server's FTP port
+ * @global string $user Remote server's username.
+ * @global string $pass Remote server's password.
+ * @global string $path Path to directory used to store the backups on the remote server.
+ * @global bool $passive Turns passive mode on or off.
+ * @global bool $as_binary Transfer files in binary mode. If FALSE, ASCII mode is used instead.
  */
 
 	$rah_backup__module_ftp_offsite[] = array(
@@ -49,9 +49,9 @@
 
 /**
  * Sends new backup files to off site
- * @param $event string Callback event.
- * @param $step string Callback step.
- * @param $data mixed Data passed to the callback function.
+ * @param string $event Callback event.
+ * @param string $step Callback step.
+ * @param mixed $data Data passed to the callback function.
  * @return bool FALSE when FTP extension isn't available, TRUE otherwise even when uploading failed.
  */
 
