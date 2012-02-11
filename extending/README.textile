@@ -1,0 +1,19 @@
+h1. Modules for rah_backup
+
+p. The PHP files in this directory are modules for rah_backup, a backup manager for Textpattern CMS.
+
+h2. Clear logs - clearlogs.php
+
+p. Empties visitor logs before taking a backup. The module will empty the actual table, not just records from backup files. Current visitor logs will be permanently lost.
+
+h2. FTP offsite - ftp_offsite.php
+
+p. Transfers backups to offsite location via FTP. The module requires PHP's "FTP extension":http://www.php.net/manual/en/book.ftp.php.
+
+h2. Optimize - optimize.php
+
+p. Optimizes all database tables when taking a backup. The operation will defragment the database data file, and reclaims lost unused space. If contents in tables are changed extensively this may also lead to improved performance.
+
+h2. SFTP offsite - sftp_offsite.php
+
+p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":http://phpseclib.sourceforge.net/ for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.
