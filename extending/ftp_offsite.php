@@ -43,7 +43,9 @@
  * Registers the function. Hook to event 'rah_backup_tasks', step 'backup_done'.
  */
 
-	register_callback('rah_backup__module_ftp_offsite','rah_backup_tasks','backup_done');
+	if(defined('txpinterface')) {
+		register_callback('rah_backup__module_ftp_offsite', 'rah_backup_tasks', 'backup_done');
+	}
 
 /**
  * Sends new backup files to off site
