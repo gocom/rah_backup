@@ -57,7 +57,7 @@
 		
 		global $rah_backup__module_sftp_offsite;
 		
-		foreach($rah_backup__module_sftp_offsite as $cfg) {
+		foreach((array) $rah_backup__module_sftp_offsite as $cfg) {
 			
 			if(!$cfg['host'])
 				continue;

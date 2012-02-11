@@ -60,7 +60,7 @@
 		if(!function_exists('ftp_connect'))
 			return false;
 		
-		foreach($rah_backup__module_ftp_offsite as $cfg) {
+		foreach((array) $rah_backup__module_ftp_offsite as $cfg) {
 		
 			if(!$cfg['host'] || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp))
 				continue;
