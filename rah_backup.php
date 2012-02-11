@@ -923,7 +923,7 @@ EOF;
 		if($cmd_check == false)
 			return false;
 		
-		if(rah_backup_is_disabled('exec'))
+		if(!function_exists('exec') || is_disabled('exec'))
 			return 'exec_func_unavailable';
 		
 		/*
@@ -958,7 +958,7 @@ EOF;
 
 	function rah_backup_exec($command, $args) {
 
-		$escape = @ini_get('safe_mode') || rah_backup_is_disabled('escapeshellcmd');
+		$escape = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || is_disabled('escapeshellcmd');
 		$cmd[] = $escape ? $command : escapeshellcmd($command);
 		
 		foreach($args as $arg => $val) {
@@ -989,16 +989,6 @@ EOF;
 		}
 		
 		return exec(implode(' ', $cmd));
-	}
-
-/**
- * Checks whether function is disabled
- * @param string $func
- * @return bool
- */
-
-	function rah_backup_is_disabled($func) {
-		return is_disabled($func) || !function_exists($func);
 	}
 
 /**
