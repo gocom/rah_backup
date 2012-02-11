@@ -4,7 +4,7 @@
  * Transfers backups made by rah_backup to offsite location
  * via SSH File Transfer Protocol.
  * 
- * @package stfp_offsite
+ * @package rah_backup
  * @author Jukka Svahn <http://rahforum.biz/>
  * @copyright (c) 2011 Jukka Svahn
  * @license GLPv2
@@ -43,7 +43,9 @@
  * Registers the function. Hook to event 'rah_backup_tasks', step 'backup_done'.
  */
 
-	register_callback('rah_backup__module_sftp_offsite','rah_backup_tasks','backup_done');
+	if(defined('txpinterface')) {
+		register_callback('rah_backup__module_sftp_offsite', 'rah_backup_tasks', 'backup_done');
+	}
 
 /**
  * Sends new backup files to remote server

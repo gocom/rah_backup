@@ -16,7 +16,9 @@
  * Registers the function. Hook to event 'rah_backup_tasks', step 'backuping'.
  */
 
-	register_callback('rah_backup__module_clearlogs','rah_backup_tasks','backuping');
+	if(defined('txpinterface')) {
+		register_callback('rah_backup__module_clearlogs', 'rah_backup_tasks', 'backuping');
+	}
 
 /**
  * Empties txp_log table.
