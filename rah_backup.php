@@ -16,7 +16,7 @@
  */
 
 	if(@txpinterface == 'admin') {
-		rah_backup_install();
+		rah_backup::install();
 		add_privs('rah_backup', '1,2');
 		add_privs('rah_backup_create', '1,2');
 		add_privs('rah_backup_restore', '1');
@@ -25,21 +25,23 @@
 		add_privs('rah_backup_preferences', '1');
 		add_privs('plugin_prefs.rah_backup', '1,2');
 		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
-		register_callback('rah_backup_page', 'rah_backup');
-		register_callback('rah_backup_head', 'admin_side','head_end');
-		register_callback('rah_backup_prefs', 'plugin_prefs.rah_backup');
-		register_callback('rah_backup_install', 'plugin_lifecycle.rah_backup');
+		register_callback(array('rah_backup', 'pane'), 'rah_backup');
+		register_callback(array('rah_backup', 'head'), 'admin_side','head_end');
+		register_callback(array('rah_backup', 'prefs'), 'plugin_prefs.rah_backup');
+		register_callback(array('rah_backup', 'install'), 'plugin_lifecycle.rah_backup');
 	}
 	elseif(@txpinterface == 'public')
-		register_callback('rah_backup_do', 'textpattern');
+		register_callback(array('rah_backup', 'take_backup'), 'textpattern');
 
-/**
- * Installer
- * @param string $event Admin-side event.
- * @param string $step Admin-side, plugin-lifecycle step.
- */
+class rah_backup {
 
-	function rah_backup_install($event='', $step='') {
+	/**
+	 * Installer
+	 * @param string $event Admin-side event.
+	 * @param string $step Admin-side, plugin-lifecycle step.
+	 */
+
+	static public function install($event='', $step='') {
 		
 		global $prefs;
 		
@@ -118,35 +120,34 @@
 		$prefs['rah_backup_version'] = $version;
 	}
 
-/**
- * Deliver panel
- */
+	/**
+	 * Delivers panels
+	 */
 
-	function rah_backup_page() {
+	static public function pane() {
 		require_privs('rah_backup');
 		global $step;
 		
 		$steps = 
 			array(
-				'list' => false,
-				'do' => true,
+				'browser' => false,
+				'take_backup' => true,
 				'restore' => true,
 				'delete' => true,
 				'download' => true
 			);
 		
 		if(!$step || !bouncer($step, $steps))
-			$step = 'list';
-		
-		$func = 'rah_backup_' . $step;
-		$func();
+			$step = 'browser';
+
+		self::$step();
 	}
 
-/**
- * Adds the panel's CSS to the head segment.
- */
+	/**
+	 * Adds the panel's CSS to the head segment.
+	 */
 
-	function rah_backup_head() {
+	static public function head() {
 		global $event, $step;
 		
 		if($event != 'rah_backup')
@@ -290,7 +291,7 @@
 										url : 'index.php',
 										data : {
 											'event' : textpattern['event'],
-											'step' : 'do',
+											'step' : 'take_backup',
 											'_txp_token' : textpattern['_txp_token'],
 										},
 										
@@ -386,12 +387,12 @@
 EOF;
 	}
 
-/**
- * The main listing
- * @param string $message Activity message.
- */
+	/**
+	 * The main listing
+	 * @param string $message Activity message.
+	 */
 
-	function rah_backup_list($message='') {
+	static public function browser($message='') {
 	
 		global $event, $prefs;
 		
@@ -410,7 +411,7 @@ EOF;
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
 		
-		$er = rah_backup_er();
+		$er = self::check_errors();
 
 		if(!$er) {
 			
@@ -447,7 +448,7 @@ EOF;
 						has_privs('rah_backup_download') && file_exists($gz) && is_readable($gz) && is_file($gz) ?
 							'				<td>'.
 							'<a title="'.gTxt('rah_backup_download').' '.
-							rah_backup_size(filesize($gz)).
+							self::format_size(filesize($gz)).
 							'" href="?event='.$event.
 								'&amp;step=download&amp;file='.
 									urlencode($name.'.gz').'&amp;_txp_token='.form_token().
@@ -457,7 +458,7 @@ EOF;
 					).
 						
 					'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
-					'				<td>'.rah_backup_size(filesize($file)).'</td>'.n.
+					'				<td>'.self::format_size(filesize($file)).'</td>'.n.
 						
 					(
 						has_privs('rah_backup_restore') && $ext == 'sql' && $prefs['rah_backup_allow_restore'] ? 
@@ -522,23 +523,23 @@ EOF;
 				'	</p>' : ''
 			);
 		
-		rah_backup_header(
+		self::build_pane(
 			$out,
 			$message
 		);
 	}
 	
-/**
- * Does dump from the database
- * @param string $event Callback event.
- */
+	/**
+	 * Does dump from the database
+	 * @param string $event Callback event.
+	 */
 
-	function rah_backup_do($event='') {
+	static public function take_backup($event='') {
 		
 		global $txpcfg, $prefs;
 		
 		if(!$event && !has_privs('rah_backup_create')) {
-			rah_backup_list();
+			self::browser();
 			return;
 		}
 		
@@ -553,9 +554,9 @@ EOF;
 		)
 			return;
 		
-		if(($er = rah_backup_er()) && $er) {
+		if(($er = self::check_errors()) && $er) {
 			if(!$event)
-				rah_backup_list($er);
+				self::browser($er);
 			return;
 		}
 
@@ -573,11 +574,11 @@ EOF;
 		$now = $prefs['rah_backup_overwrite'] ? '' : '_'.safe_strtotime('now');
 		$db = substr(preg_replace('/[^A-Za-z0-9-._]/','',$txpcfg['db']),0,64);
 		$db = ($db ? $db : 'database') . $now . '.sql';
-		$file['db'] = rah_backup_path('path') . '/' . $db;
+		$file['db'] = self::get_path('path') . '/' . $db;
 		
 		$returned = 
-			rah_backup_exec(
-				rah_backup_path('mysqldump'),
+			self::exec_command(
+				self::get_path('mysqldump'),
 				array(
 					'--opt' => false,
 					'--skip-comments' => false,
@@ -606,7 +607,7 @@ EOF;
 			unset($file['db']);
 			
 			if(!$event)
-				rah_backup_list('dumping_db_failed');
+				self::browser('dumping_db_failed');
 			
 			return;
 		}
@@ -619,8 +620,8 @@ EOF;
 			
 			$file['db_gz'] = $file['db'].'.gz';
 			
-			rah_backup_exec(
-				rah_backup_path('gzip'),
+			self::exec_command(
+				self::get_path('gzip'),
 				array(
 					'-c6' => false,
 					'' => $file['db'],
@@ -648,7 +649,7 @@ EOF;
 			
 			$site = $site ? $site : 'filesystem';
 			
-			$file['fs'] = rah_backup_path('path').'/'.$site.$now.'.tar';
+			$file['fs'] = self::get_path('path').'/'.$site.$now.'.tar';
 			
 			$opt = 
 				array(
@@ -659,7 +660,7 @@ EOF;
 			$paths = false;
 			
 			foreach($dirs as $path) {
-				$path = rah_backup_path($path, false);
+				$path = self::get_path($path, false);
 				if($path && file_exists($path) && is_readable($path) && is_dir($path)) {
 					$opt[] = array('' => $path);
 					$paths = true;
@@ -668,7 +669,7 @@ EOF;
 
 			if($paths) {
 				
-				rah_backup_exec(
+				self::exec_command(
 					$prefs['rah_backup_tar'],
 					$opt
 				);
@@ -677,8 +678,8 @@ EOF;
 					
 					$file['fs_gz'] = $file['fs'].'.gz';
 					
-					rah_backup_exec(
-						rah_backup_path('gzip'),
+					self::exec_command(
+						self::get_path('gzip'),
 						array(
 							'-c6' => false,
 							'' => $file['fs'],
@@ -694,29 +695,29 @@ EOF;
 		if($event)
 			die();
 
-		rah_backup_list('done');
+		self::browser('done');
 	}
 
-/**
- * Restore backup
- */
+	/**
+	 * Restores backup
+	 */
 
-	function rah_backup_restore() {
+	static public function restore() {
 		
 		global $txpcfg, $prefs;
 		
 		if(!has_privs('rah_backup_restore') || !$prefs['rah_backup_allow_restore']) {
-			rah_backup_list();
+			self::browser();
 			return;
 		}
 		
-		if(($er = rah_backup_er()) && $er) {
-			rah_backup_list($er);
+		if(($er = self::check_errors()) && $er) {
+			self::browser($er);
 			return;
 		}
 		
 		$file = preg_replace('/[^A-Za-z0-9-._]/','',gps('file'));
-		$path = rah_backup_path('path').'/'.$file;
+		$path = self::get_path('path').'/'.$file;
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if(
@@ -727,14 +728,14 @@ EOF;
 			!is_readable($path) || 
 			!is_file($path)
 		) {
-			rah_backup_list('can_not_restore');
+			self::browser('can_not_restore');
 			return;	
 		}
 		
 		callback_event('rah_backup_tasks', 'restoring', 1);
 		
 		$returned = 
-			rah_backup_exec(
+			self::exec_command(
 				$prefs['rah_backup_mysql'],
 				array(
 					'--host' => $txpcfg['host'],
@@ -746,11 +747,11 @@ EOF;
 			);
 		
 		if($returned === false) {
-			rah_backup_list('can_not_restore');
+			self::browser('can_not_restore');
 			return;	
 		}
 		
-		$path = rah_backup_path($prefs['rah_backup_sqlscript'],false);
+		$path = self::get_path($prefs['rah_backup_sqlscript'],false);
 		
 		if(
 			$prefs['rah_backup_maintenance'] &&
@@ -759,7 +760,7 @@ EOF;
 			is_readable($path) &&
 			is_file($path)
 		)
-			rah_backup_exec(
+			self::exec_command(
 				$prefs['rah_backup_mysql'],
 				array(
 					'--host' => $txpcfg['host'],
@@ -771,24 +772,24 @@ EOF;
 			);
 		
 		callback_event('rah_backup_tasks', 'restore_done');
-		rah_backup_list('restore_done');
+		self::browser('restore_done');
 	}
 
-/**
- * Downloads backup file
- */
+	/**
+	 * Downloads a backup file
+	 */
 
-	function rah_backup_download() {
+	static public function download() {
 
 		global $prefs;
 		
 		if(!has_privs('rah_backup_download')) {
-			rah_backup_list();
+			self::browser();
 			return;
 		}
 
 		$file = preg_replace('/[^A-Za-z0-9-._]/','',gps('file'));
-		$path = rah_backup_path('path').'/'.$file;
+		$path = self::get_path('path').'/'.$file;
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if(
@@ -799,7 +800,7 @@ EOF;
 			!is_writeable($path) || 
 			!is_file($path)
 		) {
-			rah_backup_list('can_not_download');
+			self::browser('can_not_download');
 			return;	
 		}
 
@@ -835,27 +836,27 @@ EOF;
 		exit;
 	}
 
-/**
- * Deletes a backup file
- */
+	/**
+	 * Deletes a backup file
+	 */
 
-	function rah_backup_delete() {
+	static public function delete() {
 		
 		global $prefs;
 		
 		if(!has_privs('rah_backup_delete')) {
-			rah_backup_list();
+			self::browser();
 			return;
 		}
 		
 		$selected = ps('selected');
 		
 		if(empty($selected) || !is_array($selected)) {
-			rah_backup_list('select_something');
+			self::browser('select_something');
 			return;
 		}
 		
-		$dir = rah_backup_path('path');
+		$dir = self::get_path('path');
 		
 		foreach($selected as $file) {
 			
@@ -877,16 +878,16 @@ EOF;
 			unlink($file);
 		}
 		
-		rah_backup_list('removed');
+		self::browser('removed');
 	}
 
-/**
- * Checks for errors/problems that could prevent commands from running.
- * @param bool $cmd_check Wheter check exec() access and for safe-mode restrictions.
- * @return string Language string or false when no issues are found.
- */
+	/**
+	 * Checks for errors/problems that could prevent commands from running.
+	 * @param bool $cmd_check Wheter check exec() access and for safe-mode restrictions.
+	 * @return string Language string or false when no issues are found.
+	 */
 
-	function rah_backup_er($cmd_check=true) {
+	static public function check_errors($cmd_check=true) {
 		
 		global $txpcfg, $prefs;
 	
@@ -897,7 +898,7 @@ EOF;
 		)
 			return 'define_preferences';
 		
-		$dir = rah_backup_path('path');
+		$dir = self::get_path('path');
 		
 		if(!file_exists($dir) || !is_dir($dir))
 			return 'backup_dir_not_found';
@@ -941,14 +942,14 @@ EOF;
 		return false;
 	}
 
-/**
- * Execute shell command
- * @param string $command The program to run.
- * @param array $args The arguments passed to the application.
- * @return bool
- */
+	/**
+	 * Execute shell command
+	 * @param string $command The program to run.
+	 * @param array $args The arguments passed to the application.
+	 * @return bool
+	 */
 
-	function rah_backup_exec($command, $args) {
+	static public function exec_command($command, $args) {
 
 		$escape = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || is_disabled('escapeshellcmd');
 		$cmd[] = $escape ? $command : escapeshellcmd($command);
@@ -983,14 +984,14 @@ EOF;
 		return exec(implode(' ', $cmd));
 	}
 
-/**
- * Return paths
- * @param string $item Path to return.
- * @param bool $pref Is $item preference string or path.
- * @return string
- */
+	/**
+	 * Return paths
+	 * @param string $item Path to return.
+	 * @param bool $pref Is $item preference string or path.
+	 * @return string
+	 */
 
-	function rah_backup_path($item, $pref=true) {
+	static public function get_path($item, $pref=true) {
 
 		global $prefs;
 		
@@ -1009,13 +1010,13 @@ EOF;
 		return rtrim(trim($path),'/\\');
 	}
 
-/**
- * Format filesize
- * @param int $bytes Size in bytes.
- * @return string Formatted size.
- */
+	/**
+	 * Format filesize
+	 * @param int $bytes Size in bytes.
+	 * @return string Formatted size.
+	 */
 
-	function rah_backup_size($bytes) {
+	static public function format_size($bytes) {
 		$units = array('b', 'k', 'm', 'g', 't', 'p', 'e', 'z', 'y');
 		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
 		$pow = min($pow, count($units) - 1);
@@ -1026,13 +1027,13 @@ EOF;
 		return number_format($bytes, 2, $sep_dec, $sep_thous) . ' ' . gTxt('rah_backup_units_' . $units[$pow]);
 	}
 
-/**
- * Echoes the panels and header
- * @param string $content Pane's HTML markup.
- * @param string $message The activity message.
- */
+	/**
+	 * Echoes the panels and header
+	 * @param string $content Pane's HTML markup.
+	 * @param string $message The activity message.
+	 */
 
-	function rah_backup_header($content, $message) {
+	static public function build_pane($content, $message) {
 		
 		global $event;
 		
@@ -1052,7 +1053,7 @@ EOF;
 			
 			(has_privs('rah_backup_create') ? 
 				' <span class="rah_ui_sep">&#187;</span> '.
-				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=do&amp;_txp_token='.form_token().'">'.
+				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=take_backup&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a>' : ''
 			).
@@ -1069,15 +1070,16 @@ EOF;
 			'</form>'.n;
 	}
 
-/**
- * Redirect to the admin-side interface
- */
+	/**
+	 * Redirect to the admin-side interface
+	 */
 
-	function rah_backup_prefs() {
+	static public function prefs() {
 		header('Location: ?event=rah_backup');
 		echo 
 			'<p>'.n.
 			'	<a href="?event=rah_backup">'.gTxt('continue').'</a>'.n.
 			'</p>';
 	}
+}
 ?>
