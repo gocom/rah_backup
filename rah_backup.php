@@ -414,77 +414,77 @@ EOF;
 
 		if(!$er) {
 			
-			$files = glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar]', GLOB_NOSORT);
-		
-			if($files && is_array($files)) {
-				
-				$f = array();
+			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar]', GLOB_NOSORT);
+			$f = array();
 			
-				foreach($files as $file) {
+			foreach($files as $file) {
 				
-					if(!is_readable($file) || !is_file($file))
-						continue;
+				if(!is_readable($file) || !is_file($file))
+					continue;
 					
-					$ext = pathinfo($file, PATHINFO_EXTENSION);
-					$name = htmlspecialchars(basename($file));
-					$gz = $file.'.gz';
+				$ext = pathinfo($file, PATHINFO_EXTENSION);
+				$name = htmlspecialchars(basename($file));
+				$gz = $file.'.gz';
 				
-					$f[$name] = 
+				$f[$name] = 
 					
-						'			<tr>'.n.
-						'				<td>'.
+					'			<tr>'.n.
+					'				<td>'.
 						
-						(
-							has_privs('rah_backup_download') ?
-						
-								'<a title="'.gTxt('rah_backup_download').
-									'" href="?event='.$event.
-									'&amp;step=download&amp;file='.urlencode($name).
-									'&amp;_txp_token='.form_token().
-									'">'.$name.'</a>'
-							: $name
-						).
+					(
+						has_privs('rah_backup_download') ?
+
+							'<a title="'.gTxt('rah_backup_download').
+								'" href="?event='.$event.
+								'&amp;step=download&amp;file='.urlencode($name).
+								'&amp;_txp_token='.form_token().
+								'">'.$name.'</a>'
+						: $name
+					).
 									'</td>'.n.
 						
-						(
-							has_privs('rah_backup_download') && file_exists($gz) && is_readable($gz) && is_file($gz) ?
-								'				<td>'.
-								'<a title="'.gTxt('rah_backup_download').' '.
-								rah_backup_size(filesize($gz)).
-								'" href="?event='.$event.
-									'&amp;step=download&amp;file='.
-										urlencode($name.'.gz').'&amp;_txp_token='.form_token().
-									'">.gz</a></td>'.n
-							: 
-								'				<td>&#160;</td>'.n
+					(
+						has_privs('rah_backup_download') && file_exists($gz) && is_readable($gz) && is_file($gz) ?
+							'				<td>'.
+							'<a title="'.gTxt('rah_backup_download').' '.
+							rah_backup_size(filesize($gz)).
+							'" href="?event='.$event.
+								'&amp;step=download&amp;file='.
+									urlencode($name.'.gz').'&amp;_txp_token='.form_token().
+								'">.gz</a></td>'.n
+						: 
+							'				<td>&#160;</td>'.n
+					).
 						
-						).
+					'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
+					'				<td>'.rah_backup_size(filesize($file)).'</td>'.n.
 						
-						'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
-						'				<td>'.rah_backup_size(filesize($file)).'</td>'.n.
+					(
+						has_privs('rah_backup_restore') && $ext == 'sql' && $prefs['rah_backup_allow_restore'] ? 
+							'				<td class="rah_backup_restore">'.
+								'<a title="'.$name.'" '.
+									'href="?event='.$event.
+										'&amp;step=restore&amp;file='.urlencode($name).
+										'&amp;_txp_token='.form_token().
+								'">'.gTxt('rah_backup_restore').'</a></td>'.n
+						:
+							'				<td>&#160;</td>'.n
+					).
 						
-						(
-							has_privs('rah_backup_restore') && $ext == 'sql' && $prefs['rah_backup_allow_restore'] ? 
-								'				<td class="rah_backup_restore">'.
-									'<a title="'.$name.'" '.
-										'href="?event='.$event.
-											'&amp;step=restore&amp;file='.urlencode($name).
-											'&amp;_txp_token='.form_token().
-									'">'.gTxt('rah_backup_restore').'</a></td>'.n
-							:
-								'				<td>&#160;</td>'.n
-						).
-						
-						'				<td>'.(has_privs('rah_backup_delete') ? '<input type="checkbox" name="selected[]" value="'.$name.'" />' : '').'</td>'.n.
-						'			</tr>'.n;
-						
-				}
-				
+					'				<td>'.
+					(
+						has_privs('rah_backup_delete') ? 
+							'<input type="checkbox" name="selected[]" value="'.$name.'" />' : ''
+					).
+									'</td>'.n.
+					'			</tr>'.n;
+			}
+			
+			if($f) {
 				krsort($f);
 				$out[] = implode('',$f);
-				
 			}
-			else
+			else 
 				$er = 'no_backups';
 		}
 		
