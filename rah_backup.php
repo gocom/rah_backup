@@ -35,6 +35,8 @@
 
 class rah_backup {
 
+	static public $version = '0.1';
+
 	/**
 	 * Installer
 	 * @param string $event Admin-side event.
@@ -55,12 +57,10 @@ class rah_backup {
 			return;
 		}
 		
-		$version = '0.1';
-		
 		$current = isset($prefs['rah_backup_version']) ?
 			$prefs['rah_backup_version'] : 'base';
 		
-		if($current == $version)
+		if($current == self::$version)
 			return;
 		
 		$position = 250;
@@ -78,8 +78,6 @@ class rah_backup {
 				'callback' => 0,
 				'allow_restore' => 1,
 				'key' => md5(uniqid(mt_rand(), TRUE)),
-				'maintenance' => '',
-				'sqlscript' => '',
 			) as $name => $val
 		) {
 
@@ -92,7 +90,6 @@ class rah_backup {
 					case 'compress':
 					case 'overwrite':
 					case 'allow_restore':
-					case 'maintenance':
 						$html = 'yesnoradio';
 						break;
 					default:
@@ -116,8 +113,8 @@ class rah_backup {
 			$position++;
 		}
 		
-		set_pref('rah_backup_version', $version, 'rah_backup', 2, '', 0);
-		$prefs['rah_backup_version'] = $version;
+		set_pref('rah_backup_version', self::$version, 'rah_backup', 2, '', 0);
+		$prefs['rah_backup_version'] = self::$version;
 	}
 
 	/**
@@ -750,26 +747,6 @@ EOF;
 			self::browser('can_not_restore');
 			return;	
 		}
-		
-		$path = self::get_path($prefs['rah_backup_sqlscript'],false);
-		
-		if(
-			$prefs['rah_backup_maintenance'] &&
-			$path &&
-			file_exists($path) &&
-			is_readable($path) &&
-			is_file($path)
-		)
-			self::exec_command(
-				$prefs['rah_backup_mysql'],
-				array(
-					'--host' => $txpcfg['host'],
-					'--user' => $txpcfg['user'],
-					'--password' => $txpcfg['pass'],
-					'' => $txpcfg['db'],
-					'<' => $path
-				)
-			);
 		
 		callback_event('rah_backup_tasks', 'restore_done');
 		self::browser('restore_done');
