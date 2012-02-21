@@ -72,7 +72,6 @@
 				'tar' => 'tar',
 				'compress' => 0,
 				'gzip' => 'gzip',
-				'gzip_level' => 6,
 				'overwrite' => 1,
 				'callback' => 0,
 				'allow_restore' => 1,
@@ -93,9 +92,6 @@
 					case 'allow_restore':
 					case 'maintenance':
 						$html = 'yesnoradio';
-						break;
-					case 'gzip_level':
-						$html = 'rah_backup_gzip_level';
 						break;
 					default:
 						$html = 'text_input';
@@ -621,16 +617,12 @@ EOF;
 		
 		if($prefs['rah_backup_compress']) {
 			
-			$gzip_level = 
-				in_array($prefs['rah_backup_gzip_level'], range(1,9)) ? 
-					$prefs['rah_backup_gzip_level'] : 9;
-			
 			$file['db_gz'] = $file['db'].'.gz';
 			
 			rah_backup_exec(
 				rah_backup_path('gzip'),
 				array(
-					'-c'.$gzip_level => false,
+					'-c6' => false,
 					'' => $file['db'],
 					'>' => $file['db_gz']
 				)
@@ -688,7 +680,7 @@ EOF;
 					rah_backup_exec(
 						rah_backup_path('gzip'),
 						array(
-							'-c'.$gzip_level => false,
+							'-c6' => false,
 							'' => $file['fs'],
 							'>' => $file['fs_gz']
 						)
@@ -1032,21 +1024,6 @@ EOF;
 		$sep_dec = isset($separators['decimal_point']) ? $separators['decimal_point'] : '.';
 		$sep_thous = isset($separators['thousands_sep']) ? $separators['thousands_sep'] : ',';
 		return number_format($bytes, 2, $sep_dec, $sep_thous) . ' ' . gTxt('rah_backup_units_' . $units[$pow]);
-	}
-
-/**
- * Gzip compression level option
- * @param string $name Field name.
- * @param int $val Current value.
- * @return HTML select field.
- */
-
-	function rah_backup_gzip_level($name, $val) {
-		
-		foreach(range(1,9) as $level)
-			$out[$level] = gTxt('rah_backup_gzip_level_n_'.$level);
-		
-		return selectInput($name, $out, $val, '', '', $name);
 	}
 
 /**
