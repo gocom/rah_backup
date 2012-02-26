@@ -9,14 +9,6 @@
  * that are for rah_backup's plugins.
  */
 
-
-/**
- * Sets static directory used to store revisions
- * @const rah_post_versions_static_dir
- */
-
-define('rah_post_versions_static_dir', '/absolute/path/to/vcs_dir');
-
 /**
  * Sets connection details for FTP_offsite module
  * See ../extending/ftp_offsite.php for detailed descriptions.
