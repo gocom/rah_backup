@@ -137,8 +137,8 @@ class rah_backup {
 				'compress' => 0,
 				'gzip' => 'gzip',
 				'overwrite' => 1,
-				'callback' => 0,
 				'allow_restore' => 1,
+				'callback' => 0,
 				'key' => md5(uniqid(mt_rand(), TRUE)),
 			) as $name => $val
 		) {
