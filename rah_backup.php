@@ -233,7 +233,7 @@ class rah_backup {
 			<script type="text/javascript">
 				<!--
 				
-				{$pfx} = function() {
+				$(document).ready(function(){
 				
 					var l10n = {$js};
 					var pfx = '{$pfx}';
@@ -404,10 +404,6 @@ class rah_backup {
 							});	
 						}).attr('href','#');
 					})();
-				};
-
-				$(document).ready(function(){
-					{$pfx}();
 				});
 				//-->
 			</script>
