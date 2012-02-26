@@ -1,8 +1,8 @@
 h1. rah_backup
 
-p. A plugin for "Textpattern CMS":http://www.textpattern.com. Takes and restores site backups.
+p. Rah_backup is an admin-side plugin for "Textpattern CMS":http://www.textpattern.com. It takes and restores site backups.
 
-h2(#requirements). Requirements
+h2. Requirements
 
 p. Rah_backups' minimum requirements:
 
@@ -10,20 +10,11 @@ p. Rah_backups' minimum requirements:
 * PHP 5.2.0 or newer.
 ** Access to "system()":http://php.net/manual/en/function.system.php function.
 * Access to console applications:
-** MySQL
-** MySQLdump
-** TAR
-** Gzip
+** "MySQL":http://dev.mysql.com/doc/refman/5.5/en/mysql.html
+** "MySQLdump":http://dev.mysql.com/doc/refman/5.1/en/mysqldump.html
+** "TAR":http://www.gnu.org/software/tar/
+** "Gzip":http://www.gzip.org/
 
-h2(#preferences). Preferences and configuration
+h2. Preferences and configuration
 
 p. After a successful installation you can find rah_backup's interface under _Extensions/Backup_. The interface is divided to three main areas; to the list view listing all stored backups, _Take Backup_ and _Preferences_.
-
-h3. Path to MySQL dump.
-
-p. Common paths:
-
-* @mysqldump@
-* @/usr/bin/mysqldump@
-* XAMPP on Windows: @C:\XAMPP\mysql\bin\mysqldump.exe@.
-* MAMP on Mac: @/Applications/MAMP/Library/bin/mysqldump@.
