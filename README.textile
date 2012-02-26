@@ -12,11 +12,8 @@ p. Rah_backups' minimum requirements:
 * Access to console applications:
 ** MySQL
 ** MySQLdump
-
-p. Additionally, optionally access to console applications:
-
-* TAR - required if rah_backup is used to backup filesystem.
-* Gzip - required if Gzip compression is used.
+** TAR
+** Gzip
 
 h2(#preferences). Preferences and configuration
 
