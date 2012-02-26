@@ -30,12 +30,74 @@
 		register_callback(array('rah_backup', 'prefs'), 'plugin_prefs.rah_backup');
 		register_callback(array('rah_backup', 'install'), 'plugin_lifecycle.rah_backup');
 	}
-	elseif(@txpinterface == 'public')
-		register_callback(array('rah_backup', 'take_backup'), 'textpattern');
+	elseif(@txpinterface == 'public') {
+		register_callback(array('rah_backup', 'call_backup'), 'textpattern');
+	}
+
+/**
+ * Backup class
+ */
 
 class rah_backup {
 
 	static public $version = '0.1';
+	
+	private $backup_dir;
+	private $mysql;
+	private $mysqldump;
+	private $tar;
+	private $gzip;
+	private $copy_paths = array();
+	private $message;
+
+	/**
+	 * Constructor
+	 */
+
+	public function __construct() {
+
+		global $prefs, $txpcfg;
+		
+		if(
+			file_exists($prefs['rah_backup_path']) && 
+			is_readable($prefs['rah_backup_path']) && 
+			is_writable($prefs['rah_backup_path']) && 
+			is_dir($prefs['rah_backup_path'])
+		) {
+			$this->backup_dir = $prefs['rah_backup_path'];
+		}
+		
+		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
+			if(($f = rtrim($f, "/\\")) && file_exists($f) && is_dir($f) && is_readable($f)) {
+				$this->copy_paths[$f] = $f;
+			}
+		}
+		
+		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
+		
+			if(@ini_get('safe_mode') && (strpos($n, '..') !== false || strpos($n, './') !== false)) {
+				$this->message = gTxt('rah_backup_safe_mode_no_exec_access');
+				continue;
+			}
+			
+			$this->$n = $prefs['rah_backup_' . $n ];
+			
+			if(DS != '/' && @ini_get('safe_mode')) {
+				$this->$n =  str_replace('\\', '/', $this->$n);
+			}
+			
+			$this->$n = rtrim(trim($this->$n),'/\\');
+		}
+		
+		if(strpos($txpcfg['db'], '\\') !== false) {
+			$this->message = gTxt('rah_backup_safe_mode_no_exec_access');
+		}
+		
+		if(!function_exists('exec') || is_disabled('exec')) {
+			$this->message = gTxt('rah_backup_exec_func_unavailable');
+		}
+		
+	}
 
 	/**
 	 * Installer
@@ -128,16 +190,18 @@ class rah_backup {
 		$steps = 
 			array(
 				'browser' => false,
-				'take_backup' => true,
+				'create' => true,
 				'restore' => true,
 				'delete' => true,
 				'download' => true
 			);
 		
-		if(!$step || !bouncer($step, $steps))
+		$uix = new rah_backup();
+		
+		if(!$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step))
 			$step = 'browser';
 
-		self::$step();
+		$uix->$step();
 	}
 
 	/**
@@ -145,7 +209,7 @@ class rah_backup {
 	 */
 
 	static public function head() {
-		global $event, $step;
+		global $event;
 		
 		if($event != 'rah_backup')
 			return;
@@ -267,104 +331,85 @@ class rah_backup {
 						);
 					})();
 					
-					/**
+					/*
 						Do a backup
 					*/
 					
 					(function() {
-						
-						$('a#rah_backup_do').click(
-							function(e) {
-								e.preventDefault();
+						$('a#rah_backup_do').click(function(e) {
+							e.preventDefault();
 								
-								if(!verify(l10n['confirm_backup']))
-									return false;
+							if(!verify(l10n['confirm_backup']))
+								return false;
 									
-								$(this).after('<span id="rah_backup_statusmsg">'+l10n['inprogress']+'</span>').hide();
+							$(this).after('<span id="rah_backup_statusmsg">'+l10n['inprogress']+'</span>').hide();
 									
-								$.ajax(
-									{
-										type : 'POST',
-										url : 'index.php',
-										data : {
-											'event' : textpattern['event'],
-											'step' : 'take_backup',
-											'_txp_token' : textpattern['_txp_token'],
-										},
-										
-										success: function(data, status, xhr) {
-											$('#rah_backup_container table#list tbody').html($(data).find('#rah_backup_list').html());
-										},
-										
-										error: function() {
-											
-										},
-										
-										complete: function() {
-											$('#rah_backup_statusmsg').hide();
-											$('#rah_backup_do').show();
-										}
-									}
-								);
-							}
-						).attr('href','#');
+							$.ajax({
+								type : 'POST',
+								url : 'index.php',
+								data : {
+									'event' : textpattern['event'],
+									'step' : 'create',
+									'_txp_token' : textpattern['_txp_token'],
+								},		
+								success: function(data, status, xhr) {
+									$('#rah_backup_container table#list tbody').html($(data).find('#rah_backup_list').html());
+								},		
+								error: function() {	
+								},		
+								complete: function() {
+									$('#rah_backup_statusmsg').hide();
+									$('#rah_backup_do').show();
+								}
+							});
+						}).attr('href','#');
 					})();
 					
-					/**
+					/*
 						Restore a backup
 					*/
 					
 					(function() {
-						
-						$('.rah_backup_restore a').live('click',
-							function(e) {
-								e.preventDefault();
+						$('.rah_backup_restore a').live('click', function(e) {
+							e.preventDefault();
 								
-								if(!verify(l10n['database_will_be_overwriten']))
-									return false;
+							if(!verify(l10n['database_will_be_overwriten']))
+								return false;
 									
-								$('.rah_backup_restore a').hide();
+							$('.rah_backup_restore a').hide();
 									
-								var link = $(this);
-								var filename = $(this).attr('title');
+							var link = $(this);
+							var filename = $(this).attr('title');
 								
-								link.after('<span class="rah_backup_restoring">'+l10n['restoring']+'</span>');
+							link.after('<span class="rah_backup_restoring">'+l10n['restoring']+'</span>');
 								
-								$.ajax(
-									{
-										type : 'POST',
-										url : 'index.php',
-										data : {
-											'event' : textpattern['event'],
-											'step' : 'restore',
-											'_txp_token' : textpattern['_txp_token'],
-											'file' : filename
-										},
-										
-										success: function(data, status, xhr) {
-											link.next('span.rah_backup_restoring').text(l10n['restored']);
-										},
-										
-										error: function() {
-											
-										},
-										
-										complete: function() {
-											$('.rah_backup_restore a').show();
-											link.hide();
-										}
-									}
-								);	
-								
-							}
-						).attr('href','#');
+							$.ajax({
+								type : 'POST',
+								url : 'index.php',
+								data : {
+									'event' : textpattern['event'],
+									'step' : 'restore',
+									'_txp_token' : textpattern['_txp_token'],
+									'file' : filename
+								},		
+								success: function(data, status, xhr) {
+									link.next('span.rah_backup_restoring').text(l10n['restored']);
+								},		
+								error: function() {	
+								},		
+								complete: function() {
+									$('.rah_backup_restore a').show();
+									link.hide();
+								}
+							});	
+						}).attr('href','#');
 					})();
 				};
 
 				$(document).ready(function(){
 					{$pfx}();
 				});
-				-->
+				//-->
 			</script>
 			<style type="text/css">
 				#rah_backup_container {
@@ -389,7 +434,7 @@ EOF;
 	 * @param string $message Activity message.
 	 */
 
-	static public function browser($message='') {
+	private function browser($message='') {
 	
 		global $event, $prefs;
 		
@@ -407,10 +452,8 @@ EOF;
 			'			</tr>'.n.
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
-		
-		$er = self::check_errors();
 
-		if(!$er) {
+		if(!$this->message) {
 			
 			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar]', GLOB_NOSORT);
 			$f = array();
@@ -445,7 +488,7 @@ EOF;
 						has_privs('rah_backup_download') && file_exists($gz) && is_readable($gz) && is_file($gz) ?
 							'				<td>'.
 							'<a title="'.gTxt('rah_backup_download').' '.
-							self::format_size(filesize($gz)).
+							$this->format_size(filesize($gz)).
 							'" href="?event='.$event.
 								'&amp;step=download&amp;file='.
 									urlencode($name.'.gz').'&amp;_txp_token='.form_token().
@@ -455,7 +498,7 @@ EOF;
 					).
 						
 					'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
-					'				<td>'.self::format_size(filesize($file)).'</td>'.n.
+					'				<td>'.$this->format_size(filesize($file)).'</td>'.n.
 						
 					(
 						has_privs('rah_backup_restore') && $ext == 'sql' && $prefs['rah_backup_allow_restore'] ? 
@@ -482,17 +525,18 @@ EOF;
 				krsort($f);
 				$out[] = implode('',$f);
 			}
-			else 
-				$er = 'no_backups';
+			else {
+				$this->message = 'rah_backup_no_backups';
+			}
 		}
 		
-		if($er)
+		if($this->message)
 			
 			$out[] = 
 				'			<tr>'.n.
 				'				<td id="rah_backup_msgrow" colspan="6">'.
 					gTxt(
-						'rah_backup_'.$er,
+						$this->message,
 						array(
 							'{start_by}' => 
 								'<a href="?event=prefs&amp;'.
@@ -520,42 +564,41 @@ EOF;
 				'	</p>' : ''
 			);
 		
-		self::build_pane(
+		$this->build_pane(
 			$out,
 			$message
 		);
 	}
 	
 	/**
-	 * Does dump from the database
+	 * Backup callback
+	 * @return nothing
+	 */
+	
+	static public function call_backup() {
+		
+		global $prefs;
+		
+		if(
+			!gps('rah_backup') || 
+			empty($prefs['rah_backup_callback']) || 
+			empty($prefs['rah_backup_key']) || 
+			$prefs['rah_backup_key'] != gps('rah_backup')
+		)
+			return;
+			
+		$backup = new rah_backup();
+		$backup->create(true);
+	}
+	
+	/**
+	 * Creates a new backup
 	 * @param string $event Callback event.
 	 */
 
-	static public function take_backup($event='') {
+	private function create($event='') {
 		
 		global $txpcfg, $prefs;
-		
-		if(!$event && !has_privs('rah_backup_create')) {
-			self::browser();
-			return;
-		}
-		
-		if(
-			$event && 
-			(
-				!gps('rah_backup') || 
-				!$prefs['rah_backup_callback'] || 
-				!$prefs['rah_backup_key'] || 
-				$prefs['rah_backup_key'] != gps('rah_backup')
-			)
-		)
-			return;
-		
-		if(($er = self::check_errors()) && $er) {
-			if(!$event)
-				self::browser($er);
-			return;
-		}
 
 		@set_time_limit(0);
 		@ignore_user_abort(true);
@@ -571,11 +614,11 @@ EOF;
 		$now = $prefs['rah_backup_overwrite'] ? '' : '_'.safe_strtotime('now');
 		$db = substr(preg_replace('/[^A-Za-z0-9-._]/','',$txpcfg['db']),0,64);
 		$db = ($db ? $db : 'database') . $now . '.sql';
-		$file['db'] = self::get_path('path') . '/' . $db;
+		$file['db'] = $this->backup_dir . '/' . $db;
 		
 		$returned = 
 			self::exec_command(
-				self::get_path('mysqldump'),
+				$this->mysqldump,
 				array(
 					'--opt' => false,
 					'--skip-comments' => false,
@@ -588,28 +631,6 @@ EOF;
 			);
 		
 		/*
-			In practice it almost never returns false,
-			so this might be pretty pointless really
-		*/
-		
-		if($returned === false) {
-			
-			/*
-				Remove the partial, possibly corrupted, backup file
-			*/
-			
-			if(file_exists($file['db']) && is_file($file['db']) && is_writeable($file['db']))
-				unlink($file['db']);
-			
-			unset($file['db']);
-			
-			if(!$event)
-				self::browser('dumping_db_failed');
-			
-			return;
-		}
-		
-		/*
 			Create additional compressed file
 		*/
 		
@@ -618,7 +639,7 @@ EOF;
 			$file['db_gz'] = $file['db'].'.gz';
 			
 			self::exec_command(
-				self::get_path('gzip'),
+				$this->gzip,
 				array(
 					'-c6' => false,
 					'' => $file['db'],
@@ -631,7 +652,7 @@ EOF;
 			Copy directories
 		*/
 		
-		if($prefs['rah_backup_copy_paths'] && $dirs = explode(',', $prefs['rah_backup_copy_paths'])) {
+		if($this->copy_paths) {
 			
 			$site = 
 				substr(
@@ -646,7 +667,7 @@ EOF;
 			
 			$site = $site ? $site : 'filesystem';
 			
-			$file['fs'] = self::get_path('path').'/'.$site.$now.'.tar';
+			$file['fs'] = $this->backup_dir.'/'.$site.$now.'.tar';
 			
 			$opt = 
 				array(
@@ -656,12 +677,9 @@ EOF;
 			
 			$paths = false;
 			
-			foreach($dirs as $path) {
-				$path = self::get_path($path, false);
-				if($path && file_exists($path) && is_readable($path) && is_dir($path)) {
-					$opt[] = array('' => $path);
-					$paths = true;
-				}
+			foreach($this->copy_paths as $path) {
+				$opt[] = array('' => $path);
+				$paths = true;
 			}
 
 			if($paths) {
@@ -676,7 +694,7 @@ EOF;
 					$file['fs_gz'] = $file['fs'].'.gz';
 					
 					self::exec_command(
-						self::get_path('gzip'),
+						$this->gzip,
 						array(
 							'-c6' => false,
 							'' => $file['fs'],
@@ -692,29 +710,24 @@ EOF;
 		if($event)
 			die();
 
-		self::browser('done');
+		$this->browser('done');
 	}
 
 	/**
 	 * Restores backup
 	 */
 
-	static public function restore() {
+	private function restore() {
 		
-		global $txpcfg, $prefs;
+		global $txpcfg;
 		
-		if(!has_privs('rah_backup_restore') || !$prefs['rah_backup_allow_restore']) {
-			self::browser();
-			return;
-		}
-		
-		if(($er = self::check_errors()) && $er) {
-			self::browser($er);
+		if(!$prefs['rah_backup_allow_restore']) {
+			$this->browser();
 			return;
 		}
 		
 		$file = preg_replace('/[^A-Za-z0-9-._]/','',gps('file'));
-		$path = self::get_path('path').'/'.$file;
+		$path = $this->backup_dir.'/'.$file;
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if(
@@ -725,7 +738,7 @@ EOF;
 			!is_readable($path) || 
 			!is_file($path)
 		) {
-			self::browser('can_not_restore');
+			$this->browser('can_not_restore');
 			return;	
 		}
 		
@@ -744,29 +757,22 @@ EOF;
 			);
 		
 		if($returned === false) {
-			self::browser('can_not_restore');
+			$this->browser('can_not_restore');
 			return;	
 		}
 		
 		callback_event('rah_backup_tasks', 'restore_done');
-		self::browser('restore_done');
+		$this->browser('restore_done');
 	}
 
 	/**
 	 * Downloads a backup file
 	 */
 
-	static public function download() {
+	private function download() {
 
-		global $prefs;
-		
-		if(!has_privs('rah_backup_download')) {
-			self::browser();
-			return;
-		}
-
-		$file = preg_replace('/[^A-Za-z0-9-._]/','',gps('file'));
-		$path = self::get_path('path').'/'.$file;
+		$file = preg_replace('/[^A-Za-z0-9-._]/', '', gps('file'));
+		$path = $this->backup_dir.'/'.$file;
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if(
@@ -777,7 +783,7 @@ EOF;
 			!is_writeable($path) || 
 			!is_file($path)
 		) {
-			self::browser('can_not_download');
+			$this->browser('can_not_download');
 			return;	
 		}
 
@@ -817,23 +823,14 @@ EOF;
 	 * Deletes a backup file
 	 */
 
-	static public function delete() {
-		
-		global $prefs;
-		
-		if(!has_privs('rah_backup_delete')) {
-			self::browser();
-			return;
-		}
+	private function delete() {
 		
 		$selected = ps('selected');
 		
 		if(empty($selected) || !is_array($selected)) {
-			self::browser('select_something');
+			$this->browser('select_something');
 			return;
 		}
-		
-		$dir = self::get_path('path');
 		
 		foreach($selected as $file) {
 			
@@ -842,7 +839,7 @@ EOF;
 			if(!$file || !$ext || ($ext != 'sql' && $ext != 'gz' && $ext != 'tar'))
 				continue;
 			
-			$file = $dir.'/'.preg_replace('/[^A-Za-z0-9-._]/','',$file);
+			$file = $this->backup_dir.'/'.preg_replace('/[^A-Za-z0-9-._]/', '', $file);
 			
 			if(!file_exists($file) || !is_writeable($file) || !is_file($file))
 				continue;
@@ -855,68 +852,7 @@ EOF;
 			unlink($file);
 		}
 		
-		self::browser('removed');
-	}
-
-	/**
-	 * Checks for errors/problems that could prevent commands from running.
-	 * @param bool $cmd_check Wheter check exec() access and for safe-mode restrictions.
-	 * @return string Language string or false when no issues are found.
-	 */
-
-	static public function check_errors($cmd_check=true) {
-		
-		global $txpcfg, $prefs;
-	
-		if(
-			!trim($prefs['rah_backup_mysqldump']) ||
-			!trim($prefs['rah_backup_mysql']) ||
-			!trim($prefs['rah_backup_path'])
-		)
-			return 'define_preferences';
-		
-		$dir = self::get_path('path');
-		
-		if(!file_exists($dir) || !is_dir($dir))
-			return 'backup_dir_not_found';
-		
-		if(!is_readable($dir))
-			return 'backup_dir_not_readable';
-		
-		if(!is_writable($dir))
-			return 'backup_dir_not_writable';
-		
-		/*
-			End here if command checks are ignored
-		*/
-		
-		if($cmd_check == false)
-			return false;
-		
-		if(!function_exists('exec') || is_disabled('exec'))
-			return 'exec_func_unavailable';
-		
-		/*
-			Check for safe mode limitations
-		*/
-		
-		if(
-			@ini_get('safe_mode') && 
-			(
-				strpos(
-					$txpcfg['db'], '\\'
-				) !== false ||
-				strpos(
-					$prefs['rah_backup_mysqldump'].
-					$prefs['rah_backup_mysql'].
-					$prefs['rah_backup_path'].
-					$txpcfg['db'], '..'
-				) !== false
-			)
-		)
-			return 'safe_mode_no_exec_access';
-		
-		return false;
+		$this->browser('removed');
 	}
 
 	/**
@@ -962,38 +898,12 @@ EOF;
 	}
 
 	/**
-	 * Return paths
-	 * @param string $item Path to return.
-	 * @param bool $pref Is $item preference string or path.
-	 * @return string
-	 */
-
-	static public function get_path($item, $pref=true) {
-
-		global $prefs;
-		
-		if($pref) {
-			if(!isset($prefs['rah_backup_'.$item]))
-				return;
-			
-			$path = $prefs['rah_backup_'.$item];
-		}
-		else
-			$path = $item;
-		
-		if(DS != '/' && @ini_get('safe_mode'))
-			$path = str_replace('\\', '/', $path);
-		
-		return rtrim(trim($path),'/\\');
-	}
-
-	/**
 	 * Format filesize
 	 * @param int $bytes Size in bytes.
 	 * @return string Formatted size.
 	 */
 
-	static public function format_size($bytes) {
+	private function format_size($bytes) {
 		$units = array('b', 'k', 'm', 'g', 't', 'p', 'e', 'z', 'y');
 		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
 		$pow = min($pow, count($units) - 1);
@@ -1010,7 +920,7 @@ EOF;
 	 * @param string $message The activity message.
 	 */
 
-	static public function build_pane($content, $message) {
+	private function build_pane($content, $message) {
 		
 		global $event;
 		
@@ -1030,7 +940,7 @@ EOF;
 			
 			(has_privs('rah_backup_create') ? 
 				' <span class="rah_ui_sep">&#187;</span> '.
-				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=take_backup&amp;_txp_token='.form_token().'">'.
+				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a>' : ''
 			).
