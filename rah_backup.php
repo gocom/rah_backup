@@ -68,6 +68,11 @@ class rah_backup {
 		}
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
+		
+			if(strpos($f, './') === 0) {
+				$f = txpath . '/' . substr($f, 2);
+			}
+		
 			if(($f = rtrim($f, "/\\")) && file_exists($f) && is_dir($f) && is_readable($f)) {
 				$this->copy_paths[$f] = $f;
 			}
@@ -130,7 +135,7 @@ class rah_backup {
 		foreach(
 			array(
 				'path' => '',
-				'copy_paths' => '',
+				'copy_paths' => './../',
 				'mysql' => 'mysql',
 				'mysqldump' => 'mysqldump',
 				'tar' => 'tar',
