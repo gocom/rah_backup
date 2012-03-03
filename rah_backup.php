@@ -58,14 +58,20 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
-		if(
-			file_exists($prefs['rah_backup_path']) && 
-			is_readable($prefs['rah_backup_path']) && 
-			is_writable($prefs['rah_backup_path']) && 
-			is_dir($prefs['rah_backup_path'])
-		) {
+		if(!$prefs['rah_backup_path'])
+			$this->message = gTxt('rah_backup_define_preferences');
+			
+		elseif(!file_exists($prefs['rah_backup_path']) || !is_dir($prefs['rah_backup_path']))
+			$this->message = gTxt('rah_backup_dir_not_found');
+		
+		elseif(!is_readable($prefs['rah_backup_path']))
+			$this->message = gTxt('rah_backup_dir_not_readable');
+		
+		elseif(!is_writable($prefs['rah_backup_path']))
+			$this->message = gTxt('rah_backup_dir_not_writable');
+
+		else
 			$this->backup_dir = $prefs['rah_backup_path'];
-		}
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
 		
