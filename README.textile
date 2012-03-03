@@ -8,7 +8,7 @@ p. Rah_backups' minimum requirements:
 
 * Textpattern 4.4.1 or newer.
 * PHP 5.2.0 or newer.
-** Access to "system()":http://php.net/manual/en/function.system.php function.
+** Access to "exec()":http://php.net/manual/en/function.exec.php function.
 * Access to console applications:
 ** "MySQL":http://dev.mysql.com/doc/refman/5.5/en/mysql.html
 ** "MySQLdump":http://dev.mysql.com/doc/refman/5.1/en/mysqldump.html
