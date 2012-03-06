@@ -22,10 +22,9 @@
 
 /**
  * Empties txp_log table.
- * @return bool
  */
 
 	function rah_backup__module_clearlogs() {
-		return safe_query('TRUNCATE TABLE '.safe_pfx('txp_log'));
+		@safe_query('TRUNCATE TABLE '.safe_pfx('txp_log'));
 	}
 ?>
