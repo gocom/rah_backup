@@ -911,7 +911,7 @@ EOF;
 	 * @todo Should actually divide by 1000, or use different prefix
 	 */
 
-	private function format_size($bytes) {
+	public function format_size($bytes) {
 		$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
 		$pow = min($pow, count($units) - 1);
