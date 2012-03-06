@@ -624,7 +624,7 @@ EOF;
 		$file['db'] = $this->backup_dir . '/' . $db;
 		
 		$returned = 
-			self::exec_command(
+			$this->exec_command(
 				$this->mysqldump,
 				array(
 					'--opt' => false,
@@ -645,7 +645,7 @@ EOF;
 			
 			$file['db_gz'] = $file['db'].'.gz';
 			
-			self::exec_command(
+			$this->exec_command(
 				$this->gzip,
 				array(
 					'-c6' => false,
@@ -691,7 +691,7 @@ EOF;
 
 			if($paths) {
 				
-				self::exec_command(
+				$this->exec_command(
 					$prefs['rah_backup_tar'],
 					$opt
 				);
@@ -700,7 +700,7 @@ EOF;
 					
 					$file['fs_gz'] = $file['fs'].'.gz';
 					
-					self::exec_command(
+					$this->exec_command(
 						$this->gzip,
 						array(
 							'-c6' => false,
@@ -752,7 +752,7 @@ EOF;
 		callback_event('rah_backup_tasks', 'restoring', 1);
 		
 		$returned = 
-			self::exec_command(
+			$this->exec_command(
 				$prefs['rah_backup_mysql'],
 				array(
 					'--host' => $txpcfg['host'],
@@ -869,7 +869,7 @@ EOF;
 	 * @return bool
 	 */
 
-	static public function exec_command($command, $args) {
+	public function exec_command($command, $args) {
 
 		$escape = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || is_disabled('escapeshellcmd');
 		$cmd[] = $escape ? $command : escapeshellcmd($command);
