@@ -19,7 +19,6 @@
 
 /**
  * Optimizes database tables
- * @return bool
  */
 
 	function rah_backup__module_optimize() {
@@ -28,8 +27,6 @@
 		foreach((array) $tables as $table) {
 			@safe_query('OPTIMIZE TABLE `'.$table.'`');
 		}
-
-		return true;
 	}
 
 ?>
