@@ -52,7 +52,6 @@
  * @param string $event Callback event.
  * @param string $step Callback step.
  * @param mixed $data Data passed to the callback function.
- * @return bool
  */
 
 	function rah_backup__module_sftp_offsite($event, $step, $data) {
@@ -86,7 +85,5 @@
 
 			}
 		}
-		
-		return true;
 	}
 ?>
