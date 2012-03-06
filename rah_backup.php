@@ -48,7 +48,7 @@ class rah_backup {
 	private $tar;
 	private $gzip;
 	private $copy_paths = array();
-	private $message;
+	public $message;
 
 	/**
 	 * Constructor
@@ -209,7 +209,7 @@ class rah_backup {
 		
 		$uix = new rah_backup();
 		
-		if(!$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step))
+		if($uix->message || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step))
 			$step = 'browser';
 
 		$uix->$step();
@@ -459,8 +459,10 @@ EOF;
 			'			</tr>'.n.
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
+		
+		$msg = $this->message;
 
-		if(!$this->message) {
+		if(!$msg) {
 			
 			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar]', GLOB_NOSORT);
 			$f = array();
@@ -530,20 +532,20 @@ EOF;
 			
 			if($f) {
 				krsort($f);
-				$out[] = implode('',$f);
+				$out[] = implode('', $f);
 			}
 			else {
-				$this->message = 'rah_backup_no_backups';
+				$msg = 'rah_backup_no_backups';
 			}
 		}
 		
-		if($this->message)
+		if($msg)
 			
 			$out[] = 
 				'			<tr>'.n.
 				'				<td id="rah_backup_msgrow" colspan="6">'.
 					gTxt(
-						$this->message,
+						$msg,
 						array(
 							'{start_by}' => 
 								'<a href="?event=prefs&amp;'.
@@ -595,7 +597,9 @@ EOF;
 			return;
 			
 		$backup = new rah_backup();
-		$backup->create(true);
+		
+		if(!$backup->message)
+			$backup->create(true);
 	}
 	
 	/**
@@ -946,7 +950,7 @@ EOF;
 			
 			'	<p class="rah_ui_nav">'.
 			
-			(has_privs('rah_backup_create') ? 
+			(has_privs('rah_backup_create') && !$this->message ? 
 				' <span class="rah_ui_sep">&#187;</span> '.
 				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
