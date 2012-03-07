@@ -604,11 +604,11 @@ EOF;
 	
 	/**
 	 * Creates a new backup
-	 * @param string $event Callback event.
+	 * @param bool $silent Return output or not.
 	 * @todo Site URL might not be trusted.
 	 */
 
-	private function create($event='') {
+	private function create($silent=false) {
 		
 		global $txpcfg, $prefs;
 
@@ -712,8 +712,8 @@ EOF;
 
 		callback_event('rah_backup_tasks', 'backup_done', 0, array('files' => $file));
 
-		if($event)
-			die();
+		if($silent)
+			exit;
 
 		$this->browser('done');
 	}
