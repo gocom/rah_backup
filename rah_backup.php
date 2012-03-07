@@ -605,6 +605,7 @@ EOF;
 	/**
 	 * Creates a new backup
 	 * @param string $event Callback event.
+	 * @todo Site URL might not be trusted.
 	 */
 
 	private function create($event='') {
@@ -627,25 +628,24 @@ EOF;
 		$db = ($db ? $db : 'database') . $now . '.sql';
 		$file['db'] = $this->backup_dir . '/' . $db;
 		
-		$returned = 
-			$this->exec_command(
-				$this->mysqldump,
-				array(
-					'--opt' => false,
-					'--skip-comments' => false,
-					'--host' => $txpcfg['host'],
-					'--user' => $txpcfg['user'],
-					'--password' => $txpcfg['pass'],
-					'--result-file' => $file['db'],
-					'' => $txpcfg['db']
-				)
-			);
+		$this->exec_command(
+			$this->mysqldump,
+			array(
+				'--opt' => false,
+				'--skip-comments' => false,
+				'--host' => $txpcfg['host'],
+				'--user' => $txpcfg['user'],
+				'--password' => $txpcfg['pass'],
+				'--result-file' => $file['db'],
+				'' => $txpcfg['db']
+			)
+		);
 		
 		/*
 			Create additional compressed file
 		*/
 		
-		if($prefs['rah_backup_compress']) {
+		if($prefs['rah_backup_compress'] && file_exists($file['db'])) {
 			
 			$file['db_gz'] = $file['db'].'.gz';
 			
@@ -686,33 +686,27 @@ EOF;
 					array('' => $file['fs'])
 				);
 			
-			$paths = false;
-			
 			foreach($this->copy_paths as $path) {
 				$opt[] = array('' => $path);
-				$paths = true;
 			}
-
-			if($paths) {
-				
+			
+			$this->exec_command(
+				$prefs['rah_backup_tar'],
+				$opt
+			);
+			
+			if($prefs['rah_backup_compress']) {
+					
+				$file['fs_gz'] = $file['fs'].'.gz';
+					
 				$this->exec_command(
-					$prefs['rah_backup_tar'],
-					$opt
+					$this->gzip,
+					array(
+						'-c6' => false,
+						'' => $file['fs'],
+						'>' => $file['fs_gz']
+					)
 				);
-				
-				if($prefs['rah_backup_compress']) {
-					
-					$file['fs_gz'] = $file['fs'].'.gz';
-					
-					$this->exec_command(
-						$this->gzip,
-						array(
-							'-c6' => false,
-							'' => $file['fs'],
-							'>' => $file['fs_gz']
-						)
-					);
-				}
 			}
 		}
 
