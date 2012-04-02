@@ -59,7 +59,14 @@ class rah_backup {
 		global $prefs, $txpcfg;
 		
 		if(!$prefs['rah_backup_path'])
-			$this->message = gTxt('rah_backup_define_preferences');
+			$this->message = gTxt('rah_backup_define_preferences', array(
+				'{start_by}' => 
+					'<a href="?event=prefs&amp;'.
+						'step=advanced_prefs#prefs-rah_backup_path">'.
+						gTxt('rah_backup_start_by').
+					'</a>'
+			),
+			false);
 			
 		elseif(!file_exists($prefs['rah_backup_path']) || !is_dir($prefs['rah_backup_path']))
 			$this->message = gTxt('rah_backup_dir_not_found');
@@ -535,28 +542,16 @@ EOF;
 				$out[] = implode('', $f);
 			}
 			else {
-				$msg = 'rah_backup_no_backups';
+				$msg = gTxt('rah_backup_no_backups');
 			}
 		}
 		
-		if($msg)
-			
+		if($msg) {	
 			$out[] = 
 				'			<tr>'.n.
-				'				<td id="rah_backup_msgrow" colspan="6">'.
-					gTxt(
-						$msg,
-						array(
-							'{start_by}' => 
-								'<a href="?event=prefs&amp;'.
-									'step=advanced_prefs#prefs-rah_backup_path">'.
-									gTxt('rah_backup_start_by').
-								'</a>'
-						),
-						false
-					).
-								'</td>'.n.
+				'				<td id="rah_backup_msgrow" colspan="6">'.$msg.'</td>'.n.
 				'			</tr>'.n;
+		}
 		
 		$out[] = 
 			
