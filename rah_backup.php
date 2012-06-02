@@ -369,12 +369,12 @@ class rah_backup {
 									'event' : textpattern['event'],
 									'step' : 'create',
 									'_txp_token' : textpattern['_txp_token'],
-								},		
+								},
 								success: function(data, status, xhr) {
-									$('#rah_backup_container table#list tbody').html($(data).find('#rah_backup_list').html());
-								},		
-								error: function() {	
-								},		
+									$('#rah_backup_container table.txp-list tbody').html($(data).find('#rah_backup_list').html());
+								},
+								error: function() {
+								},
 								complete: function() {
 									$('#rah_backup_statusmsg').hide();
 									$('#rah_backup_do').show();
@@ -454,7 +454,7 @@ EOF;
 		
 		$out[] = 
 			
-			'	<table cellspacing="0" cellpadding="0" id="list">'.n.
+			'	<table class="txp-list">'.n.
 			'		<thead>'.n.
 			'			<tr>'.n.
 			'				<th>'.gTxt('rah_backup_filename').'</th>'.n.
