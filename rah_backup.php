@@ -268,7 +268,7 @@ class rah_backup {
 						if(!steps.length)
 							return;
 						
-						steps.children('.smallerbox').hide();
+						steps.children('input[type=submit]').hide();
 						
 						pane.find('th.rah_ui_selectall').html(
 							'<input type="checkbox" name="selectall" value="1" />'
@@ -560,7 +560,7 @@ EOF;
 				'			<option value="">'.gTxt('rah_backup_with_selected').'</option>'.n.
 				'			<option value="delete">'.gTxt('rah_backup_delete').'</option>'.n.
 				'		</select>'.n.
-				'		<input type="submit" class="smallerbox" value="'.gTxt('go').'" />'.n.
+				'		<input type="submit" value="'.gTxt('go').'" />'.n.
 				'	</p>' : ''
 			);
 		
