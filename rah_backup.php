@@ -933,18 +933,16 @@ EOF;
 			'	'.eInput($event).n.
 			'	'.tInput().n.
 			
-			'	<p class="rah_ui_nav">'.
+			'	<p class="nav-tertiary">'.
 			
 			(has_privs('rah_backup_create') && !$this->message ? 
-				' <span class="rah_ui_sep">&#187;</span> '.
-				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
+				'<a class="navlink" id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a>' : ''
 			).
 			
 			(has_privs('prefs') && has_privs('rah_backup_preferences') ? 
-				' <span class="rah_ui_sep">&#187;</span> '.
-				'<a href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup_path">'.
+				'<a class="navlink" href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup_path">'.
 					gTxt('rah_backup_preferences').
 				'</a>' : ''
 			).
