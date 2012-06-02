@@ -426,10 +426,6 @@ class rah_backup {
 				//-->
 			</script>
 			<style type="text/css">
-				#rah_backup_container {
-					width: 950px;
-					margin: 0 auto;
-				}
 				#rah_backup_container table {
 					width: 100%;
 				}
