@@ -929,7 +929,7 @@ EOF;
 		echo 
 			n.
 			
-			'<form action="index.php" method="post" id="rah_backup_container" class="rah_ui_container">'.n.
+			'<form action="index.php" method="post" id="rah_backup_container" class="txp-container">'.n.
 			'	'.eInput($event).n.
 			'	'.tInput().n.
 			
