@@ -360,7 +360,7 @@ class rah_backup {
 							if(!verify(l10n['confirm_backup']))
 								return false;
 									
-							$(this).after('<span id="rah_backup_statusmsg">'+l10n['inprogress']+'</span>').hide();
+							$(this).after('<span class="navlink-active" id="rah_backup_statusmsg">'+l10n['inprogress']+'</span>').hide();
 									
 							$.ajax({
 								type : 'POST',
