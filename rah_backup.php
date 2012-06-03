@@ -244,7 +244,6 @@ class rah_backup {
 		echo <<<EOF
 			<script type="text/javascript">
 				<!--
-				
 				$(document).ready(function(){
 					var pane = $('#rah_backup_container');
 
@@ -255,89 +254,56 @@ class rah_backup {
 					(function() {
 						
 						var steps = $('select[name=step]').parent();
+						var form = steps.parents('form');
 					
-						if(!steps.length)
+						if(steps.length < 1)
 							return;
 						
-						steps.children('input[type=submit]').hide();
+						steps.find('input[type=submit]').hide();
 						
-						pane.find('th.rah_ui_selectall').html(
-							'<input type="checkbox" name="selectall" value="1" />'
-						);
-						
-						if(pane.children('input[type=checkbox]:checked').val() == null)
+						if(form.find('input[type=checkbox]:checked').val() == null) {
 							steps.hide();
-						
-						/*
-							Reset the value
-						*/
+						}
 	
-						steps.children('select[name="step"]').val('');
-						
-						/*
-							Check all
-						*/
+						steps.find('select[name=step]').val('');
 	
-						pane.find('input[name="selectall"]').live('click',
-							function() {
-								var tr = pane.find('table tbody input[type=checkbox]');
+						form.find('input[name=selectall]').click(function() {
+							
+							var tr = form.find('tbody input[type=checkbox]');
 								
-								if($(this).is(':checked'))
-									tr.attr('checked', true);
-								else
-									tr.removeAttr('checked');
+							if($(this).is(':checked')) {
+								tr.attr('checked', true);
 							}
-						);
+							else {
+								tr.removeAttr('checked');
+							}
+						});
 						
-						/*
-							Every time something is checked, check if
-							the dropdown should be shown
-						*/
-						
-						pane.find('table input[type=checkbox], td').live('click',
-							function(){
-								steps.children('select[name="step"]').val('');
+						form.find('input[type=checkbox], td, th').live('click', function(){
+							steps.children('select[name="step"]').val('');
 								
-								if(pane.find('tbody input[type=checkbox]:checked').val() != null)
-									steps.slideDown();
-								else
-									steps.slideUp();
+							if(pane.find('tbody input[type=checkbox]:checked').val() != null) {
+								steps.slideDown();
 							}
-						);
-						
-						/*
-							Uncheck the check all box if an item is unchecked
-						*/
-						
-						pane.find('tbody input[type=checkbox]').live('click',
-							function() {
-								pane.find('input[name="selectall"]').removeAttr('checked');
+							else {
+								steps.slideUp();
 							}
-						);
+						});
+						
+						form.find('tbody input[type=checkbox]').live('click', function() {
+							form.find('input[name="selectall"]').removeAttr('checked');
+						});
 	
-						/*
-							If value is changed, send the form
-						*/
+						steps.find('select[name=step]').change(function(){
+							form.submit();
+						});
 	
-						steps.change(
-							function(){
-								steps.parents('form').submit();
+						form.submit(function() {
+							if(!verify(textpattern.gTxt('are_you_sure'))) {
+								steps.find('select[name="step"]').val('');
+								return false;
 							}
-						);
-	
-						/*
-							Verify if the sent is allowed
-						*/
-						
-						
-						$('form').submit(
-							function() {
-								if(!verify(textpattern.gTxt('are_you_sure'))) {
-									steps.children('select[name="step"]').val('');
-									return false;
-								}
-							}
-						);
+						});
 					})();
 					
 					/*
@@ -449,7 +415,7 @@ EOF;
 			'				<th>'.gTxt('rah_backup_date').'</th>'.n.
 			'				<th>'.gTxt('rah_backup_size').'</th>'.n.
 			'				<th>'.($prefs['rah_backup_allow_restore'] ? gTxt('rah_backup_restore') : '&#160;').'</th>'.n.
-			'				<th class="rah_ui_selectall">&#160;</th>'.n.
+			'				<th><input type="checkbox" name="selectall" value="1" /></th>'.n.
 			'			</tr>'.n.
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
