@@ -234,26 +234,20 @@ class rah_backup {
 			
 		$pfx = 'rah_backup';
 		
-		$js = 
-			json_encode(
-				array(
-					'database_will_be_overwriten' => gTxt('rah_backup_database_will_be_overwriten'),
-					'inprogress' => gTxt('rah_backup_inprogress'),
-					'confirm_backup' => gTxt('rah_backup_confirm_backup'),
-					'restoring' => gTxt('rah_backup_restoring'),
-					'restored' => gTxt('rah_backup_restored'),
-				)
-			);
-		
-		$msg = gTxt('are_you_sure');
+		gTxtScript(array(
+			'rah_backup_database_will_be_overwriten',
+			'rah_backup_inprogress',
+			'rah_backup_confirm_backup',
+			'rah_backup_restoring',
+			'rah_backup_restored',
+			'are_you_sure',
+		));
 		
 		echo <<<EOF
 			<script type="text/javascript">
 				<!--
 				
 				$(document).ready(function(){
-				
-					var l10n = {$js};
 					var pfx = '{$pfx}';
 					var pane = $('#'+pfx+'_container');
 
@@ -341,7 +335,7 @@ class rah_backup {
 						
 						$('form').submit(
 							function() {
-								if(!verify(l10n['are_you_sure'])) {
+								if(!verify(textpattern.gTxt('are_you_sure'))) {
 									steps.children('select[name="step"]').val('');
 									return false;
 								}
@@ -357,10 +351,10 @@ class rah_backup {
 						$('a#rah_backup_do').click(function(e) {
 							e.preventDefault();
 								
-							if(!verify(l10n['confirm_backup']))
+							if(!verify(textpattern.gTxt('rah_backup_confirm_backup')))
 								return false;
 									
-							$(this).after('<span class="navlink-active" id="rah_backup_statusmsg">'+l10n['inprogress']+'</span>').hide();
+							$(this).after('<span class="navlink-active" id="rah_backup_statusmsg">'+textpattern.gTxt('rah_backup_inprogress')+'</span>').hide();
 									
 							$.ajax({
 								type : 'POST',
@@ -391,7 +385,7 @@ class rah_backup {
 						$('.rah_backup_restore a').live('click', function(e) {
 							e.preventDefault();
 								
-							if(!verify(l10n['database_will_be_overwriten']))
+							if(!verify(textpattern.gTxt('rah_backup_database_will_be_overwriten')))
 								return false;
 									
 							$('.rah_backup_restore a').hide();
@@ -399,7 +393,7 @@ class rah_backup {
 							var link = $(this);
 							var filename = $(this).attr('title');
 								
-							link.after('<span class="rah_backup_restoring">'+l10n['restoring']+'</span>');
+							link.after('<span class="rah_backup_restoring">'+textpattern.gTxt('rah_backup_restoring')+'</span>');
 								
 							$.ajax({
 								type : 'POST',
@@ -411,7 +405,7 @@ class rah_backup {
 									'file' : filename
 								},		
 								success: function(data, status, xhr) {
-									link.next('span.rah_backup_restoring').text(l10n['restored']);
+									link.next('span.rah_backup_restoring').text(textpattern.gTxt('rah_backup_restored'));
 								},		
 								error: function() {	
 								},		
