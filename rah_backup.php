@@ -231,8 +231,6 @@ class rah_backup {
 		
 		if($event != 'rah_backup')
 			return;
-			
-		$pfx = 'rah_backup';
 		
 		gTxtScript(array(
 			'rah_backup_database_will_be_overwriten',
@@ -248,16 +246,15 @@ class rah_backup {
 				<!--
 				
 				$(document).ready(function(){
-					var pfx = '{$pfx}';
-					var pane = $('#'+pfx+'_container');
+					var pane = $('#rah_backup_container');
 
-					/**
+					/*
 						Multi-edit function, auto-hiden dropdown
 					*/
 				
 					(function() {
 						
-						var steps = $('#'+pfx+'_step');
+						var steps = $('select[name=step]').parent();
 					
 						if(!steps.length)
 							return;
