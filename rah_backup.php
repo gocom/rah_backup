@@ -383,9 +383,6 @@ class rah_backup {
 				//-->
 			</script>
 			<style type="text/css">
-				#rah_backup_container table {
-					width: 100%;
-				}
 				#rah_backup_container #rah_backup_step {
 					text-align: right;
 				}
