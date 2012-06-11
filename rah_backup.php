@@ -408,7 +408,6 @@ EOF;
 			'		<thead>'.n.
 			'			<tr>'.n.
 			'				<th>'.gTxt('rah_backup_filename').'</th>'.n.
-			'				<th>&#160;</th>'.n.
 			'				<th>'.gTxt('rah_backup_date').'</th>'.n.
 			'				<th>'.gTxt('rah_backup_size').'</th>'.n.
 			'				<th>'.($prefs['rah_backup_allow_restore'] ? gTxt('rah_backup_restore') : '&#160;').'</th>'.n.
@@ -421,7 +420,7 @@ EOF;
 
 		if(!$msg) {
 			
-			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar]', GLOB_NOSORT);
+			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar|.gz]', GLOB_NOSORT);
 			$f = array();
 			
 			foreach($files as $file) {
@@ -431,7 +430,6 @@ EOF;
 					
 				$ext = pathinfo($file, PATHINFO_EXTENSION);
 				$name = htmlspecialchars(basename($file));
-				$gz = $file.'.gz';
 				
 				$f[$name] = 
 					
@@ -449,19 +447,6 @@ EOF;
 						: $name
 					).
 									'</td>'.n.
-						
-					(
-						has_privs('rah_backup_download') && file_exists($gz) && is_readable($gz) && is_file($gz) ?
-							'				<td>'.
-							'<a title="'.gTxt('rah_backup_download').' '.
-							$this->format_size(filesize($gz)).
-							'" href="?event='.$event.
-								'&amp;step=download&amp;file='.
-									urlencode($name.'.gz').'&amp;_txp_token='.form_token().
-								'">.gz</a></td>'.n
-						: 
-							'				<td>&#160;</td>'.n
-					).
 						
 					'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
 					'				<td>'.$this->format_size(filesize($file)).'</td>'.n.
@@ -499,7 +484,7 @@ EOF;
 		if($msg) {	
 			$out[] = 
 				'			<tr>'.n.
-				'				<td id="rah_backup_msgrow" colspan="6">'.$msg.'</td>'.n.
+				'				<td id="rah_backup_msgrow" colspan="5">'.$msg.'</td>'.n.
 				'			</tr>'.n;
 		}
 		
