@@ -559,16 +559,13 @@ EOF;
 		$file['db'] = $this->backup_dir . '/' . $db;
 		
 		$this->exec_command(
-			$this->mysqldump,
-			array(
-				'--opt' => false,
-				'--skip-comments' => false,
-				'--host' => $txpcfg['host'],
-				'--user' => $txpcfg['user'],
-				'--password' => $txpcfg['pass'],
-				'--result-file' => $file['db'],
-				'' => $txpcfg['db']
-			)
+			$this->mysqldump, 
+			" --opt --skip-comments".
+			" --host=".$this->arg($txpcfg['host']).
+			" --user=".$this->arg($txpcfg['user']).
+			" --password=".$this->arg($txpcfg['pass']).
+			" --result-file=".$this->arg($file['db']).
+			" ".$this->arg($txpcfg['db'])
 		);
 		
 		/*
@@ -576,17 +573,8 @@ EOF;
 		*/
 		
 		if($prefs['rah_backup_compress'] && file_exists($file['db'])) {
-			
 			$file['db_gz'] = $file['db'].'.gz';
-			
-			$this->exec_command(
-				$this->gzip,
-				array(
-					'-c6' => false,
-					'' => $file['db'],
-					'>' => $file['db_gz']
-				)
-			);
+			$this->exec_command($this->gzip, '-c6 '.$this->arg($file['db']).' > '.$this->arg($file['db_gz']));
 		}
 		
 		/*
@@ -607,36 +595,18 @@ EOF;
 				);
 			
 			$site = $site ? $site : 'filesystem';
-			
 			$file['fs'] = $this->backup_dir.'/'.$site.$now.'.tar';
-			
-			$opt = 
-				array(
-					array('-cvpzf' => false),
-					array('' => $file['fs'])
-				);
+			$opt = '-cvpzf ' . $this->arg($file['fs']);
 			
 			foreach($this->copy_paths as $path) {
-				$opt[] = array('' => $path);
+				$opt .= ' '.$this->arg($path);
 			}
 			
-			$this->exec_command(
-				$prefs['rah_backup_tar'],
-				$opt
-			);
+			$this->exec_command($prefs['rah_backup_tar'], $opt);
 			
 			if($prefs['rah_backup_compress']) {
-					
 				$file['fs_gz'] = $file['fs'].'.gz';
-					
-				$this->exec_command(
-					$this->gzip,
-					array(
-						'-c6' => false,
-						'' => $file['fs'],
-						'>' => $file['fs_gz']
-					)
-				);
+				$this->exec_command($this->gzip, '-c6 '.$this->arg($file['fs']).' '.$this->arg($file['fs_gz']));
 			}
 		}
 
@@ -681,14 +651,12 @@ EOF;
 		
 		$returned = 
 			$this->exec_command(
-				$prefs['rah_backup_mysql'],
-				array(
-					'--host' => $txpcfg['host'],
-					'--user' => $txpcfg['user'],
-					'--password' => $txpcfg['pass'],
-					'' => $txpcfg['db'],
-					'<' => $path
-				)
+				$prefs['rah_backup_mysql'], 
+				' --host='.$this->arg($txpcfg['host']).
+				' --user='.$this->arg($txpcfg['user']).
+				' --password='.$this->arg($txpcfg['pass']).
+				' '.$this->arg($txpcfg['db']).
+				' < '.$this->arg($path)
 			);
 		
 		if($returned === false) {
@@ -789,47 +757,35 @@ EOF;
 		
 		$this->browser('removed');
 	}
+	
+	/**
+	 * Escape shell argument
+	 */
+	
+	public function arg($arg) {
+		return "'".str_replace("'", "'\\''", $arg)."'";
+	}
 
 	/**
 	 * Execute shell command
 	 * @param string $command The program to run.
-	 * @param array $args The arguments passed to the application.
+	 * @param string $args The arguments passed to the application.
 	 * @return bool
 	 */
 
 	public function exec_command($command, $args) {
-
-		$escape = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || is_disabled('escapeshellcmd');
-		$cmd[] = $escape ? $command : escapeshellcmd($command);
+	
+		static $disabled = NULL;
 		
-		foreach($args as $arg => $val) {
-			
-			if(is_array($val)) {
-				foreach($val as $k => $v) {
-					$arg = $k;
-					$val = $v;
-				}
-			}
-			
-			if($val !== false)
-				$val = "'".str_replace("'", "'\\''", $val)."'";
-			
-			if($arg == '<' || $arg == '>' || $arg === '')
-				$cmd[] = ($arg ? $arg.' ' : '').$val;
-			
-			else {
-				$arg = $escape ? $arg : escapeshellcmd($arg);
-				
-				if($val === false)
-					$cmd[] = $arg;
-				
-				else
-					$cmd[] = $arg.'='.$val;
-				
-			}
+		if($disabled === NULL) {
+			$disabled = @ini_get('safe_mode') || !is_callable('escapeshellcmd');
 		}
 		
-		return exec(implode(' ', $cmd));
+		if(!$disabled) {
+			$command = escapeshellcmd($command);
+		}
+		
+		return exec($command.' '.$args);
 	}
 
 	/**
