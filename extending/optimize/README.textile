@@ -1,0 +1,3 @@
+h1. Optimize module for rah_backup
+
+p. Optimizes all database tables when taking a backup. The operation will defragment the database data file, and reclaims lost unused space. If contents in tables are changed extensively this may also lead to improved performance.

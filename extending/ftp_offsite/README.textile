@@ -1,0 +1,3 @@
+h1. FTP module for rah_backup
+
+p. Transfers backups to offsite location via FTP. The module requires PHP's "FTP extension":http://www.php.net/manual/en/book.ftp.php.
