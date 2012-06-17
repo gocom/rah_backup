@@ -608,7 +608,7 @@ EOF;
 			
 			if($prefs['rah_backup_compress']) {
 				$file['fs_gz'] = $file['fs'].'.gz';
-				$this->exec_command($this->gzip, '-c6 '.$this->arg($file['fs']).' '.$this->arg($file['fs_gz']));
+				$this->exec_command($this->gzip, '-c6 '.$this->arg($file['fs']).' > '.$this->arg($file['fs_gz']));
 			}
 		}
 
