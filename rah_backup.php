@@ -68,30 +68,27 @@ class rah_backup {
 			),
 			false);
 		}
+		
+		$dir = $this->path($prefs['rah_backup_path']);
 			
-		elseif(!file_exists($prefs['rah_backup_path']) || !is_dir($prefs['rah_backup_path'])) {
+		if(!file_exists($dir) || !is_dir($dir)) {
 			$this->message = gTxt('rah_backup_dir_not_found');
 		}
 		
-		elseif(!is_readable($prefs['rah_backup_path'])) {
+		elseif(!is_readable($dir)) {
 			$this->message = gTxt('rah_backup_dir_not_readable');
 		}
 		
-		elseif(!is_writable($prefs['rah_backup_path'])) {
+		elseif(!is_writable($dir)) {
 			$this->message = gTxt('rah_backup_dir_not_writable');
 		}
 		
 		else {
-			$this->backup_dir = $prefs['rah_backup_path'];
+			$this->backup_dir = $dir;
 		}
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
-		
-			if(strpos($f, './') === 0) {
-				$f = txpath . '/' . substr($f, 2);
-			}
-		
-			if(($f = rtrim($f, "/\\")) && file_exists($f) && is_dir($f) && is_readable($f)) {
+			if($f && ($f = $this->path($f)) && file_exists($f) && is_dir($f) && is_readable($f)) {
 				$this->copy_paths[$f] = $f;
 			}
 		}
@@ -850,6 +847,21 @@ EOF;
 			'</p>'.n.
 			$content.n.
 			'</form>'.n;
+	}
+	
+	/**
+	 * Format a path
+	 * @param string $path
+	 * @return string|bool
+	 */
+	
+	public function path($path) {
+		
+		if(strpos($path, './') === 0) {
+			$path = txpath.'/'.substr($path, 2);
+		}
+		
+		return rtrim($path, "/\\");
 	}
 
 	/**
