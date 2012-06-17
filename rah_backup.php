@@ -383,7 +383,7 @@ class rah_backup {
 				//-->
 			</script>
 			<style type="text/css">
-				#rah_backup_container #rah_backup_step {
+				#rah_backup_container .rah_ui_step {
 					text-align: right;
 				}
 				#rah_backup_container td.rah_backup_restore {
@@ -494,7 +494,7 @@ EOF;
 			'	</table>'.n.
 			
 			(has_privs('rah_backup_delete') ?
-				'	<p id="rah_backup_step" class="rah_ui_step">'.n.
+				'	<p class="rah_ui_step">'.n.
 				'		<select name="step">'.n.
 				'			<option value="">'.gTxt('rah_backup_with_selected').'</option>'.n.
 				'			<option value="delete">'.gTxt('rah_backup_delete').'</option>'.n.
