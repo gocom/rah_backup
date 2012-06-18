@@ -544,7 +544,7 @@ EOF;
 			!gps('rah_backup') || 
 			empty($prefs['rah_backup_callback']) || 
 			empty($prefs['rah_backup_key']) || 
-			$prefs['rah_backup_key'] != gps('rah_backup')
+			$prefs['rah_backup_key'] !== gps('rah_backup')
 		)
 			return;
 			
