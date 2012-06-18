@@ -23,6 +23,7 @@ rah_backup_restored => Palautettu
 rah_backup_done => Varmuuskopio otettu.
 rah_backup_path => Absoluuttinen tiedostopolku hakemistoon johon varmuuskopiot tallennetaan
 rah_backup_mysqldump => Tiedostopolku MySQLdump-ohjelmaan ja/tai komento
+rah_backup_ignore_tables => Poislue tietokanta taulut (pilkuin eroteltuna)
 rah_backup_key => Julkisen soittopyyntö-osoitteen käyttämä tietoturva-avain
 rah_backup_callback => Käytetäänkö julkista soittopyyntö-osoittetta?
 rah_backup_compress => Luo Gzip-pakatut versiot varmuuskopioista?

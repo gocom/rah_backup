@@ -48,6 +48,7 @@ class rah_backup {
 	private $tar;
 	private $gzip;
 	private $copy_paths = array();
+	private $ignore_tables = array();
 	public $message;
 
 	/**
@@ -85,6 +86,24 @@ class rah_backup {
 		
 		else {
 			$this->backup_dir = $dir;
+		}
+		
+		@$tables = (array) getThings('SHOW TABLES');
+		
+		foreach(do_list($prefs['rah_backup_ignore_tables']) as $table) {
+			
+			if(!$table) {
+				continue;
+			}
+			
+			if(in_array(PFX.$table, $tables)) {
+				$tbl = $txpcfg['db'].'.'.safe_pfx($table);
+				$this->ignore_tables[$tbl] = '--ignore-table='.$this->arg($tbl);
+			}
+			
+			else {
+				$this->message = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
+			}
 		}
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
@@ -153,6 +172,7 @@ class rah_backup {
 				'copy_paths' => './../',
 				'mysql' => 'mysql',
 				'mysqldump' => 'mysqldump',
+				'ignore_tables' => '',
 				'tar' => 'tar',
 				'compress' => 0,
 				'gzip' => 'gzip',
@@ -567,6 +587,7 @@ EOF;
 			" --user=".$this->arg($txpcfg['user']).
 			" --password=".$this->arg($txpcfg['pass']).
 			" --result-file=".$this->arg($file['db']).
+			($this->ignore_tables ? ' '.implode(' ', $this->ignore_tables) : '').
 			" ".$this->arg($txpcfg['db'])
 		);
 		
