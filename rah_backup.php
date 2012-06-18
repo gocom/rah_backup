@@ -159,9 +159,9 @@ class rah_backup {
 		}
 		
 		$current = isset($prefs['rah_backup_version']) ?
-			$prefs['rah_backup_version'] : 'base';
+			(string) $prefs['rah_backup_version'] : 'base';
 		
-		if($current == self::$version)
+		if($current === self::$version)
 			return;
 		
 		$position = 250;
