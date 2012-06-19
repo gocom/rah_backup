@@ -564,7 +564,7 @@ EOF;
 		@set_time_limit(0);
 		@ignore_user_abort(true);
 		
-		callback_event('rah_backup_tasks', 'backuping');
+		callback_event('rah_backup.create');
 		
 		$file = array();
 		
@@ -628,7 +628,7 @@ EOF;
 			}
 		}
 
-		callback_event('rah_backup_tasks', 'backup_done', 0, array('files' => $file));
+		callback_event('rah_backup.done');
 
 		if($silent)
 			exit;
@@ -665,8 +665,6 @@ EOF;
 			return;	
 		}
 		
-		callback_event('rah_backup_tasks', 'restoring', 1);
-		
 		$returned = 
 			$this->exec_command(
 				$prefs['rah_backup_mysql'], 
@@ -682,7 +680,6 @@ EOF;
 			return;	
 		}
 		
-		callback_event('rah_backup_tasks', 'restore_done');
 		$this->browser('restore_done');
 	}
 
@@ -735,8 +732,7 @@ EOF;
 			}
 			fclose($f);
 		}
-		
-		callback_event('rah_backup_tasks', 'download_done', 0, $path);
+
 		exit;
 	}
 
