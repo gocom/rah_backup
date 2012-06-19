@@ -13,11 +13,11 @@
  */
 
 /**
- * Registers the function. Hook to event 'rah_backup_tasks', step 'backuping'.
+ * Registers the function. Hook to event 'rah_backup.create'.
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_clearlogs', 'rah_backup_tasks', 'backuping');
+		register_callback('rah_backup__module_clearlogs', 'rah_backup.create');
 	}
 
 /**
