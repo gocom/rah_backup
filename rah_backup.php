@@ -367,13 +367,13 @@ class rah_backup {
 					*/
 					
 					(function() {
-						$('.rah_backup_restore a').live('click', function(e) {
+						$('.rah_backup_restore').live('click', function(e) {
 							e.preventDefault();
 								
 							if(!verify(textpattern.gTxt('rah_backup_database_will_be_overwriten')))
 								return false;
 									
-							$('.rah_backup_restore a').hide();
+							$('.rah_backup_restore').hide();
 									
 							var link = $(this);
 							var filename = $(this).attr('title');
@@ -395,7 +395,7 @@ class rah_backup {
 								error: function() {	
 								},		
 								complete: function() {
-									$('.rah_backup_restore a').show();
+									$('.rah_backup_restore').show();
 									link.hide();
 								}
 							});	
@@ -408,7 +408,7 @@ class rah_backup {
 				#rah_backup_container .rah_ui_step {
 					text-align: right;
 				}
-				#rah_backup_container td.rah_backup_restore {
+				#rah_backup_container .rah_backup_restore {
 					min-width: 100px;
 				}
 			</style>
@@ -424,17 +424,24 @@ EOF;
 	
 		global $event, $prefs;
 		
+		$column = array(
+			gTxt('rah_backup_filename'),
+			gTxt('rah_backup_date'),
+			gTxt('rah_backup_size')
+		);
+		
+		if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
+			$column[] = gTxt('rah_backup_restore');
+		}
+		
+		if(has_privs('rah_backup_delete')) {
+			$column[] = '<input type="checkbox" name="selectall" value="1" />';
+		}
+		
 		$out[] = 
-			
 			'	<table class="txp-list">'.n.
-			'		<thead>'.n.
-			'			<tr>'.n.
-			'				<th>'.gTxt('rah_backup_filename').'</th>'.n.
-			'				<th>'.gTxt('rah_backup_date').'</th>'.n.
-			'				<th>'.gTxt('rah_backup_size').'</th>'.n.
-			'				<th>'.($prefs['rah_backup_allow_restore'] ? gTxt('rah_backup_restore') : '&#160;').'</th>'.n.
-			'				<th><input type="checkbox" name="selectall" value="1" /></th>'.n.
-			'			</tr>'.n.
+			'		<thead>'.
+			tr(implode(n, doArray($column, 'hCell'))).
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
 		
@@ -447,51 +454,41 @@ EOF;
 			
 			foreach($files as $file) {
 				
-				if(!is_readable($file) || !is_file($file))
+				if(!is_readable($file) || !is_file($file)) {
 					continue;
-					
+				}
+				
 				$ext = pathinfo($file, PATHINFO_EXTENSION);
 				$name = htmlspecialchars(basename($file));
+				$column = array();
 				
-				$f[$name] = 
+				if(has_privs('rah_backup_download')) {
+					$column[] = '<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>';
+				}
+				
+				else {
+					$column[] = $name;
+				}
+				
+				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file));
+				$column[] = $this->format_size(filesize($file));
+				
+				if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
 					
-					'			<tr>'.n.
-					'				<td>'.
-						
-					(
-						has_privs('rah_backup_download') ?
-
-							'<a title="'.gTxt('rah_backup_download').
-								'" href="?event='.$event.
-								'&amp;step=download&amp;file='.urlencode($name).
-								'&amp;_txp_token='.form_token().
-								'">'.$name.'</a>'
-						: $name
-					).
-									'</td>'.n.
-						
-					'				<td>'.safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file)).'</td>'.n.
-					'				<td>'.$this->format_size(filesize($file)).'</td>'.n.
-						
-					(
-						has_privs('rah_backup_restore') && $ext == 'sql' && $prefs['rah_backup_allow_restore'] ? 
-							'				<td class="rah_backup_restore">'.
-								'<a title="'.$name.'" '.
-									'href="?event='.$event.
-										'&amp;step=restore&amp;file='.urlencode($name).
-										'&amp;_txp_token='.form_token().
-								'">'.gTxt('rah_backup_restore').'</a></td>'.n
-						:
-							'				<td>&#160;</td>'.n
-					).
-						
-					'				<td>'.
-					(
-						has_privs('rah_backup_delete') ? 
-							'<input type="checkbox" name="selected[]" value="'.$name.'" />' : ''
-					).
-									'</td>'.n.
-					'			</tr>'.n;
+					if($ext == 'sql') {
+						$column[] = '<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>';
+					}
+					
+					else {
+						$column[] = '';
+					}
+				}
+				
+				if(has_privs('rah_backup_delete')) {
+					$column[] = '<input type="checkbox" name="selected[]" value="'.$name.'" />';
+				}
+				
+				$f[$name] = tr(implode(n, doArray($column, 'td')));
 			}
 			
 			if($f) {
@@ -503,10 +500,10 @@ EOF;
 			}
 		}
 		
-		if($msg) {	
+		if($msg) {
 			$out[] = 
 				'			<tr>'.n.
-				'				<td id="rah_backup_msgrow" colspan="5">'.$msg.'</td>'.n.
+				'				<td id="rah_backup_msgrow" colspan="'.count($column).'">'.$msg.'</td>'.n.
 				'			</tr>'.n;
 		}
 		
