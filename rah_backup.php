@@ -588,13 +588,10 @@ EOF;
 			" ".$this->arg($txpcfg['db'])
 		);
 		
-		/*
-			Create additional compressed file
-		*/
-		
 		if($prefs['rah_backup_compress'] && file_exists($file['db'])) {
 			$file['db_gz'] = $file['db'].'.gz';
 			$this->exec_command($this->gzip, '-c6 '.$this->arg($file['db']).' > '.$this->arg($file['db_gz']));
+			unlink($file['db']);
 		}
 		
 		/*
@@ -627,6 +624,7 @@ EOF;
 			if($prefs['rah_backup_compress']) {
 				$file['fs_gz'] = $file['fs'].'.gz';
 				$this->exec_command($this->gzip, '-c6 '.$this->arg($file['fs']).' > '.$this->arg($file['fs_gz']));
+				unlink($file['fs']);
 			}
 		}
 
