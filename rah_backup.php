@@ -745,13 +745,13 @@ EOF;
 		
 		foreach($selected as $file) {
 			
-			$ext = pathinfo($file, PATHINFO_EXTENSION);
+			$ext = pathinfo((string) $file, PATHINFO_EXTENSION);
 			
 			if(!$file || !$ext || ($ext !== 'sql' && $ext !== 'gz' && $ext !== 'tar')) {
 				continue;
 			}
 			
-			$file = $this->backup_dir.'/'.preg_replace('/[^A-Za-z0-9-._]/', '', $file);
+			$file = $this->backup_dir.'/'.preg_replace('/[^A-Za-z0-9-._]/', '', (string) $file);
 			
 			if(!file_exists($file) || !is_writeable($file) || !is_file($file)) {
 				continue;
