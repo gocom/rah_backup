@@ -747,18 +747,15 @@ EOF;
 			
 			$ext = pathinfo($file, PATHINFO_EXTENSION);
 			
-			if(!$file || !$ext || ($ext != 'sql' && $ext != 'gz' && $ext != 'tar'))
+			if(!$file || !$ext || ($ext !== 'sql' && $ext !== 'gz' && $ext !== 'tar')) {
 				continue;
+			}
 			
 			$file = $this->backup_dir.'/'.preg_replace('/[^A-Za-z0-9-._]/', '', $file);
 			
-			if(!file_exists($file) || !is_writeable($file) || !is_file($file))
+			if(!file_exists($file) || !is_writeable($file) || !is_file($file)) {
 				continue;
-			
-			$gz = $file.'.gz';
-			
-			if(file_exists($gz) && is_writeable($gz) && is_file($gz))
-				unlink($gz);
+			}
 			
 			unlink($file);
 		}
