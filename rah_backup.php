@@ -627,7 +627,7 @@ EOF;
 			exit;
 		}
 
-		$this->browser('done');
+		$this->browser(gTxt('rah_backup_done'));
 	}
 
 	/**
@@ -654,7 +654,7 @@ EOF;
 			!is_readable($path) || 
 			!is_file($path)
 		) {
-			$this->browser('can_not_restore');
+			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
 			return;
 		}
 		
@@ -674,7 +674,7 @@ EOF;
 			);
 		
 		if($returned === false) {
-			$this->browser('can_not_restore');
+			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
 			return;	
 		}
 		
@@ -682,7 +682,7 @@ EOF;
 			@unlink($path);
 		}
 		
-		$this->browser('restore_done');
+		$this->browser(gTxt('rah_backup_restore_done'));
 	}
 
 	/**
@@ -703,7 +703,7 @@ EOF;
 			!is_writeable($path) || 
 			!is_file($path)
 		) {
-			$this->browser('can_not_download');
+			$this->browser(array(gTxt('rah_backup_can_not_download'), E_ERROR));
 			return;	
 		}
 
@@ -747,7 +747,7 @@ EOF;
 		$selected = ps('selected');
 		
 		if(empty($selected) || !is_array($selected)) {
-			$this->browser('select_something');
+			$this->browser(array(gTxt('rah_backup_select_something'), E_WARNING));
 			return;
 		}
 		
@@ -768,7 +768,7 @@ EOF;
 			unlink($file);
 		}
 		
-		$this->browser('removed');
+		$this->browser(gTxt('rah_backup_removed'));
 	}
 	
 	/**
@@ -829,10 +829,11 @@ EOF;
 		
 		global $event;
 		
-		pagetop(gTxt('rah_backup'), $message ? gTxt('rah_backup_' . $message) : '');
+		pagetop(gTxt('rah_backup'), $message ? $message : '');
 		
-		if(is_array($content))
-			$content = implode('',$content);
+		if(is_array($content)) {
+			$content = implode('', $content);
+		}
 		
 		echo 
 			n.
