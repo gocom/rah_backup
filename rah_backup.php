@@ -479,7 +479,7 @@ EOF;
 				
 				if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
 					
-					if($ext == 'sql') {
+					if($ext == 'sql' || ($ext == 'gz' && substr($name, -7, 4) === '.sql')) {
 						$column[] = '<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>';
 					}
 					
@@ -562,7 +562,7 @@ EOF;
 	
 	public function sanitize($filename) {
 		$filename = preg_replace('/[^A-Za-z0-9-._]/', '.', (string) $filename);
-		return preg_replace('/[_.-]{2,}/', '.', $filename);
+		return trim(preg_replace('/[_.-]{2,}/', '.', $filename), '. ');
 	}
 	
 	/**
@@ -593,7 +593,7 @@ EOF;
 			' '.$this->arg($txpcfg['db'])
 		);
 		
-		if($prefs['rah_backup_compress'] && file_exists($file['db'])) {
+		if($prefs['rah_backup_compress'] && file_exists($path)) {
 			$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
 			unlink($path);
 			$path .= '.gz';
@@ -636,27 +636,31 @@ EOF;
 
 	private function restore() {
 		
-		global $txpcfg;
+		global $txpcfg, $prefs;
 		
 		if(!$prefs['rah_backup_allow_restore']) {
 			$this->browser();
 			return;
 		}
 		
-		$file = preg_replace('/[^A-Za-z0-9-._]/','',gps('file'));
+		$file = preg_replace('/[^A-Za-z0-9-._]/', '', (string) gps('file'));
 		$path = $this->backup_dir.'/'.$file;
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if(
 			!$file || 
-			!$ext || 
-			($ext != 'sql' && $ext != 'gz') || 
+			($ext !== 'sql' && $ext !== 'gz') || 
 			!file_exists($path) || 
 			!is_readable($path) || 
 			!is_file($path)
 		) {
 			$this->browser('can_not_restore');
-			return;	
+			return;
+		}
+		
+		if($ext === 'gz') {
+			$this->exec_command($this->gzip, '-cd '.$this->arg($path).' > '.$this->arg($path.'.tmp'));
+			$path .= '.tmp';
 		}
 		
 		$returned = 
@@ -672,6 +676,10 @@ EOF;
 		if($returned === false) {
 			$this->browser('can_not_restore');
 			return;	
+		}
+		
+		if($ext === 'gz') {
+			@unlink($path);
 		}
 		
 		$this->browser('restore_done');
