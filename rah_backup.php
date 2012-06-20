@@ -49,6 +49,7 @@ class rah_backup {
 	private $gzip;
 	private $copy_paths = array();
 	private $ignore_tables = array();
+	private $filestamp = '';
 	public $message;
 
 	/**
@@ -108,7 +109,7 @@ class rah_backup {
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
 			if($f && ($f = $this->path($f)) && file_exists($f) && is_dir($f) && is_readable($f)) {
-				$this->copy_paths[$f] = $f;
+				$this->copy_paths[$f] = $this->arg($f);
 			}
 		}
 		
@@ -136,6 +137,9 @@ class rah_backup {
 			$this->message = gTxt('rah_backup_exec_func_unavailable');
 		}
 		
+		if(!$prefs['rah_backup_overwrite']) {
+			$this->filestamp = '_'.safe_strtotime('now');
+		}
 	}
 
 	/**
@@ -552,6 +556,16 @@ EOF;
 	}
 	
 	/**
+	 * Sanitize filename
+	 * @param string $filename
+	 */
+	
+	public function sanitize($filename) {
+		$filename = preg_replace('/[^A-Za-z0-9-._]/', '.', (string) $filename);
+		return preg_replace('/[_.-]{2,}/', '.', $filename);
+	}
+	
+	/**
 	 * Creates a new backup
 	 * @param bool $silent Return output or not.
 	 * @todo Site URL might not be trusted.
@@ -566,72 +580,52 @@ EOF;
 		
 		callback_event('rah_backup.create');
 		
-		$file = array();
-		
-		/*
-			Dump database
-		*/
-		
-		$now = $prefs['rah_backup_overwrite'] ? '' : '_'.safe_strtotime('now');
-		$db = substr(preg_replace('/[^A-Za-z0-9-._]/','',$txpcfg['db']),0,64);
-		$db = ($db ? $db : 'database') . $now . '.sql';
-		$file['db'] = $this->backup_dir . '/' . $db;
+		$path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
 		
 		$this->exec_command(
-			$this->mysqldump, 
-			" --opt --skip-comments".
-			" --host=".$this->arg($txpcfg['host']).
-			" --user=".$this->arg($txpcfg['user']).
-			" --password=".$this->arg($txpcfg['pass']).
-			" --result-file=".$this->arg($file['db']).
-			($this->ignore_tables ? ' '.implode(' ', $this->ignore_tables) : '').
-			" ".$this->arg($txpcfg['db'])
+			$this->mysqldump,
+			' --opt --skip-comments'.
+			' --host='.$this->arg($txpcfg['host']).
+			' --user='.$this->arg($txpcfg['user']).
+			' --password='.$this->arg($txpcfg['pass']).
+			' --result-file='.$this->arg($path).
+			' '.implode(' ', $this->ignore_tables).
+			' '.$this->arg($txpcfg['db'])
 		);
 		
 		if($prefs['rah_backup_compress'] && file_exists($file['db'])) {
-			$file['db_gz'] = $file['db'].'.gz';
-			$this->exec_command($this->gzip, '-c6 '.$this->arg($file['db']).' > '.$this->arg($file['db_gz']));
-			unlink($file['db']);
+			$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
+			unlink($path);
+			$path .= '.gz';
 		}
 		
-		/*
-			Copy directories
-		*/
+		callback_event('rah_backup.created');
 		
 		if($this->copy_paths) {
 			
-			$site = 
-				substr(
-					preg_replace('/[^A-Za-z0-9-_]/','',
-						str_replace(
-							array('.',':','/'),
-							'_',
-							trim($prefs['siteurl'])
-						)
-					), 0, 64
-				);
+			$path = $this->sanitize($prefs['siteurl']);
 			
-			$site = $site ? $site : 'filesystem';
-			$file['fs'] = $this->backup_dir.'/'.$site.$now.'.tar';
-			$opt = '-cvpzf ' . $this->arg($file['fs']);
-			
-			foreach($this->copy_paths as $path) {
-				$opt .= ' '.$this->arg($path);
+			if(!$path) {
+				$path = 'filesystem';
 			}
 			
-			$this->exec_command($prefs['rah_backup_tar'], $opt);
+			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.tar';
+			$this->exec_command($prefs['rah_backup_tar'], '-cvpzf '.$this->arg($path).' '.implode(' ', $this->copy_paths));
 			
 			if($prefs['rah_backup_compress']) {
-				$file['fs_gz'] = $file['fs'].'.gz';
-				$this->exec_command($this->gzip, '-c6 '.$this->arg($file['fs']).' > '.$this->arg($file['fs_gz']));
-				unlink($file['fs']);
+				$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
+				unlink($path);
+				$path .= '.gz';
 			}
+			
+			callback_event('rah_backup.created');
 		}
 
 		callback_event('rah_backup.done');
 
-		if($silent)
+		if($silent) {
 			exit;
+		}
 
 		$this->browser('done');
 	}
