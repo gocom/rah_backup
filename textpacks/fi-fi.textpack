@@ -19,6 +19,7 @@ rah_backup_database_will_be_overwriten => Oletko varma? Koko tietokanta korvataa
 rah_backup_inprogress => Otetaan varmuuskopiota...
 rah_backup_confirm_backup => Oletko varma että haluta ottaa varmuuskopion sivustosta? Varmuuskopion ottaminen voi viedä useamman minuutin.
 rah_backup_restoring => Palautetaan...
+rah_backup_can_not_restore => Valittua varmuuskopiota ei pystytty palauttamaan.
 rah_backup_restored => Palautettu
 rah_backup_done => Varmuuskopio otettu.
 rah_backup_path => Absoluuttinen tiedostopolku hakemistoon johon varmuuskopiot tallennetaan
