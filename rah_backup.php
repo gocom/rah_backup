@@ -50,6 +50,7 @@ class rah_backup {
 	private $copy_paths = array();
 	private $ignore_tables = array();
 	private $filestamp = '';
+	public $created = '';
 	public $message;
 
 	/**
@@ -597,7 +598,10 @@ EOF;
 			$path .= '.gz';
 		}
 		
-		callback_event('rah_backup.created');
+		if(file_exists($path)) {
+			$this->created = $path;
+			callback_event('rah_backup.created');
+		}
 		
 		if($this->copy_paths) {
 			
@@ -616,7 +620,10 @@ EOF;
 				$path .= '.gz';
 			}
 			
-			callback_event('rah_backup.created');
+			if(file_exists($path)) {
+				$this->created = $path;
+				callback_event('rah_backup.created');
+			}
 		}
 
 		callback_event('rah_backup.done');
