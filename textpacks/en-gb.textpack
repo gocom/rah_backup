@@ -3,7 +3,7 @@
 rah_backup => Backups
 rah_backup_create => Take a new backup
 rah_backup_preferences => Preferences
-rah_backup_filename => Filename
+rah_backup_name => Filename
 rah_backup_date => Created
 rah_backup_download => Download
 rah_backup_restore => Restore

@@ -3,7 +3,7 @@
 rah_backup => Varmuuskopiot
 rah_backup_create => Ota uusi varmuuskopio
 rah_backup_preferences => Asetukset
-rah_backup_filename => Tiedostonimi
+rah_backup_name => Tiedostonimi
 rah_backup_date => Luotu
 rah_backup_download => Lataa
 rah_backup_restore => Palauta

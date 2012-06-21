@@ -428,24 +428,40 @@ EOF;
 	
 		global $event, $prefs;
 		
-		$column = array(
-			gTxt('rah_backup_filename'),
-			gTxt('rah_backup_date'),
-			gTxt('rah_backup_size')
-		);
+		extract(gpsa(array(
+			'sort',
+			'dir',
+		)));
+		
+		$column = array('name', 'date', 'size');
+		
+		if($dir !== 'desc' && $dir !== 'asc') {
+			$dir = get_pref($event.'_sort_dir', 'asc');
+		}
+		
+		if(!in_array((string) $sort, $column)) {
+			$sort = get_pref($event.'_sort_column', 'name');
+		}
+		
+		foreach($column as $key => $name) {
+			$column[$key] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', ($name === $sort ? $dir : ''));
+		}
 		
 		if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
-			$column[] = gTxt('rah_backup_restore');
+			$column[] = hCell(gTxt('rah_backup_restore'));
 		}
 		
 		if(has_privs('rah_backup_delete')) {
-			$column[] = '<input type="checkbox" name="selectall" value="1" />';
+			$column[] = hCell('<input type="checkbox" name="selectall" value="1" />');
 		}
+		
+		set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
+		set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 		
 		$out[] = 
 			'	<table class="txp-list">'.n.
 			'		<thead>'.
-			tr(implode(n, doArray($column, 'hCell'))).
+			tr(implode(n, $column)).
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
 		
@@ -453,7 +469,7 @@ EOF;
 
 		if(!$msg) {
 			
-			foreach($this->get_backups() as $name => $backup) {
+			foreach($this->get_backups($sort, $dir) as $name => $backup) {
 				
 				$column = array();
 				$name = htmlspecialchars($name);
@@ -466,7 +482,7 @@ EOF;
 					$column[] = $name;
 				}
 				
-				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), $backup['modified']);
+				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']);
 				$column[] = $this->format_size($backup['size']);
 				
 				if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
@@ -821,7 +837,7 @@ EOF;
 		$sort_crit = array(
 			'name' => SORT_REGULAR,
 			'ext' => SORT_REGULAR,
-			'modified' => SORT_NUMERIC,
+			'date' => SORT_NUMERIC,
 			'size' => SORT_NUMERIC,
 		);
 		
@@ -844,7 +860,7 @@ EOF;
 				'ext' => pathinfo($file, PATHINFO_EXTENSION),
 				'path' => $file,
 				'name' => basename($file),
-				'modified' => (int) filemtime($file),
+				'date' => (int) filemtime($file),
 				'size' => (int) filesize($file),
 				'type' => 'filesystem',
 			);
