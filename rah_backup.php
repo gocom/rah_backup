@@ -453,18 +453,10 @@ EOF;
 
 		if(!$msg) {
 			
-			$files = (array) glob(preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar|.gz]', GLOB_NOSORT);
-			$f = array();
-			
-			foreach($files as $file) {
+			foreach($this->get_backups() as $name => $backup) {
 				
-				if(!is_readable($file) || !is_file($file)) {
-					continue;
-				}
-				
-				$ext = pathinfo($file, PATHINFO_EXTENSION);
-				$name = htmlspecialchars(basename($file));
 				$column = array();
+				$name = htmlspecialchars($name);
 				
 				if(has_privs('rah_backup_download')) {
 					$column[] = '<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>';
@@ -474,12 +466,12 @@ EOF;
 					$column[] = $name;
 				}
 				
-				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), filemtime($file));
-				$column[] = $this->format_size(filesize($file));
+				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), $backup['modified']);
+				$column[] = $this->format_size($backup['size']);
 				
 				if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
 					
-					if($ext == 'sql' || ($ext == 'gz' && substr($name, -7, 4) === '.sql')) {
+					if($backup['type'] === 'database') {
 						$column[] = '<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>';
 					}
 					
@@ -492,15 +484,7 @@ EOF;
 					$column[] = '<input type="checkbox" name="selected[]" value="'.$name.'" />';
 				}
 				
-				$f[$name] = tr(implode(n, doArray($column, 'td')));
-			}
-			
-			if($f) {
-				krsort($f);
-				$out[] = implode('', $f);
-			}
-			else {
-				$msg = gTxt('rah_backup_no_backups');
+				$out[] = tr(implode(n, doArray($column, 'td')));
 			}
 		}
 		
@@ -817,6 +801,73 @@ EOF;
 		$sep_dec = isset($separators['decimal_point']) ? $separators['decimal_point'] : '.';
 		$sep_thous = isset($separators['thousands_sep']) ? $separators['thousands_sep'] : ',';
 		return number_format($bytes, 2, $sep_dec, $sep_thous) . ' ' . $units[$pow];
+	}
+	
+	/**
+	 * Gets a list of backups
+	 * @param string $sort
+	 * @param string $direction
+	 * @param int $offset
+	 * @param int $limit
+	 * @return array
+	 */
+	
+	public function get_backups($sort='name', $direction='asc', $offset=0, $limit=NULL) {
+		
+		global $prefs;
+		
+		$order = $files = array();
+		
+		$sort_crit = array(
+			'name' => SORT_REGULAR,
+			'ext' => SORT_REGULAR,
+			'modified' => SORT_NUMERIC,
+			'size' => SORT_NUMERIC,
+		);
+		
+		if(!is_string($sort) || !isset($sort_crit[$sort])) {
+			$sort = 'name';
+		}
+		
+		foreach(
+			(array) glob(
+				preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar|.gz]',
+				GLOB_NOSORT
+			) as $file
+		) {
+			
+			if(!$file || !is_readable($file) || !is_file($file)) {
+				continue;
+			}
+			
+			$backup = array(
+				'ext' => pathinfo($file, PATHINFO_EXTENSION),
+				'path' => $file,
+				'name' => basename($file),
+				'modified' => (int) filemtime($file),
+				'size' => (int) filesize($file),
+				'type' => 'filesystem',
+			);
+			
+			if($backup['ext'] === 'sql' || ($backup['ext'] === 'gz' && substr($backup['name'], -7, 4) === '.sql')) {
+				$backup['type'] = 'database';
+			}
+			
+			$files[$backup['name']] = $backup;
+			$order[$backup['name']] = $backup[$sort];
+		}
+		
+		if(!$files) {
+			return array();
+		}
+		
+		array_multisort($order, $sort_crit[$sort], $files);
+		
+		if($direction === 'desc') {
+			$files = array_reverse($files);
+		}
+		
+		return array_slice($files, $offset, $limit);
 	}
 
 	/**
