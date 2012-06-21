@@ -663,7 +663,7 @@ EOF;
 			$path .= '.tmp';
 		}
 		
-		$returned = 
+		if(
 			$this->exec_command(
 				$prefs['rah_backup_mysql'], 
 				' --host='.$this->arg($txpcfg['host']).
@@ -671,11 +671,10 @@ EOF;
 				' --password='.$this->arg($txpcfg['pass']).
 				' '.$this->arg($txpcfg['db']).
 				' < '.$this->arg($path)
-			);
-		
-		if($returned === false) {
+			) === false
+		) {
 			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
-			return;	
+			return;
 		}
 		
 		if($ext === 'gz') {
@@ -739,7 +738,7 @@ EOF;
 	}
 
 	/**
-	 * Deletes a backup file
+	 * Deletes selected backups
 	 */
 
 	private function delete() {
@@ -751,21 +750,10 @@ EOF;
 			return;
 		}
 		
-		foreach($selected as $file) {
-			
-			$ext = pathinfo((string) $file, PATHINFO_EXTENSION);
-			
-			if(!$file || !$ext || ($ext !== 'sql' && $ext !== 'gz' && $ext !== 'tar')) {
-				continue;
+		foreach($this->get_backups() as $name => $file) {
+			if(in_array($name, $selected)) {
+				@unlink($file['path']);
 			}
-			
-			$file = $this->backup_dir.'/'.preg_replace('/[^A-Za-z0-9-._]/', '', (string) $file);
-			
-			if(!file_exists($file) || !is_writeable($file) || !is_file($file)) {
-				continue;
-			}
-			
-			unlink($file);
 		}
 		
 		$this->browser(gTxt('rah_backup_removed'));
