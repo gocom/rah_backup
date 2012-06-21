@@ -32,7 +32,6 @@ rah_backup_mysql => Tiedostopolku MySQL-ohjelmaan
 rah_backup_tar => Tiedostopolku TAR-ohjelmaan ja/tai komento
 rah_backup_gzip => Tiedostopolku Gzip-ohjelmaan ja/tai komento
 rah_backup_copy_paths => Tiedostopolut varmuuskopioitaviin hakemistoihin (pilkuin eroteltuna)
-rah_backup_allow_restore => Salli varmuuskopioiden palauttaminen?
 rah_backup_can_not_download => Valitun tiedoston lataaminen epäonnistui.
 rah_backup_define_preferences => Joitain asetuksia tulee määrittää ennen kuin varmuuskopioiden luomista. {start_by}.
 rah_backup_dir_not_found => Varmuuskopio-hakemisto ei löytynyt.

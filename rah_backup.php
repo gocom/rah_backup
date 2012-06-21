@@ -181,7 +181,6 @@ class rah_backup {
 				'compress' => 0,
 				'gzip' => 'gzip',
 				'overwrite' => 1,
-				'allow_restore' => 1,
 				'callback' => 0,
 				'key' => md5(uniqid(mt_rand(), TRUE)),
 			) as $name => $val
@@ -195,7 +194,6 @@ class rah_backup {
 					case 'callback':
 					case 'compress':
 					case 'overwrite':
-					case 'allow_restore':
 						$html = 'yesnoradio';
 						break;
 					default:
@@ -447,7 +445,7 @@ EOF;
 			$column[$key] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', ($name === $sort ? $dir : ''));
 		}
 		
-		if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
+		if(has_privs('rah_backup_restore')) {
 			$column[] = hCell(gTxt('rah_backup_restore'));
 		}
 		
@@ -485,7 +483,7 @@ EOF;
 				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']);
 				$column[] = $this->format_size($backup['size']);
 				
-				if(has_privs('rah_backup_restore') && $prefs['rah_backup_allow_restore']) {
+				if(has_privs('rah_backup_restore')) {
 					
 					if($backup['type'] === 'database') {
 						$column[] = '<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>';
@@ -637,11 +635,6 @@ EOF;
 	private function restore() {
 		
 		global $txpcfg, $prefs;
-		
-		if(!$prefs['rah_backup_allow_restore']) {
-			$this->browser();
-			return;
-		}
 		
 		$file = preg_replace('/[^A-Za-z0-9-._]/', '', (string) gps('file'));
 		$path = $this->backup_dir.'/'.$file;
