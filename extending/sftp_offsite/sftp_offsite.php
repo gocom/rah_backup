@@ -40,31 +40,28 @@
 	);
 
 /**
- * Registers the function. Hook to event 'rah_backup_tasks', step 'backup_done'.
+ * Registers the function. Hook to event 'rah_backup.done'
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_sftp_offsite', 'rah_backup_tasks', 'backup_done');
+		register_callback('rah_backup__module_sftp_offsite', 'rah_backup.created');
 	}
 
 /**
  * Sends new backup files to remote server
- * @param string $event Callback event.
- * @param string $step Callback step.
- * @param mixed $data Data passed to the callback function.
  */
 
-	function rah_backup__module_sftp_offsite($event, $step, $data) {
+	function rah_backup__module_sftp_offsite() {
 		
 		global $rah_backup__module_sftp_offsite;
 		
 		foreach((array) $rah_backup__module_sftp_offsite as $cfg) {
 			
-			if(!$cfg['host'])
+			if(empty($cfg['host'])) {
 				continue;
+			}
 				
 			if(!class_exists('Net_SFTP')) {
-				
 				$path = set_include_path($cfg['phpseclib_path']);
 				
 				if($path !== false) {
@@ -76,13 +73,10 @@
 			$sftp = new Net_SFTP($cfg['host'], (int) $cfg['port'], 90);
 			
 			if($sftp->login($cfg['user'], $cfg['pass'])) {
-				
 				if(!$cfg['path'] || $sftp->chdir($cfg['path'])) {
-					foreach($data['files'] as $file) {
-						$sftp->put(basename($file), $file, NET_SFTP_LOCAL_FILE);
-					}
+					$file = rah_backup::get()->created;
+					$sftp->put(basename($file), $file, NET_SFTP_LOCAL_FILE);
 				}
-
 			}
 		}
 	}
