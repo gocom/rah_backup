@@ -571,7 +571,6 @@ EOF;
 	 */
 
 	private function create($silent=false) {
-		
 		global $txpcfg, $prefs;
 
 		@set_time_limit(0);
@@ -640,25 +639,19 @@ EOF;
 	 */
 
 	private function restore() {
-		
 		global $txpcfg, $prefs;
 		
-		$file = preg_replace('/[^A-Za-z0-9-._]/', '', (string) gps('file'));
-		$path = $this->backup_dir.'/'.$file;
-		$ext = pathinfo($file, PATHINFO_EXTENSION);
-
-		if(
-			!$file || 
-			($ext !== 'sql' && $ext !== 'gz') || 
-			!file_exists($path) || 
-			!is_readable($path) || 
-			!is_file($path)
-		) {
+		$file = (string) gps('file');
+		$backups = $this->get_backups();
+		
+		if(!isset($backups[$file]) || $backups[$file]['type'] != 'database') {
 			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
 			return;
 		}
 		
-		if($ext === 'gz') {
+		extract($backups[$file]);
+		
+		if($ext == 'gz') {
 			$this->exec_command($this->gzip, '-cd '.$this->arg($path).' > '.$this->arg($path.'.tmp'));
 			$path .= '.tmp';
 		}
@@ -690,38 +683,27 @@ EOF;
 
 	private function download() {
 
-		$file = preg_replace('/[^A-Za-z0-9-._]/', '', gps('file'));
-		$path = $this->backup_dir.'/'.$file;
-		$ext = pathinfo($file, PATHINFO_EXTENSION);
-
-		if(
-			!$file || 
-			!$ext || 
-			($ext != 'sql' && $ext != 'gz' && $ext != 'tar') || 
-			!file_exists($path) || 
-			!is_writeable($path) || 
-			!is_file($path)
-		) {
+		$file = (string) gps('file');
+		
+		if(!($backups = $this->get_backups()) || !isset($backups[$file])) {
 			$this->browser(array(gTxt('rah_backup_can_not_download'), E_ERROR));
-			return;	
+			return;
 		}
 
-		$size = filesize($path);
+		extract($backups[$file]);
 
 		@ini_set('zlib.output_compression', 'Off');
 		@set_time_limit(0);
 		@ignore_user_abort(true);
 
 		ob_clean();
-
 		header('Content-Description: File Download');
 		header('Content-Type: application/octet-stream');
-		header('Content-Disposition: attachment; filename="'.$file.'"; size="'.$size.'"');
+		header('Content-Disposition: attachment; filename="'.$name.'"; size="'.$size.'"');
 		header('Content-Transfer-Encoding: binary');
 		header('Expires: 0');
 		header('Cache-Control: private');
 		header('Content-Length: '.$size);
-
 		ob_flush();
 		flush();
 
