@@ -51,7 +51,7 @@ class rah_backup {
 	private $ignore_tables = array();
 	private $filestamp = '';
 	public $created = '';
-	public $message;
+	public $message = array();
 
 	/**
 	 * Constructor
@@ -62,7 +62,7 @@ class rah_backup {
 		global $prefs, $txpcfg;
 		
 		if(!$prefs['rah_backup_path']) {
-			$this->message = gTxt('rah_backup_define_preferences', array(
+			$this->message[] = gTxt('rah_backup_define_preferences', array(
 				'{start_by}' => 
 					'<a href="?event=prefs&amp;'.
 						'step=advanced_prefs#prefs-rah_backup_path">'.
@@ -75,15 +75,15 @@ class rah_backup {
 		$dir = $this->path($prefs['rah_backup_path']);
 			
 		if(!file_exists($dir) || !is_dir($dir)) {
-			$this->message = gTxt('rah_backup_dir_not_found');
+			$this->message[] = gTxt('rah_backup_dir_not_found');
 		}
 		
 		elseif(!is_readable($dir)) {
-			$this->message = gTxt('rah_backup_dir_not_readable');
+			$this->message[] = gTxt('rah_backup_dir_not_readable');
 		}
 		
 		elseif(!is_writable($dir)) {
-			$this->message = gTxt('rah_backup_dir_not_writable');
+			$this->message[] = gTxt('rah_backup_dir_not_writable');
 		}
 		
 		else {
@@ -104,7 +104,7 @@ class rah_backup {
 			}
 			
 			else {
-				$this->message = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
+				$this->message[] = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
 			}
 		}
 		
@@ -117,7 +117,7 @@ class rah_backup {
 		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
 		
 			if(@ini_get('safe_mode') && (strpos($n, '..') !== false || strpos($n, './') !== false)) {
-				$this->message = gTxt('rah_backup_safe_mode_no_exec_access');
+				$this->message[] = gTxt('rah_backup_safe_mode_no_exec_access');
 				continue;
 			}
 			
@@ -131,11 +131,11 @@ class rah_backup {
 		}
 		
 		if(strpos($txpcfg['db'], '\\') !== false) {
-			$this->message = gTxt('rah_backup_safe_mode_no_exec_access');
+			$this->message[] = gTxt('rah_backup_safe_mode_no_exec_access');
 		}
 		
 		if(!function_exists('exec') || is_disabled('exec')) {
-			$this->message = gTxt('rah_backup_exec_func_unavailable');
+			$this->message[] = gTxt('rah_backup_exec_func_unavailable');
 		}
 		
 		if(!$prefs['rah_backup_overwrite']) {
@@ -463,10 +463,8 @@ EOF;
 			tr(implode(n, $column)).
 			'		</thead>'.n.
 			'		<tbody id="rah_backup_list">'.n;
-		
-		$msg = $this->message;
 
-		if(!$msg) {
+		if(!$this->message) {
 			
 			foreach($this->get_backups($sort, $dir) as $name => $backup) {
 				
@@ -503,10 +501,10 @@ EOF;
 			}
 		}
 		
-		if($msg) {
+		else {
 			$out[] = 
 				'			<tr>'.n.
-				'				<td id="rah_backup_msgrow" colspan="'.count($column).'">'.$msg.'</td>'.n.
+				'				<td id="rah_backup_msgrow" colspan="'.count($column).'">'.$this->message[0].'</td>'.n.
 				'			</tr>'.n;
 		}
 		
