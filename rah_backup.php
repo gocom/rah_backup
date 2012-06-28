@@ -42,6 +42,12 @@ class rah_backup {
 
 	static public $version = '0.1';
 	
+	/**
+	 * Stores instances
+	 */
+	
+	static public $instance = NULL;
+	
 	private $backup_dir;
 	private $mysql;
 	private $mysqldump;
@@ -223,6 +229,20 @@ class rah_backup {
 	}
 
 	/**
+	 * Gets an instance of the class
+	 * @return obj
+	 */
+
+	static public function get() {
+		
+		if(self::$instance === NULL) {
+			self::$instance = new rah_backup();
+		}
+		
+		return self::$instance;
+	}
+
+	/**
 	 * Delivers panels
 	 */
 
@@ -239,12 +259,11 @@ class rah_backup {
 				'download' => true
 			);
 		
-		$uix = new rah_backup();
-		
-		if($uix->message || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step))
+		if(rah_backup::get()->message || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
 			$step = 'browser';
+		}
 
-		$uix->$step();
+		rah_backup::get()->$step();
 	}
 
 	/**
