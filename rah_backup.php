@@ -43,20 +43,70 @@ class rah_backup {
 	static public $version = '0.1';
 	
 	/**
-	 * Stores instances
+	 * @var obj Stores instances
 	 */
 	
 	static public $instance = NULL;
 	
+	/**
+	 * @var string Path to directory storing backups
+	 */
+	
 	private $backup_dir;
+	
+	/**
+	 * @var string MySQL command
+	 */
+	
 	private $mysql;
+	
+	/**
+	 * @var string MySQLdump command
+	 */
+	
 	private $mysqldump;
+	
+	/**
+	 * @var string TAR command
+	 */
+	
 	private $tar;
+	
+	/**
+	 * @var string Gzip command
+	 */
+	
 	private $gzip;
+	
+	/** 
+	 * @var array List of backed up files
+	 */
+	
 	private $copy_paths = array();
+	
+	/**
+	 * @var array List of ignored tables
+	 */
+	
 	private $ignore_tables = array();
+	
+	/**
+	 * @var string Timestamp append to backup archives
+	 */
+	
 	private $filestamp = '';
+	
+	/**
+	 * @var string Path to created backup file
+	 * @todo requires remodelling
+	 */
+	
 	public $created = '';
+
+	/**
+	 * @var array List of invoked message and errors
+	 */
+	
 	public $message = array();
 
 	/**
