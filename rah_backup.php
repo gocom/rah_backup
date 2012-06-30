@@ -21,6 +21,7 @@
 		add_privs('rah_backup_create', '1,2');
 		add_privs('rah_backup_restore', '1');
 		add_privs('rah_backup_download', '1,2');
+		add_privs('rah_backup_multi_edit', '1,2');
 		add_privs('rah_backup_delete', '1');
 		add_privs('rah_backup_preferences', '1');
 		add_privs('plugin_prefs.rah_backup', '1,2');
@@ -305,8 +306,8 @@ class rah_backup {
 				'browser' => false,
 				'create' => true,
 				'restore' => true,
-				'delete' => true,
-				'download' => true
+				'download' => true,
+				'multi_edit' => true,
 			);
 		
 		if(rah_backup::get()->message || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
@@ -339,66 +340,6 @@ class rah_backup {
 			<script type="text/javascript">
 				<!--
 				$(document).ready(function(){
-					var pane = $('#rah_backup_container');
-
-					/*
-						Multi-edit function, auto-hiden dropdown
-					*/
-				
-					(function() {
-						
-						var steps = $('select[name=step]').parent();
-						var form = steps.parents('form');
-					
-						if(steps.length < 1)
-							return;
-						
-						steps.find('input[type=submit]').hide();
-						
-						if(form.find('input[type=checkbox]:checked').val() == null) {
-							steps.hide();
-						}
-	
-						steps.find('select[name=step]').val('');
-	
-						form.find('input[name=selectall]').click(function() {
-							
-							var tr = form.find('tbody input[type=checkbox]');
-								
-							if($(this).is(':checked')) {
-								tr.attr('checked', true);
-							}
-							else {
-								tr.removeAttr('checked');
-							}
-						});
-						
-						form.find('input[type=checkbox], td, th').live('click', function(){
-							steps.children('select[name="step"]').val('');
-								
-							if(pane.find('tbody input[type=checkbox]:checked').val() != null) {
-								steps.slideDown();
-							}
-							else {
-								steps.slideUp();
-							}
-						});
-						
-						form.find('tbody input[type=checkbox]').live('click', function() {
-							form.find('input[name="selectall"]').removeAttr('checked');
-						});
-	
-						steps.find('select[name=step]').change(function(){
-							form.submit();
-						});
-	
-						form.submit(function() {
-							if(!verify(textpattern.gTxt('are_you_sure'))) {
-								steps.find('select[name="step"]').val('');
-								return false;
-							}
-						});
-					})();
 					
 					/*
 						Do a backup
@@ -477,9 +418,6 @@ class rah_backup {
 				//-->
 			</script>
 			<style type="text/css">
-				#rah_backup_container .rah_ui_step {
-					text-align: right;
-				}
 				#rah_backup_container .rah_backup_restore {
 					min-width: 100px;
 				}
@@ -501,26 +439,32 @@ EOF;
 			'dir',
 		)));
 		
-		$column = array('name', 'date', 'size');
+		$methods = array();
+		
+		if(has_privs('rah_backup_delete')) {
+			$methods['delete'] = gTxt('rah_backup_delete');
+		}
+		
+		$columns = array('name', 'date', 'size');
 		
 		if($dir !== 'desc' && $dir !== 'asc') {
 			$dir = get_pref($event.'_sort_dir', 'asc');
 		}
 		
-		if(!in_array((string) $sort, $column)) {
+		if(!in_array((string) $sort, $columns)) {
 			$sort = get_pref($event.'_sort_column', 'name');
 		}
 		
-		foreach($column as $key => $name) {
-			$column[$key] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', ($name === $sort ? $dir : ''));
+		if(has_privs('rah_backup_delete')) {
+			$column[] = hCell(fInput('checkbox', 'select_all', 0, '', '', '', '', '', 'select_all'), '', ' title="'.gTxt('toggle_all_selected').'" class="multi-edit"');
+		}
+		
+		foreach($columns as $name) {
+			$column[] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', ($name === $sort ? $dir : ''));
 		}
 		
 		if(has_privs('rah_backup_restore')) {
 			$column[] = hCell(gTxt('rah_backup_restore'));
-		}
-		
-		if(has_privs('rah_backup_delete')) {
-			$column[] = hCell('<input type="checkbox" name="selectall" value="1" />');
 		}
 		
 		set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
@@ -540,33 +484,33 @@ EOF;
 				$column = array();
 				$name = htmlspecialchars($name);
 				
+				if(has_privs('rah_backup_delete')) {
+					$column[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
+				}
+				
 				if(has_privs('rah_backup_download')) {
-					$column[] = '<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>';
+					$column[] = td('<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>');
 				}
 				
 				else {
-					$column[] = $name;
+					$column[] = td($name);
 				}
 				
-				$column[] = safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']);
-				$column[] = $this->format_size($backup['size']);
+				$column[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
+				$column[] = td($this->format_size($backup['size']));
 				
 				if(has_privs('rah_backup_restore')) {
 					
 					if($backup['type'] === 'database') {
-						$column[] = '<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>';
+						$column[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
 					}
 					
 					else {
-						$column[] = '';
+						$column[] = td('');
 					}
 				}
 				
-				if(has_privs('rah_backup_delete')) {
-					$column[] = '<input type="checkbox" name="selected[]" value="'.$name.'" />';
-				}
-				
-				$out[] = tr(implode(n, doArray($column, 'td')));
+				$out[] = tr(implode(n, $column));
 			}
 		}
 		
@@ -578,24 +522,11 @@ EOF;
 		}
 		
 		$out[] = 
-			
 			'		</tbody>'.n.
 			'	</table>'.n.
-			
-			(has_privs('rah_backup_delete') ?
-				'	<p class="rah_ui_step">'.n.
-				'		<select name="step">'.n.
-				'			<option value="">'.gTxt('rah_backup_with_selected').'</option>'.n.
-				'			<option value="delete">'.gTxt('rah_backup_delete').'</option>'.n.
-				'		</select>'.n.
-				'		<input type="submit" value="'.gTxt('go').'" />'.n.
-				'	</p>' : ''
-			);
+			multi_edit($methods, $event, 'multi_edit');
 		
-		$this->build_pane(
-			$out,
-			$message
-		);
+		$this->build_pane($out, $message);
 	}
 	
 	/**
@@ -617,8 +548,9 @@ EOF;
 			
 		$backup = new rah_backup();
 		
-		if(!$backup->message)
+		if(!$backup->message) {
 			$backup->create(true);
+		}
 	}
 	
 	/**
@@ -785,19 +717,41 @@ EOF;
 
 		exit;
 	}
+	
+	/**
+	 * Multi-edit handler
+	 */
+	
+	private function multi_edit() {
+		
+		extract(psa(array(
+			'selected',
+			'edit_method',
+		)));
+		
+		require_privs('rah_backup_'.((string) $edit_method));
+		
+		if(!is_string($edit_method) || empty($selected) || !is_array($selected)) {
+			$this->browser(array(gTxt('rah_backup_select_something'), E_WARNING));
+			return;
+		}
+		
+		$method = 'multi_' . $edit_method;
+		
+		if(!method_exists($this, $method)) {
+			$method = 'browse';
+		}
+		
+		$this->$method();
+	}
 
 	/**
 	 * Deletes selected backups
 	 */
 
-	private function delete() {
+	private function multi_delete() {
 		
 		$selected = ps('selected');
-		
-		if(empty($selected) || !is_array($selected)) {
-			$this->browser(array(gTxt('rah_backup_select_something'), E_WARNING));
-			return;
-		}
 		
 		foreach($this->get_backups() as $name => $file) {
 			if(in_array($name, $selected)) {
@@ -942,8 +896,7 @@ EOF;
 		echo 
 			n.
 			
-			'<form action="index.php" method="post" id="rah_backup_container" class="txp-container">'.n.
-			'	'.eInput($event).n.
+			'<form action="index.php" method="post" id="rah_backup_container" class="txp-container multi_edit_form">'.n.
 			'	'.tInput().n.
 			
 			'	<p class="nav-tertiary">'.
