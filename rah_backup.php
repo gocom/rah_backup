@@ -736,7 +736,7 @@ EOF;
 			return;
 		}
 		
-		$method = 'multi_' . $edit_method;
+		$method = 'multi_option_' . $edit_method;
 		
 		if(!method_exists($this, $method)) {
 			$method = 'browse';
@@ -749,7 +749,7 @@ EOF;
 	 * Deletes selected backups
 	 */
 
-	private function multi_delete() {
+	private function multi_option_delete() {
 		
 		$selected = ps('selected');
 		
