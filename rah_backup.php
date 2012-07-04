@@ -181,13 +181,14 @@ class rah_backup {
 		}
 		
 		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
-		
-			if(@ini_get('safe_mode') && (strpos($n, '..') !== false || strpos($n, './') !== false)) {
+			
+			$value = $prefs['rah_backup_'.$n];
+			
+			if(@ini_get('safe_mode') && (strpos($value, '..') !== false || strpos($value, './') !== false)) {
 				$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
-				continue;
 			}
 			
-			$this->$n = $prefs['rah_backup_' . $n ];
+			$this->$n = $value;
 			
 			if(DS != '/' && @ini_get('safe_mode')) {
 				$this->$n =  str_replace('\\', '/', $this->$n);
