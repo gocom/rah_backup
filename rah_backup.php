@@ -516,7 +516,7 @@ EOF;
 				
 				if(has_privs('rah_backup_restore')) {
 					
-					if($backup['type'] === 'database' && !$this->warning) {
+					if($backup['type'] === 'database' && $this->warning) {
 						$column[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
 					}
 					
