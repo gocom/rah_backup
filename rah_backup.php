@@ -105,10 +105,16 @@ class rah_backup {
 	public $created = '';
 
 	/**
-	 * @var array List of invoked message and errors
+	 * @var array List of invoked messages
 	 */
 	
 	public $message = array();
+	
+	/**
+	 * @var array List of invoked errors/notices
+	 */
+	
+	public $warning = array();
 
 	/**
 	 * Constructor
@@ -129,22 +135,25 @@ class rah_backup {
 			false);
 		}
 		
-		$dir = $this->path($prefs['rah_backup_path']);
-			
-		if(!file_exists($dir) || !is_dir($dir)) {
-			$this->message[] = gTxt('rah_backup_dir_not_found');
-		}
-		
-		elseif(!is_readable($dir)) {
-			$this->message[] = gTxt('rah_backup_dir_not_readable');
-		}
-		
-		elseif(!is_writable($dir)) {
-			$this->message[] = gTxt('rah_backup_dir_not_writable');
-		}
-		
 		else {
-			$this->backup_dir = $dir;
+		
+			$dir = $this->path($prefs['rah_backup_path']);
+				
+			if(!file_exists($dir) || !is_dir($dir)) {
+				$this->warning[] = gTxt('rah_backup_dir_not_found');
+			}
+			
+			elseif(!is_readable($dir)) {
+				$this->warning[] = gTxt('rah_backup_dir_not_readable');
+			}
+			
+			elseif(!is_writable($dir)) {
+				$this->warning[] = gTxt('rah_backup_dir_not_writable');
+			}
+			
+			else {
+				$this->backup_dir = $dir;
+			}
 		}
 		
 		@$tables = (array) getThings('SHOW TABLES');
@@ -161,7 +170,7 @@ class rah_backup {
 			}
 			
 			else {
-				$this->message[] = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
+				$this->warning[] = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
 			}
 		}
 		
@@ -174,7 +183,7 @@ class rah_backup {
 		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
 		
 			if(@ini_get('safe_mode') && (strpos($n, '..') !== false || strpos($n, './') !== false)) {
-				$this->message[] = gTxt('rah_backup_safe_mode_no_exec_access');
+				$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
 				continue;
 			}
 			
@@ -188,11 +197,11 @@ class rah_backup {
 		}
 		
 		if(strpos($txpcfg['db'], '\\') !== false) {
-			$this->message[] = gTxt('rah_backup_safe_mode_no_exec_access');
+			$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
 		}
 		
 		if(!function_exists('exec') || is_disabled('exec')) {
-			$this->message[] = gTxt('rah_backup_exec_func_unavailable');
+			$this->warning[] = gTxt('rah_backup_exec_func_unavailable');
 		}
 		
 		if(!$prefs['rah_backup_overwrite']) {
@@ -310,7 +319,7 @@ class rah_backup {
 				'multi_edit' => true,
 			);
 		
-		if(rah_backup::get()->message || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
+		if(rah_backup::get()->message || rah_backup::get()->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
 			$step = 'browser';
 		}
 
@@ -470,6 +479,10 @@ EOF;
 		set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
 		set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 		
+		if($this->warning) {
+			$out[] = '<p id="warning">'.$this->warning[0].'</p>';
+		}
+		
 		$out[] = 
 			'	<table class="txp-list">'.n.
 			'		<thead>'.
@@ -479,7 +492,9 @@ EOF;
 
 		if(!$this->message) {
 			
-			foreach($this->get_backups($sort, $dir) as $name => $backup) {
+			$backups = $this->get_backups($sort, $dir);
+			
+			foreach($backups as $name => $backup) {
 				
 				$column = array();
 				$name = htmlspecialchars($name);
@@ -512,9 +527,13 @@ EOF;
 				
 				$out[] = tr(implode(n, $column));
 			}
+			
+			if(!$backups) {
+				$this->message[] = gTxt('rah_backup_no_backups');
+			}
 		}
 		
-		else {
+		if($this->message) {
 			$out[] = 
 				'			<tr>'.n.
 				'				<td id="rah_backup_msgrow" colspan="'.count($column).'">'.$this->message[0].'</td>'.n.
@@ -901,7 +920,7 @@ EOF;
 			
 			'	<p class="nav-tertiary">'.
 			
-			(has_privs('rah_backup_create') && !$this->message ? 
+			(has_privs('rah_backup_create') && !$this->message && !$this->warning ? 
 				'<a class="navlink" id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a>' : ''
