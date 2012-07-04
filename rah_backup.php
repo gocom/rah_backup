@@ -140,15 +140,15 @@ class rah_backup {
 			$dir = $this->path($prefs['rah_backup_path']);
 				
 			if(!file_exists($dir) || !is_dir($dir)) {
-				$this->warning[] = gTxt('rah_backup_dir_not_found');
+				$this->warning[] = gTxt('rah_backup_dir_not_found', array('{path}' => $dir));
 			}
 			
 			elseif(!is_readable($dir)) {
-				$this->warning[] = gTxt('rah_backup_dir_not_readable');
+				$this->warning[] = gTxt('rah_backup_dir_not_readable', array('{path}' => $dir));
 			}
 			
 			elseif(!is_writable($dir)) {
-				$this->warning[] = gTxt('rah_backup_dir_not_writable');
+				$this->warning[] = gTxt('rah_backup_dir_not_writable', array('{path}' => $dir));
 			}
 			
 			else {
