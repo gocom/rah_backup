@@ -240,46 +240,34 @@ class rah_backup {
 		
 		foreach(
 			array(
-				'path' => '',
-				'copy_paths' => './../',
-				'mysql' => 'mysql',
-				'mysqldump' => 'mysqldump',
-				'tar' => 'tar',
-				'gzip' => 'gzip',
-				'ignore_tables' => '',
-				'compress' => 0,
-				'overwrite' => 1,
-				'callback' => 0,
-				'key' => md5(uniqid(mt_rand(), TRUE)),
+				'path' => array('text_input', ''),
+				'copy_paths' => array('text_input', './../'),
+				'mysql' => array('text_input', 'mysql'),
+				'mysqldump' => array('text_input', 'mysqldump'),
+				'tar' => array('text_input', 'tar'),
+				'gzip' => array('text_input', 'gzip'),
+				'ignore_tables' => array('text_input', ''),
+				'compress' => array('yesnoradio', 0),
+				'overwrite' => array('yesnoradio', 1),
+				'callback' => array('yesnoradio', 0),
+				'key' => array('text_input', md5(uniqid(mt_rand(), TRUE))),
 			) as $name => $val
 		) {
-
-			$n = 'rah_backup_' . $name;
+			$n = 'rah_backup_'.$name;
 			
 			if(!isset($prefs[$n])) {
-
-				switch($name) {
-					case 'callback':
-					case 'compress':
-					case 'overwrite':
-						$html = 'yesnoradio';
-						break;
-					default:
-						$html = 'text_input';
-				}
-
 				safe_insert(
 					'txp_prefs',
 					"prefs_id=1,
 					name='$n',
-					val='$val',
+					val='".doSlash($val[1])."',
 					type=1,
 					event='rah_backup',
-					html='$html',
+					html='".doSlash($val[0])."',
 					position=".$position
 				);
 				
-				$prefs[$n] = $val;
+				$prefs[$n] = $val[1];
 			}
 			
 			$position++;
