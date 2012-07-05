@@ -520,7 +520,7 @@ EOF;
 		if($this->message) {
 			$out[] = 
 				'			<tr>'.n.
-				'				<td id="rah_backup_msgrow" colspan="'.count($column).'">'.$this->message[0].'</td>'.n.
+				'				<td colspan="'.count($column).'">'.$this->message[0].'</td>'.n.
 				'			</tr>'.n;
 		}
 		
