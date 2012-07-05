@@ -883,15 +883,15 @@ EOF;
 
 	/**
 	 * Echoes the panels and header
-	 * @param string $content Pane's HTML markup.
-	 * @param string $message The activity message.
+	 * @param string|array $content Pane's HTML markup.
+	 * @param string|array $message The activity message.
 	 */
 
-	private function build_pane($content, $message) {
+	private function build_pane($content, $message='') {
 		
 		global $event;
 		
-		pagetop(gTxt('rah_backup'), $message ? $message : '');
+		pagetop(gTxt('rah_backup'), $message);
 		
 		if(is_array($content)) {
 			$content = implode('', $content);
