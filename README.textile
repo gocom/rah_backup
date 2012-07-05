@@ -21,29 +21,23 @@ p. Rah_backup offers number of preferences that can be used to configure the plu
 
 h3. Absolute filesystem path to a directory used to store backups
 
-bc. /absolute/path/to/backups/directory
-
 p. Sets the path used to store backup files, database dumps and TAR tapes. The path should be an absolute and point to a existing, empty directory that is both readable and writeable by PHP. Using relative paths is possible too. A path that starts with @./@ will be relative to Textpattern's installation directory (i.e. @./textpattern@).
 
 p. An backup directory path might look something like this:
 
 bc. ./../../site_backups
 
-p. Which would create backups to directory named *site_backups*, located two directories up from Textpattern's installation directory (i.e. @textpattern). This relative path would do the same as providing an absolute path to the same directory starting from the top:
+p. Which would create backups to directory named *site_backups*, located two directories up from Textpattern's installation directory (i.e. @textpattern@). This relative path would do the same as providing an absolute path to the same directory starting from the top:
 
 bc. /users/some/example/path/to/site_backups
 
 h3. Directories to backup (comma-separated)
-
-bc. /path/to/directory/1, path/to/directory/2
 
 p. Sets which directories are backed up and included in created TAR archives. Separate multiple paths with commas (@,@). As with backup directory, also this option supports relative paths. A path that starts with @./@ will be relative to Textpattern's installation directory (i.e. @./textpattern@). On a single site setup, following would back up the directory containing Textpattern (i.e. @textpattern@ directory and @index.php@ file):
 
 bc. ./../
 
 h3. Path to MySQL
-
-bc. mysql
 
 p. Sets path to MySQL command line application. This option and direct command line access MySQL is used to restore taken backups. This path should be a absolute filesystem path to mysql. If you are uncertain what the path to MySQL is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
 
@@ -60,8 +54,6 @@ p. On Linux you may also try to find the path by using @which mysql@ command via
 
 h3. Path to MySQLdump
 
-bc. mysqldump
-
 p. Sets path to MySQLdump command line application. This option and direct command line access MySQLdump is used to take backups of databases. This path should be a absolute filesystem path to mysqldump. If you are uncertain what the path to MySQLdump is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
 
 p. Common paths to MySQLdump include, but are not limited to:
@@ -77,8 +69,6 @@ p. On Linux you may also try to find the path by using @which mysqldump@ command
 
 h3. Path to TAR
 
-bc. tar
-
 p. Sets path to TAR command line application. This option and direct command line access TAR is used to take backups of directories and files. This path should be a absolute filesystem path to TAR. If you are uncertain what the location of TAR is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
 
 p. Common paths to TAR include, but are not limited to:
@@ -91,8 +81,6 @@ p. On Linux you may also try to find the path by using @which tar@ command via S
 
 h3. Path to Gzip
 
-bc. gzip
-
 p. Sets path to gzip command line application. This option and direct command line access gzip is used to compress created backups. This path should be a absolute filesystem path to gzip. If you are uncertain what the location of gzip is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
 
 p. Common paths to Gzip include, but are not limited to:
@@ -104,8 +92,6 @@ p. Common paths to Gzip include, but are not limited to:
 p. On Linux you may also try to find the path by using @which gzip@ command via SSH or "rah_terminal":https://github.com/gocom/rah_terminal.
 
 h3. Ignore database tables (comma-separated)
-
-bc. dbtable1, dbtable2
 
 p. Sets database tables that will not be included in database backups. Separate multiple tables with commas (@,@). Note that since the tables are not included in backups, they won't be restored, created or populated either with the backup when restoring. Ignored tables need to be managed otherwise, and re-created manually.
 
