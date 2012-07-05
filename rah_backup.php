@@ -434,6 +434,10 @@ EOF;
 		
 		$methods = array();
 		
+		if(has_privs('rah_backup_delete')) {
+			$methods['delete'] = gTxt('rah_backup_delete');
+		}
+		
 		$columns = array('name', 'date', 'size');
 		
 		if($dir !== 'desc' && $dir !== 'asc') {
@@ -444,9 +448,8 @@ EOF;
 			$sort = get_pref($event.'_sort_column', 'name');
 		}
 		
-		if(has_privs('rah_backup_delete')) {
+		if($methods) {
 			$column[] = hCell(fInput('checkbox', 'select_all', 0, '', '', '', '', '', 'select_all'), '', ' title="'.gTxt('toggle_all_selected').'" class="multi-edit"');
-			$methods['delete'] = gTxt('rah_backup_delete');
 		}
 		
 		foreach($columns as $name) {
