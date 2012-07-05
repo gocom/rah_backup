@@ -35,10 +35,6 @@
 		register_callback(array('rah_backup', 'call_backup'), 'textpattern');
 	}
 
-/**
- * Backup class
- */
-
 class rah_backup {
 
 	static public $version = '0.1';
