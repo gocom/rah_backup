@@ -449,7 +449,7 @@ EOF;
 		}
 		
 		foreach($columns as $name) {
-			$column[] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', ($name === $sort ? $dir : ''));
+			$column[] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', $name === $sort ? $dir : '', 'browse');
 		}
 		
 		if(has_privs('rah_backup_restore')) {
