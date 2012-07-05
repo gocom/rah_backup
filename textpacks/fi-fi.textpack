@@ -37,6 +37,7 @@ rah_backup_define_preferences => Joitain asetuksia tulee määrittää ennen kui
 rah_backup_dir_not_found => Varmuuskopio-hakemisto <strong>{path}</strong> ei löytynyt.
 rah_backup_dir_not_readable => Varmuuskopio-hakemisto <strong>{path}</strong> ei ole luettavissa.
 rah_backup_dir_not_writable => Varmuuskopio-hakemisto <strong>{path}</strong> ei ole kirjoitettavissa.
+rah_backup_invalid_ignored_table => Poisluettu tietokantataulu <strong>{name}</strong> ei ole olemassa.
 rah_backup_exec_func_unavailable => PHP:n exec() funktio on poistettu käytöstä. Liitännäinen vaatii sen toimiakseen.
 rah_backup_start_by => Aloita määrittämällä asetukset Asetukset-sivulla
 rah_backup_safe_mode_no_exec_access => Valittua komentoa ei voi suorittaa PHP:n safe-moden seurauksena.
