@@ -539,7 +539,6 @@ EOF;
 	
 	/**
 	 * Backup callback
-	 * @return nothing
 	 */
 	
 	static public function call_backup() {
@@ -553,17 +552,16 @@ EOF;
 			$prefs['rah_backup_key'] !== gps('rah_backup')
 		)
 			return;
-			
-		$backup = new rah_backup();
 		
-		if(!$backup->message) {
-			$backup->create(true);
+		if(!rah_backup::get()->message) {
+			rah_backup::get()->create(true);
 		}
 	}
 	
 	/**
 	 * Sanitize filename
 	 * @param string $filename
+	 * @return string
 	 */
 	
 	public function sanitize($filename) {
