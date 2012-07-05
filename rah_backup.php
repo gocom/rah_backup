@@ -124,7 +124,7 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
-		if(!$prefs['rah_backup_path'] || !$prefs['rah_backup_mysql'] || !$prefs['rah_backup_mysqldump'] || ($prefs['rah_backup_copy_paths'] && !$prefs['rah_backup_tar'])) {
+		if(!$prefs['rah_backup_path'] || !$prefs['rah_backup_mysql'] || !$prefs['rah_backup_mysqldump'] || ($prefs['rah_backup_copy_paths'] && !$prefs['rah_backup_tar']) || ($prefs['rah_backup_compress'] && !$prefs['rah_backup_gzip'])) {
 			$this->message[] = gTxt('rah_backup_define_preferences', array(
 				'{start_by}' => 
 					'<a href="?event=prefs&amp;'.
