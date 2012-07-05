@@ -434,10 +434,6 @@ EOF;
 		
 		$methods = array();
 		
-		if(has_privs('rah_backup_delete')) {
-			$methods['delete'] = gTxt('rah_backup_delete');
-		}
-		
 		$columns = array('name', 'date', 'size');
 		
 		if($dir !== 'desc' && $dir !== 'asc') {
@@ -450,6 +446,7 @@ EOF;
 		
 		if(has_privs('rah_backup_delete')) {
 			$column[] = hCell(fInput('checkbox', 'select_all', 0, '', '', '', '', '', 'select_all'), '', ' title="'.gTxt('toggle_all_selected').'" class="multi-edit"');
+			$methods['delete'] = gTxt('rah_backup_delete');
 		}
 		
 		foreach($columns as $name) {
@@ -483,7 +480,7 @@ EOF;
 				$column = array();
 				$name = htmlspecialchars($name);
 				
-				if(has_privs('rah_backup_delete')) {
+				if($methods) {
 					$column[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
 				}
 				
@@ -526,8 +523,11 @@ EOF;
 		
 		$out[] = 
 			'		</tbody>'.n.
-			'	</table>'.n.
-			multi_edit($methods, $event, 'multi_edit');
+			'	</table>'.n;
+		
+		if($methods) {
+			$out[] = multi_edit($methods, $event, 'multi_edit');
+		}
 		
 		$this->build_pane($out, $message);
 	}
