@@ -415,11 +415,6 @@ class rah_backup {
 				});
 				//-->
 			</script>
-			<style type="text/css">
-				#rah_backup_container .rah_backup_restore {
-					min-width: 100px;
-				}
-			</style>
 EOF;
 	}
 
