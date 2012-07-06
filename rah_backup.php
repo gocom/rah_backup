@@ -36,8 +36,20 @@
 	}
 
 class rah_backup {
-
+	
 	static public $version = '0.1';
+	
+	/**
+	 * @const int Filesystem backup type
+	 */
+
+	const BACKUP_FILESYSTEM = 1;
+	
+	/**
+	 * @const int Filesystem backup type
+	 */
+	
+	const BACKUP_DATABASE = 2;
 	
 	/**
 	 * @var obj Stores instances
@@ -496,7 +508,7 @@ EOF;
 				
 				if(has_privs('rah_backup_restore')) {
 					
-					if($backup['type'] === 'database' && !$this->warning) {
+					if($backup['type'] === self::BACKUP_DATABASE && !$this->warning) {
 						$column[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
 					}
 					
@@ -830,6 +842,7 @@ EOF;
 			'ext' => SORT_REGULAR,
 			'date' => SORT_NUMERIC,
 			'size' => SORT_NUMERIC,
+			'type' => SORT_NUMERIC,
 		);
 		
 		if(!is_string($sort) || !isset($sort_crit[$sort])) {
@@ -848,16 +861,16 @@ EOF;
 			}
 			
 			$backup = array(
-				'ext' => pathinfo($file, PATHINFO_EXTENSION),
 				'path' => $file,
 				'name' => basename($file),
+				'ext' => pathinfo($file, PATHINFO_EXTENSION),
 				'date' => (int) filemtime($file),
 				'size' => (int) filesize($file),
-				'type' => 'filesystem',
+				'type' => self::BACKUP_FILESYSTEM,
 			);
 			
 			if($backup['ext'] === 'sql' || ($backup['ext'] === 'gz' && substr($backup['name'], -7, 4) === '.sql')) {
-				$backup['type'] = 'database';
+				$backup['type'] = self::BACKUP_DATABASE;
 			}
 			
 			$files[$backup['name']] = $backup;
