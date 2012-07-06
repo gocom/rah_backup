@@ -244,7 +244,7 @@ class rah_backup {
 				'gzip' => array('text_input', 'gzip'),
 				'ignore_tables' => array('text_input', ''),
 				'compress' => array('yesnoradio', 0),
-				'overwrite' => array('yesnoradio', 1),
+				'overwrite' => array('yesnoradio', 0),
 				'callback' => array('yesnoradio', 0),
 				'key' => array('text_input', md5(uniqid(mt_rand(), TRUE))),
 			) as $name => $val
