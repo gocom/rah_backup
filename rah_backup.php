@@ -132,6 +132,14 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
+		if(!is_callable('exec')) {
+			$this->warning[] = gTxt('rah_backup_exec_func_unavailable');
+		}
+		
+		if(strpos($txpcfg['db'], '\\') !== false) {
+			$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
+		}
+		
 		if(!$prefs['rah_backup_path'] || !$prefs['rah_backup_mysql'] || !$prefs['rah_backup_mysqldump'] || ($prefs['rah_backup_copy_paths'] && !$prefs['rah_backup_tar']) || ($prefs['rah_backup_compress'] && !$prefs['rah_backup_gzip'])) {
 			$this->message[] = gTxt('rah_backup_define_preferences', array(
 				'{start_by}' => 
@@ -203,14 +211,6 @@ class rah_backup {
 			}
 			
 			$this->$n = rtrim(trim($this->$n),'/\\');
-		}
-		
-		if(strpos($txpcfg['db'], '\\') !== false) {
-			$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
-		}
-		
-		if(!function_exists('exec') || is_disabled('exec')) {
-			$this->warning[] = gTxt('rah_backup_exec_func_unavailable');
 		}
 		
 		if(!$prefs['rah_backup_overwrite']) {
