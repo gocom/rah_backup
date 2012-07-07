@@ -133,7 +133,7 @@ class rah_backup {
 		global $prefs, $txpcfg;
 		
 		if(!is_callable('exec')) {
-			$this->warning[] = gTxt('rah_backup_exec_func_unavailable');
+			$this->warning[] = gTxt('rah_backup_exec_disabled');
 		}
 		
 		if(strpos($txpcfg['db'], '\\') !== false) {
