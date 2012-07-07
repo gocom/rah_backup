@@ -111,9 +111,9 @@ h3. Ignore database tables (comma-separated)
 
 p. Sets database tables that will not be included in database backups. Separate multiple tables with commas (@,@). Note that since the tables are not included in backups, they won't be restored, created or populated either with the backup when restoring. Ignored tables need to be managed otherwise, and re-created manually.
 
-p. This option can be used to exclude sensitive information or temporary data from a frequently taken backups. Following would exclude Textpattern's user accounts table containing email address and password hashes from backups:
+p. This option can be used to exclude sensitive information or temporary data from a frequently taken backups. Following would exclude Textpattern's user accounts table containing email address and password hashes and visitor logs from backups:
 
-bc. txp_users
+bc. txp_users, txp_log
 
 h3. Compress backups using Gzip?
 
