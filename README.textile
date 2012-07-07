@@ -1,6 +1,6 @@
 h1. rah_backup
 
-p. Rah_backup is an admin-side plugin for "Textpattern CMS":http://www.textpattern.com. It takes and restores site backups.
+p. Rah_backup keeps your important site safe from disastrous events. Rah_backup is an admin-side backup utility plugin for "Textpattern CMS":http://www.textpattern.com. Backs up both your files and databases with single click of button and restores as easily. To support its features, the plugin packs a clean, user-friendly interface that feels like it was part of Textpattern itself.
 
 h2. Requirements
 
@@ -14,6 +14,22 @@ p. Rah_backups' minimum requirements:
 ** "MySQLdump":http://dev.mysql.com/doc/refman/5.1/en/mysqldump.html
 ** "TAR":http://www.gnu.org/software/tar/
 ** "Gzip":http://www.gzip.org/
+
+h2. Installation
+
+p. Rah_backup's installation starts with the simple three-steps all plugin normally use:
+
+# Download and copy the plugin installation files contents.
+# Paste the copied contents into the box at the top of the "Plugins panel":":http://textpattern.net/wiki/index.php?title=plugins, and click *Upload*. 
+# You will be shown a preview of the plugin and its documentation. Click *Install* at the bottom of the screen.
+# You will be returned to the plugin list when the plugin has been installed.
+# Now activate the plugin by clicking its No link, which toggles the status to Yes, and it's not active.
+
+p. If everything worked fine, the plugin is now installed and active. The plugin's admin-interface should be accessible under _Extensions/Backups_ area. When you go to the plugin's panel for the first time, you will be greeted with following message:
+
+bq. Some settings need to be set before backups can be made. Start by defining mandatory settings at Preferences pane.
+
+p. The message will direct you to "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences where you will be able to set set some mandatory preferences.
 
 h2. Preferences and configuration
 
