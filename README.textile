@@ -20,7 +20,7 @@ h2. Installation
 p. Rah_backup's installation starts with the simple three-steps all plugin normally use:
 
 # Download and copy the plugin installation files contents.
-# Paste the copied contents into the box at the top of the "Plugins panel":":http://textpattern.net/wiki/index.php?title=plugins, and click *Upload*. 
+# Paste the copied contents into the box at the top of the "Plugins panel":http://textpattern.net/wiki/index.php?title=plugins, and click *Upload*. 
 # You will be shown a preview of the plugin and its documentation. Click *Install* at the bottom of the screen.
 # You will be returned to the plugin list when the plugin has been installed.
 # Now activate the plugin by clicking its No link, which toggles the status to Yes, and it's not active.
