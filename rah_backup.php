@@ -446,7 +446,7 @@ EOF;
 			$methods['delete'] = gTxt('rah_backup_delete');
 		}
 		
-		$columns = array('name', 'date', 'size');
+		$columns = array('name', 'date', 'type', 'size');
 		
 		if($dir !== 'desc' && $dir !== 'asc') {
 			$dir = get_pref($event.'_sort_dir', 'asc');
@@ -504,6 +504,7 @@ EOF;
 				}
 				
 				$column[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
+				$column[] = td(gTxt('rah_backup_type_'.$backup['type']));
 				$column[] = td($this->format_size($backup['size']));
 				
 				if(has_privs('rah_backup_restore')) {
