@@ -41,6 +41,6 @@ rah_backup_dir_not_writable => Backup directory <strong>{path}</strong> is not w
 rah_backup_invalid_ignored_table => Ignored table <strong>{name}</strong> doesn't exists in the database.
 rah_backup_exec_disabled => PHP's exec() function is disabled. The plugin requires that the function is enabled.
 rah_backup_start_by => Start by defining mandatory settings at Preferences pane
-rah_backup_safe_mode_no_exec_access => Sorry, can't execute the task. PHP's safe mode prevents commands from being ran correctly.
+rah_backup_safe_mode_no_exec_access => PHP's safe mode being on prevents commands from executing correctly.
 rah_backup_type_1 => Files
 rah_backup_type_2 => Database

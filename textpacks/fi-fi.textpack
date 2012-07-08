@@ -41,6 +41,6 @@ rah_backup_dir_not_writable => Varmuuskopio-hakemisto <strong>{path}</strong> ei
 rah_backup_invalid_ignored_table => Poisluettu tietokantataulu <strong>{name}</strong> ei ole olemassa.
 rah_backup_exec_disabled => PHP:n exec() funktio on poistettu käytöstä. Liitännäinen vaatii sen toimiakseen.
 rah_backup_start_by => Aloita määrittämällä asetukset Asetukset-sivulla
-rah_backup_safe_mode_no_exec_access => Valittua komentoa ei voi suorittaa PHP:n safe-moden seurauksena.
+rah_backup_safe_mode_no_exec_access => PHP:n safe-moden päällä oleminen estää komentojen käsittelyn oikein.
 rah_backup_type_1 => Tiedostot
 rah_backup_type_2 => Tietokanta
