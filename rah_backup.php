@@ -328,62 +328,49 @@ class rah_backup {
 	 */
 
 	static public function head() {
-		global $event;
+		global $event, $theme;
 		
 		if($event != 'rah_backup')
 			return;
 		
 		gTxtScript(array(
 			'rah_backup_database_will_be_overwriten',
-			'rah_backup_inprogress',
 			'rah_backup_confirm_backup',
 			'rah_backup_restoring',
 			'rah_backup_restored',
 			'are_you_sure',
 		));
 		
+		$msg = array(
+			'backup' => escape_js($theme->announce_async(gTxt('rah_backup_inprogress'))),
+			'done' => escape_js($theme->announce_async(gTxt('rah_backup_done'))),
+		);
+		
 		echo <<<EOF
 			<script type="text/javascript">
 				<!--
 				$(document).ready(function(){
 					
-					/*
-						Do a backup
-					*/
-					
-					(function() {
-						$('a#rah_backup_do').click(function(e) {
-							e.preventDefault();
-								
-							if(!verify(textpattern.gTxt('rah_backup_confirm_backup')))
-								return false;
-									
-							$(this).after('<span class="navlink-active" id="rah_backup_statusmsg">'+textpattern.gTxt('rah_backup_inprogress')+'</span>').hide();
-									
-							$.ajax({
-								type : 'POST',
-								url : 'index.php',
-								data : {
-									'event' : textpattern['event'],
-									'step' : 'create',
-									'_txp_token' : textpattern['_txp_token'],
-								},
-								success: function(data, status, xhr) {
-									$('#rah_backup_container table.txp-list tbody').html($(data).find('#rah_backup_list').html());
-								},
-								error: function() {
-								},
-								complete: function() {
-									$('#rah_backup_statusmsg').hide();
-									$('#rah_backup_do').show();
-								}
-							});
-						}).attr('href','#');
-					})();
-					
-					/*
-						Restore a backup
-					*/
+					$('a#rah_backup_do').click(function(e) {
+						e.preventDefault();
+						var obj = $(this);
+						
+						if(obj.hasClass('navlink-active') || !verify(textpattern.gTxt('rah_backup_confirm_backup'))) {
+							return false;
+						}
+						
+						var href = $(this).attr('href');
+						obj.addClass('navlink-active').attr('href', '#');
+						
+						$.globalEval('{$msg['backup']}');
+						
+						$.post('index.php', href.substr(1) + '&app_mode=async').success(function(data) {
+							$('#rah_backup_container table.txp-list tbody').html($(data).find('#rah_backup_list').html());
+							$.globalEval('{$msg['done']}');
+						}).complete(function() {
+							obj.removeClass('navlink-active').attr('href', href);
+						});
+					});
 					
 					(function() {
 						$('.rah_backup_restore').live('click', function(e) {
