@@ -339,7 +339,7 @@ class rah_backup {
 		));
 		
 		$msg = array(
-			'backup' => escape_js($theme->announce_async(gTxt('rah_backup_inprogress'))),
+			'backup' => escape_js($theme->announce_async(gTxt('rah_backup_taking'))),
 			'restore' => escape_js($theme->announce_async(gTxt('rah_backup_restoring'))),
 		);
 		
