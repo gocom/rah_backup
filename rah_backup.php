@@ -915,7 +915,7 @@ EOF;
 			
 			'	<p class="nav-tertiary">'.
 			
-			(has_privs('rah_backup_create') && !$this->message && !$this->warning ? 
+			(has_privs('rah_backup_create') && !$this->warning ? 
 				'<a class="navlink" id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a>' : ''
