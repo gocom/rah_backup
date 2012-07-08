@@ -334,79 +334,53 @@ class rah_backup {
 			return;
 		
 		gTxtScript(array(
-			'rah_backup_database_will_be_overwriten',
+			'rah_backup_confirm_restore',
 			'rah_backup_confirm_backup',
-			'rah_backup_restoring',
-			'rah_backup_restored',
-			'are_you_sure',
 		));
 		
 		$msg = array(
 			'backup' => escape_js($theme->announce_async(gTxt('rah_backup_inprogress'))),
-			'done' => escape_js($theme->announce_async(gTxt('rah_backup_done'))),
+			'restore' => escape_js($theme->announce_async(gTxt('rah_backup_restoring'))),
 		);
 		
 		echo <<<EOF
 			<script type="text/javascript">
 				<!--
 				$(document).ready(function(){
-					
-					$('a#rah_backup_do').click(function(e) {
+					$('.rah_backup_restore, .rah_backup_take').live('click', function(e) {
 						e.preventDefault();
 						var obj = $(this);
 						
-						if(obj.hasClass('rah_backup_active') || !verify(textpattern.gTxt('rah_backup_confirm_backup'))) {
+						if(obj.hasClass('rah_backup_take')) {
+							var message = textpattern.gTxt('rah_backup_confirm_backup');
+						}
+						else {
+							var message = textpattern.gTxt('rah_backup_confirm_restore');
+						}
+								
+						if(obj.hasClass('rah_backup_active') || !verify(message)) {
 							return false;
+						}
+						
+						if(obj.hasClass('rah_backup_take')) {
+							$.globalEval('{$msg['backup']}');
+						}
+						else {
+							$.globalEval('{$msg['restore']}');
 						}
 						
 						var href = $(this).attr('href');
 						obj.addClass('rah_backup_active').attr('href', '#');
 						
-						$.globalEval('{$msg['backup']}');
-						
-						$.post('index.php', href.substr(1) + '&app_mode=async').success(function(data) {
-							$('#rah_backup_container table.txp-list tbody').html($(data).find('#rah_backup_list').html());
-							$.globalEval('{$msg['done']}');
+						$.ajax({
+							type: 'POST',
+							url: 'index.php',
+							data: href.substr(1) + '&app_mode=async',
+							dataType: 'script'
 						}).complete(function() {
 							obj.removeClass('rah_backup_active').attr('href', href);
 						});
 					});
-					
-					(function() {
-						$('.rah_backup_restore').live('click', function(e) {
-							e.preventDefault();
-								
-							if(!verify(textpattern.gTxt('rah_backup_database_will_be_overwriten')))
-								return false;
-									
-							$('.rah_backup_restore').hide();
-									
-							var link = $(this);
-							var filename = $(this).attr('title');
-								
-							link.after('<span class="rah_backup_restoring">'+textpattern.gTxt('rah_backup_restoring')+'</span>');
-								
-							$.ajax({
-								type : 'POST',
-								url : 'index.php',
-								data : {
-									'event' : textpattern['event'],
-									'step' : 'restore',
-									'_txp_token' : textpattern['_txp_token'],
-									'file' : filename
-								},		
-								success: function(data, status, xhr) {
-									link.next('span.rah_backup_restoring').text(textpattern.gTxt('rah_backup_restored'));
-								},		
-								error: function() {	
-								},		
-								complete: function() {
-									$('.rah_backup_restore').show();
-									link.hide();
-								}
-							});	
-						}).attr('href','#');
-					})();
 				});
 				//-->
 			</script>
@@ -420,7 +394,7 @@ EOF;
 
 	private function browser($message='') {
 	
-		global $event, $prefs;
+		global $event, $prefs, $app_mode, $theme;
 		
 		extract(gpsa(array(
 			'sort',
@@ -461,51 +435,43 @@ EOF;
 		if($this->warning) {
 			$out[] = '<p id="warning">'.$this->warning[0].'</p>';
 		}
-		
-		$out[] = 
-			'	<table class="txp-list">'.n.
-			'		<thead>'.
-			tr(implode(n, $column)).
-			'		</thead>'.n.
-			'		<tbody id="rah_backup_list">'.n;
 
 		if(!$this->message) {
-			
 			$backups = $this->get_backups($sort, $dir);
 			
 			foreach($backups as $name => $backup) {
 				
-				$column = array();
+				$td = array();
 				$name = htmlspecialchars($name);
 				
 				if($methods) {
-					$column[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
+					$td[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
 				}
 				
 				if(has_privs('rah_backup_download')) {
-					$column[] = td('<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>');
+					$td[] = td('<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>');
 				}
 				
 				else {
-					$column[] = td($name);
+					$td[] = td($name);
 				}
 				
-				$column[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
-				$column[] = td(gTxt('rah_backup_type_'.$backup['type']));
-				$column[] = td($this->format_size($backup['size']));
+				$td[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
+				$td[] = td(gTxt('rah_backup_type_'.$backup['type']));
+				$td[] = td($this->format_size($backup['size']));
 				
 				if(has_privs('rah_backup_restore')) {
 					
 					if($backup['type'] === self::BACKUP_DATABASE && !$this->warning) {
-						$column[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
+						$td[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
 					}
 					
 					else {
-						$column[] = td('');
+						$td[] = td('');
 					}
 				}
 				
-				$out[] = tr(implode(n, $column));
+				$out[] = tr(implode(n, $td));
 			}
 			
 			if(!$backups) {
@@ -520,12 +486,25 @@ EOF;
 				'			</tr>'.n;
 		}
 		
-		$out[] = 
-			'		</tbody>'.n.
-			'	</table>'.n;
+		$out = implode(n, $out);
+		
+		if($app_mode == 'async') {
+			send_script_response($theme->announce_async($message).n.'$("#rah_backup_list").html("'.escape_js($out).'");');
+			return;
+		}
+		
+		$out = 
+			'<table class="txp-list">'.n.
+			'	<thead>'.
+			tr(implode(n, $column)).
+			'	</thead>'.n.
+			'	<tbody id="rah_backup_list">'.n.
+				$out.n.
+			'	</tbody>'.n.
+			'</table>'.n;
 		
 		if($methods) {
-			$out[] = multi_edit($methods, $event, 'multi_edit');
+			$out .= multi_edit($methods, $event, 'multi_edit');
 		}
 		
 		$this->build_pane($out, $message);
@@ -643,7 +622,7 @@ EOF;
 		$file = (string) gps('file');
 		$backups = $this->get_backups();
 		
-		if(!isset($backups[$file]) || $backups[$file]['type'] != 'database') {
+		if(!isset($backups[$file]) || $backups[$file]['type'] != self::BACKUP_DATABASE) {
 			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
 			return;
 		}
@@ -673,7 +652,7 @@ EOF;
 			@unlink($path);
 		}
 		
-		$this->browser(gTxt('rah_backup_restore_done'));
+		$this->browser(gTxt('rah_backup_restored'));
 	}
 
 	/**
@@ -903,7 +882,7 @@ EOF;
 			'	<p class="txp-buttons">'.
 			
 			(has_privs('rah_backup_create') && !$this->warning ? 
-				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
+				'<a class="rah_backup_take" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
 				'</a> ' : ''
 			).
