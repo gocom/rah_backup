@@ -355,12 +355,12 @@ class rah_backup {
 						e.preventDefault();
 						var obj = $(this);
 						
-						if(obj.hasClass('navlink-active') || !verify(textpattern.gTxt('rah_backup_confirm_backup'))) {
+						if(obj.hasClass('rah_backup_active') || !verify(textpattern.gTxt('rah_backup_confirm_backup'))) {
 							return false;
 						}
 						
 						var href = $(this).attr('href');
-						obj.addClass('navlink-active').attr('href', '#');
+						obj.addClass('rah_backup_active').attr('href', '#');
 						
 						$.globalEval('{$msg['backup']}');
 						
@@ -368,7 +368,7 @@ class rah_backup {
 							$('#rah_backup_container table.txp-list tbody').html($(data).find('#rah_backup_list').html());
 							$.globalEval('{$msg['done']}');
 						}).complete(function() {
-							obj.removeClass('navlink-active').attr('href', href);
+							obj.removeClass('rah_backup_active').attr('href', href);
 						});
 					});
 					
@@ -900,16 +900,16 @@ EOF;
 			'<form action="index.php" method="post" id="rah_backup_container" class="txp-container multi_edit_form">'.n.
 			'	'.tInput().n.
 			
-			'	<p class="nav-tertiary">'.
+			'	<p class="txp-buttons">'.
 			
 			(has_privs('rah_backup_create') && !$this->warning ? 
-				'<a class="navlink" id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
+				'<a id="rah_backup_do" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
 					gTxt('rah_backup_create').
-				'</a>' : ''
+				'</a> ' : ''
 			).
 			
 			(has_privs('prefs') && has_privs('rah_backup_preferences') ? 
-				'<a class="navlink" href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup_path">'.
+				'<a href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup_path">'.
 					gTxt('rah_backup_preferences').
 				'</a>' : ''
 			).
