@@ -431,10 +431,6 @@ EOF;
 		
 		set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
 		set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
-		
-		if($this->warning) {
-			$out[] = '<p id="warning">'.$this->warning[0].'</p>';
-		}
 
 		if(!$this->message) {
 			$backups = $this->get_backups($sort, $dir);
@@ -494,6 +490,8 @@ EOF;
 		}
 		
 		$out = 
+			($this->warning ? '<p id="warning">'.$this->warning[0].'</p>' : '').
+		
 			'<table class="txp-list">'.n.
 			'	<thead>'.
 			tr(implode(n, $column)).
