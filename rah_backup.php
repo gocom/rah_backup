@@ -527,7 +527,7 @@ EOF;
 			return;
 		
 		if(!rah_backup::get()->message) {
-			rah_backup::get()->create(true);
+			rah_backup::get()->create();
 		}
 	}
 	
@@ -544,11 +544,9 @@ EOF;
 	
 	/**
 	 * Creates a new backup
-	 * @param bool $silent Return output or not.
-	 * @todo Site URL might not be trusted.
 	 */
 
-	private function create($silent=false) {
+	private function create() {
 		global $txpcfg, $prefs;
 
 		@set_time_limit(0);
@@ -605,7 +603,7 @@ EOF;
 
 		callback_event('rah_backup.done');
 
-		if($silent) {
+		if(txpinterface == 'public') {
 			exit;
 		}
 
