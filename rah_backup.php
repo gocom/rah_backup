@@ -492,6 +492,7 @@ EOF;
 		$out = 
 			($this->warning ? '<p id="warning">'.$this->warning[0].'</p>' : '').
 		
+			'<div class="txp-listtables">'.n.
 			'<table class="txp-list">'.n.
 			'	<thead>'.
 			tr(implode(n, $column)).
@@ -499,7 +500,8 @@ EOF;
 			'	<tbody id="rah_backup_list">'.n.
 				$out.n.
 			'	</tbody>'.n.
-			'</table>'.n;
+			'</table>'.n.
+			'</div>'.n;
 		
 		if($methods) {
 			$out .= multi_edit($methods, $event, 'multi_edit');
