@@ -341,6 +341,7 @@ class rah_backup {
 		$msg = array(
 			'backup' => escape_js($theme->announce_async(gTxt('rah_backup_taking'))),
 			'restore' => escape_js($theme->announce_async(gTxt('rah_backup_restoring'))),
+			'error' => escape_js($theme->announce_async(gTxt('rah_backup_task_error'))),
 		);
 		
 		echo <<<EOF
@@ -372,11 +373,8 @@ class rah_backup {
 						var href = $(this).attr('href');
 						obj.addClass('rah_backup_active').attr('href', '#');
 						
-						$.ajax({
-							type: 'POST',
-							url: 'index.php',
-							data: href.substr(1) + '&app_mode=async',
-							dataType: 'script'
+						sendAsyncEvent(href.substr(1), null, 'script').error(function() {
+							$.globalEval('{$msg['error']}');
 						}).complete(function() {
 							obj.removeClass('rah_backup_active').attr('href', href);
 						});

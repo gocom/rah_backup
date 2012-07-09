@@ -42,5 +42,6 @@ rah_backup_invalid_ignored_table => Poisluettu tietokantataulu <strong>{name}</s
 rah_backup_exec_disabled => PHP:n exec() funktio on poistettu käytöstä. Liitännäinen vaatii sen toimiakseen.
 rah_backup_start_by => Aloita määrittämällä asetukset Asetukset-sivulla
 rah_backup_safe_mode_no_exec_access => PHP:n safe-moden päällä oleminen estää komentojen käsittelyn oikein.
+rah_backup_task_error => Tehtävä epäonnistui. Ole hyvä ja yritä uudelleen.
 rah_backup_type_1 => Tiedostot
 rah_backup_type_2 => Tietokanta
