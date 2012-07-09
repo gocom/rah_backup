@@ -1,3 +1,25 @@
 h1. SFTP module for rah_backup
 
 p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":http://phpseclib.sourceforge.net/ for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.
+
+h2. Configuration
+
+p. To set SFTP connection details add following rules to your Textpattern's *config.php* file, by default located in your *textpattern* directory.
+
+bc. $rah_backup__module_sftp_offsite[] = array(
+	'host' => 'example.com',
+	'port' => 22,
+	'user' => 'myusername',
+	'pass' => 'mypassword',
+	'path' => '/path/to/remote/directory/',
+	'phpseclib_path' => '/path/to/phpseclib/installation/directory/',
+);
+
+p. Where options are as follows:
+
+* *host* SFTP server's address (i.e. domain.ltd or IP)
+* *port* remote server's SSH (SFTP) port number
+* *user* remote server's username
+* *pass* remote server's password
+* *path* path to directory used to store the backups on the remote server.
+* *phpseclib_path* absolute path to phpseclib's installation directory. The specified directory should cointain sub-directories as "Crypt" and "Net"

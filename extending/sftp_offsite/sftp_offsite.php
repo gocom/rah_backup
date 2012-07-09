@@ -15,31 +15,6 @@
  */
 
 /**
- * @global array $rah_backup__module_sftp_offsite
- */
-
-	global $rah_backup__module_sftp_offsite;
-
-/**
- * Your configuration. Used to connect to remote server.
- * @global string $host SFTP server's address (i.e. domain.ltd or IP).
- * @global int $port Remote server's SSH (SFTP) port.
- * @global string $user Remote server's username.
- * @global string $pass Remote server's password.
- * @global string $path Path to directory used to store the backups on the remote server.
- * @global string $phpseclib_path Absolute path to phpseclib's installation directory. The directory should cointain sub-directories as "Crypt" and "Net".
- */
-
-	$rah_backup__module_sftp_offsite[] = array(
-		'host' => '',
-		'port' => 22,
-		'user' => '',
-		'pass' => '',
-		'path' => '/path/to/remote/directory/',
-		'phpseclib_path' => '/path/to/phpseclib/installation/directory/',
-	);
-
-/**
  * Registers the function. Hook to event 'rah_backup.done'
  */
 
