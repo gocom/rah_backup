@@ -13,33 +13,6 @@
  */
 
 /**
- * @global array $rah_backup__module_ftp_offsite
- */
-
-	global $rah_backup__module_ftp_offsite;
-
-/**
- * Your configuration. Used to connect to remote server.
- * @global string $host FTP server's address (i.e. domain.ltd or IP).
- * @global int $port Remote server's FTP port
- * @global string $user Remote server's username.
- * @global string $pass Remote server's password.
- * @global string $path Path to directory used to store the backups on the remote server.
- * @global bool $passive Turns passive mode on or off.
- * @global bool $as_binary Transfer files in binary mode. If FALSE, ASCII mode is used instead.
- */
-
-	$rah_backup__module_ftp_offsite[] = array(
-		'host' => '',
-		'port' => 21,
-		'user' => '',
-		'pass' => '',
-		'path' => '/path/to/remote/directory/',
-		'passive' => true,
-		'as_binary' => true,
-	);
-
-/**
  * Registers the function. Hook to event 'rah_backup.done'.
  */
 
@@ -61,7 +34,7 @@
 		
 		foreach((array) $rah_backup__module_ftp_offsite as $cfg) {
 		
-			if(!$cfg['host'] || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp)) {
+			if(empty($cfg['host']) || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp)) {
 				continue;
 			}
 			

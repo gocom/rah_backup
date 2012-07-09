@@ -1,3 +1,26 @@
 h1. FTP module for rah_backup
 
 p. Transfers backups to offsite location via FTP. The module requires PHP's "FTP extension":http://www.php.net/manual/en/book.ftp.php.
+
+h2. Configuring
+
+p. To set the FTP connection details, add following rule (or multiple) to your *config.php* file, located by default in your *textpattern* directory.
+
+bc. $rah_backup__module_ftp_offsite[] = array(
+	'host' => 'ftp.example.com',
+	'port' => 21,
+	'user' => 'myusername',
+	'pass' => 'mypassword',
+	'path' => '/path/to/remote/directory/',
+	'passive' => true,
+	'as_binary' => true,
+);
+
+p. Where options are:
+
+* *host* is your remote FTP server's address
+* *port* remote server's FTP port number
+* *pass* remote server's password
+* *path* path to directory used to store the backups on the remote server
+* *passive* turns passive mode on or off
+* *as_binary* transfer files in binary mode. If FALSE, ASCII mode is used instead
