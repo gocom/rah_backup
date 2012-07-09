@@ -617,6 +617,9 @@ EOF;
 	private function restore() {
 		global $txpcfg, $prefs;
 		
+		@set_time_limit(0);
+		@ignore_user_abort(true);
+		
 		$file = (string) gps('file');
 		$backups = $this->get_backups();
 		
