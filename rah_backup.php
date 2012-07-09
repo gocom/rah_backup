@@ -617,9 +617,6 @@ EOF;
 	private function restore() {
 		global $txpcfg, $prefs;
 		
-		@set_time_limit(0);
-		@ignore_user_abort(true);
-		
 		$file = (string) gps('file');
 		$backups = $this->get_backups();
 		
@@ -629,6 +626,9 @@ EOF;
 		}
 		
 		extract($backups[$file]);
+		
+		@set_time_limit(0);
+		@ignore_user_abort(true);
 		
 		if($ext == 'gz') {
 			$this->exec_command($this->gzip, '-cd '.$this->arg($path).' > '.$this->arg($path.'.tmp'));
