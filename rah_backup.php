@@ -877,7 +877,7 @@ EOF;
 		echo 
 			n.
 			
-			'<form action="index.php" method="post" id="rah_backup_container" class="txp-container multi_edit_form">'.n.
+			'<form action="index.php" method="post" class="txp-container multi_edit_form">'.n.
 			'	'.tInput().n.
 			
 			'	<p class="txp-buttons">'.
