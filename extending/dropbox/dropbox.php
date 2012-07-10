@@ -255,6 +255,7 @@ class rah_backup__dropbox {
 
 	/**
 	 * Connect to Dropbox
+	 * @return bool
 	 */
 	
 	public function connect() {
@@ -288,6 +289,7 @@ class rah_backup__dropbox {
 		}
 		
 		$this->connected = true;
+		return true;
 	}
 	
 	/**
@@ -295,7 +297,7 @@ class rah_backup__dropbox {
 	 */
 	
 	public function upload() {
-		
+	
 		if(!$this->token || !$this->connect()) {
 			return;
 		}
