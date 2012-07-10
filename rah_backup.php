@@ -46,7 +46,7 @@ class rah_backup {
 	const BACKUP_FILESYSTEM = 1;
 	
 	/**
-	 * @const int Filesystem backup type
+	 * @const int Database backup type
 	 */
 	
 	const BACKUP_DATABASE = 2;
