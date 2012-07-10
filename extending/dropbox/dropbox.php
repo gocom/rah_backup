@@ -227,7 +227,7 @@ class rah_backup__dropbox {
 	 * Redirects user to web endpoint
 	 */
 	
-	public function auth_authorize() {
+	protected function auth_authorize() {
 		if(!$this->connect()) {
 			exit(gTxt(__CLASS__ . '_connection_error'));
 		}
@@ -237,7 +237,7 @@ class rah_backup__dropbox {
 	 * Gets token and writes it to DB
 	 */
 	
-	public function auth_accesstoken() {
+	protected function auth_accesstoken() {
 		
 		if(!$this->connect()) {
 			exit(gTxt(__CLASS__ . '_connection_error'));
