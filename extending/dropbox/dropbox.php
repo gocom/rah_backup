@@ -343,6 +343,8 @@ class rah_backup__dropbox {
 	
 	/**
 	 * Options controller for app key
+	 * @param string $name Field name
+	 * @param string $value Current value
 	 * @return string HTML
 	 */
 
