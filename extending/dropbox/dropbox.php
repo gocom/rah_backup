@@ -39,12 +39,6 @@ class rah_backup__dropbox {
 	protected $token;
 	
 	/**
-	 * @var string Encryption key
-	 */
-	
-	protected $encryption_key;
-	
-	/**
 	 * @var string Path to Dropbox SDK's installation directory
 	 */
 	
@@ -73,12 +67,6 @@ class rah_backup__dropbox {
 	 */
 	
 	protected $dropbox;
-	
-	/**
-	 * @var obj Encrypter
-	 */
-	
-	protected $encrypter;
 	
 	/**
 	 * Connected
@@ -152,7 +140,6 @@ class rah_backup__dropbox {
 		}
 		
 		$this->callback_uri = hu.'?'.__CLASS__.'_oauth=accesstoken';
-		$this->encryption_key = md5(__CLASS__ . get_pref('blog_uid'));
 		
 		foreach(array('key', 'secret', 'api_dir', 'token') as $name) {
 			$this->$name = get_pref(__CLASS__.'_'.$name);
