@@ -6,7 +6,7 @@ h2. clearlogs
 
 p. Empties visitor logs before taking a backup. The module will empty the actual table, not just records from backup files. Current visitor logs will be permanently lost.
 
-h2. Dropbox
+h2. dropbox
 
 p. Uploads backups to your Dropbox account. The module requires Ben Tadiar's "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox, cURL and PHP 5.3.1.
 
