@@ -1,0 +1,14 @@
+#@admin
+#Default language, en-us, en-gb
+rah_bckp_db => Dropbox module for rah_backup
+rah_backup__dropbox_key => Dropbox app key
+rah_backup__dropbox_secret => Dropbox app secret
+rah_backup__dropbox_token => Account actions
+rah_backup__dropbox_api_dir => Dropbox SDK installation directory
+rah_backup__dropbox_unlink => Unlink account and app
+rah_backup__dropbox_reset => Reset app key and secret
+rah_backup__dropbox_authenticated => Authenticated successfully. You can now go to your Textpattern control panel.
+rah_backup__dropbox_connection_error => Unable to connect to Dropbox. Please try again later.
+rah_backup__dropbox_token_error => Unable to retrieve oAuth token.
+rah_backup__dropbox_set_keys => Set above options and <strong>save</strong>, a link will appear
+rah_backup__dropbox_authorize => Authorize

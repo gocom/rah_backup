@@ -1,0 +1,20 @@
+h1. Dropbox module for rah_backup
+
+p. Transfers backups to your "Dropbox":https://www.dropbox.com/.
+
+h2. Requirements
+
+p. The module at minimum requires:
+
+* "Dropbox App key and secret":https://www.dropbox.com/developers/apps
+* Ben Tadiar's "SDK for the Dropbox REST API":https://github.com/BenTheDesigner/Dropbox
+* PHP 5.3.1 or newer.
+** "cURL":http://www.php.net/manual/en/book.curl.php
+
+h2. Configuration
+
+p. Todo.
+
+h2. Preferences
+
+p. Todo.
