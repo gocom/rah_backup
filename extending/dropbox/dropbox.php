@@ -228,7 +228,9 @@ class rah_backup__dropbox {
 	 */
 	
 	public function auth_authorize() {
-		$this->connect();
+		if(!$this->connect()) {
+			exit(gTxt(__CLASS__ . '_connection_error'));
+		}
 	}
 	
 	/**
