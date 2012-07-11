@@ -17,14 +17,14 @@
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_clearlogs', 'rah_backup.create');
+		register_callback('rah_backup__clearlogs', 'rah_backup.create');
 	}
 
 /**
  * Empties txp_log table.
  */
 
-	function rah_backup__module_clearlogs() {
+	function rah_backup__clearlogs() {
 		@safe_query('TRUNCATE TABLE '.safe_pfx('txp_log'));
 	}
 ?>
