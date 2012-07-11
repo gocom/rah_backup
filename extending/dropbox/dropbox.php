@@ -347,7 +347,9 @@ class rah_backup__dropbox {
 			!get_pref('rah_backup__dropbox_key', '', true) || 
 			!get_pref('rah_backup__dropbox_secret', '', true)
 		) {
-			return gTxt('rah_backup__dropbox_set_keys');
+			return 
+				'<span class="navlink-disabled">'.gTxt('rah_backup__dropbox_authorize').'</span>'.n.
+				'<span class="information">'.gTxt('rah_backup__dropbox_set_keys', array('{save}' => gTxt('save'))).'</span>';
 		}
 		
 		if(get_pref('rah_backup__dropbox_token')) {
