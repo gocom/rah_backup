@@ -597,7 +597,7 @@ EOF;
 			}
 		}
 		
-		callback_event('rah_backup.created');
+		callback_event('rah_backup.created', $this->created);
 
 		if(txpinterface == 'public') {
 			exit;
