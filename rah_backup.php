@@ -106,11 +106,11 @@ class rah_backup {
 	private $filestamp = '';
 	
 	/**
-	 * @var string Path to created backup file
+	 * @var array Path to created backup file
 	 * @todo requires remodelling
 	 */
 	
-	public $created = '';
+	public $created = array();
 
 	/**
 	 * @var array List of invoked messages
@@ -572,8 +572,7 @@ EOF;
 		}
 		
 		if(file_exists($path)) {
-			$this->created = $path;
-			callback_event('rah_backup.created');
+			$this->created[basename($path)] = $path;
 		}
 		
 		if($this->copy_paths) {
@@ -594,11 +593,11 @@ EOF;
 			}
 			
 			if(file_exists($path)) {
-				$this->created = $path;
-				callback_event('rah_backup.created');
+				$this->created[basename($path)] = $path;
 			}
 		}
-
+		
+		callback_event('rah_backup.created');
 		callback_event('rah_backup.done');
 
 		if(txpinterface == 'public') {
