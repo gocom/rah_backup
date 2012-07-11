@@ -14,14 +14,14 @@
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_optimize', 'rah_backup.created');
+		register_callback('rah_backup__optimize', 'rah_backup.created');
 	}
 
 /**
  * Optimizes database tables
  */
 
-	function rah_backup__module_optimize() {
+	function rah_backup__optimize() {
 		@$tables = getThings('SHOW TABLES');
 		
 		foreach((array) $tables as $table) {

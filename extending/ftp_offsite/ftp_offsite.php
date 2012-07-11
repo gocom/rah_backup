@@ -17,22 +17,22 @@
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_ftp_offsite', 'rah_backup.created');
+		register_callback('rah_backup__ftp_offsite', 'rah_backup.created');
 	}
 
 /**
  * Sends new backup files to off site
  */
 
-	function rah_backup__module_ftp_offsite($event, $files) {
+	function rah_backup__ftp_offsite($event, $files) {
 		
-		global $rah_backup__module_ftp_offsite;
+		global $rah_backup__ftp_offsite;
 		
 		if(!is_callable('ftp_connect')) {
 			return;
 		}
 		
-		foreach((array) $rah_backup__module_ftp_offsite as $cfg) {
+		foreach((array) $rah_backup__ftp_offsite as $cfg) {
 		
 			if(empty($cfg['host']) || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp)) {
 				continue;

@@ -19,18 +19,18 @@
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_sftp_offsite', 'rah_backup.created');
+		register_callback('rah_backup__sftp_offsite', 'rah_backup.created');
 	}
 
 /**
  * Sends new backup files to remote server
  */
 
-	function rah_backup__module_sftp_offsite($event, $files) {
+	function rah_backup__sftp_offsite($event, $files) {
 		
-		global $rah_backup__module_sftp_offsite;
+		global $rah_backup__sftp_offsite;
 		
-		foreach((array) $rah_backup__module_sftp_offsite as $cfg) {
+		foreach((array) $rah_backup__sftp_offsite as $cfg) {
 			
 			if(empty($cfg['host'])) {
 				continue;
