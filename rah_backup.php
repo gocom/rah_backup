@@ -584,12 +584,14 @@ EOF;
 			}
 			
 			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.tar';
-			$this->exec_command($this->tar, '-cvpzf '.$this->arg($path).' '.implode(' ', $this->copy_paths));
 			
 			if($prefs['rah_backup_compress']) {
-				$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
-				unlink($path);
-				$path .= '.gz';
+				$path .= '.gz'; 
+				$this->exec_command($this->tar, '-c -v -p -z -f '.$this->arg($path).' '.implode(' ', $this->copy_paths));
+			}
+			
+			else {
+				$this->exec_command($this->tar, '-c -v -p -f '.$this->arg($path).' '.implode(' ', $this->copy_paths));
 			}
 			
 			if(file_exists($path)) {
