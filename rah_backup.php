@@ -837,8 +837,8 @@ EOF;
 				$backup['type'] = self::BACKUP_DATABASE;
 			}
 			
-			$files[$file] = $backup;
-			$order[$file] = $backup[$sort];
+			$files[$backup['name']] = $backup;
+			$order[$backup['name']] = $backup[$sort];
 		}
 		
 		if(!$files) {
