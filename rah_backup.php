@@ -433,10 +433,10 @@ EOF;
 		if(!$this->message) {
 			$backups = $this->get_backups($sort, $dir);
 			
-			foreach($backups as $name => $backup) {
+			foreach($backups as $backup) {
 				
 				$td = array();
-				$name = htmlspecialchars($name);
+				$name = htmlspecialchars($backup['name']);
 				
 				if($methods) {
 					$td[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
@@ -839,8 +839,8 @@ EOF;
 				$backup['type'] = self::BACKUP_DATABASE;
 			}
 			
-			$files[$backup['name']] = $backup;
-			$order[$backup['name']] = $backup[$sort];
+			$files[$file] = $backup;
+			$order[$file] = $backup[$sort];
 		}
 		
 		if(!$files) {
