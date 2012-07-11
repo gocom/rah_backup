@@ -224,6 +224,10 @@ class rah_backup__dropbox {
 			return;
 		}
 		
+		if(!$this->import_api()) {
+			die(gTxt(__CLASS__.'_unable_import_api'));
+		}
+		
 		$this->$method();
 	}
 	
@@ -233,7 +237,7 @@ class rah_backup__dropbox {
 	
 	protected function auth_authorize() {
 		if(!$this->connect()) {
-			exit(gTxt(__CLASS__ . '_connection_error'));
+			die(gTxt(__CLASS__ . '_connection_error'));
 		}
 	}
 	
@@ -244,7 +248,7 @@ class rah_backup__dropbox {
 	protected function auth_accesstoken() {
 		
 		if(!$this->connect()) {
-			exit(gTxt(__CLASS__ . '_connection_error'));
+			die(gTxt(__CLASS__ . '_connection_error'));
 		}
 			
 		$token = $this->storage->get('access_token');
@@ -301,6 +305,10 @@ class rah_backup__dropbox {
 	 */
 	
 	public function upload($event, $files) {
+		
+		if(!$this->import_api()) {
+			return;
+		}
 	
 		if(!$this->token || !$this->connect()) {
 			return;
