@@ -161,6 +161,8 @@ class rah_backup__dropbox {
 		if(strpos($this->api_dir, './') === 0) {
 			$this->api_dir = txpath.'/'.substr($this->api_dir, 2);
 		}
+		
+		$this->api_dir = rtrim($this->api_dir, '\\/');
 	
 		if(!file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->api_dir)) {
 			return;
