@@ -307,6 +307,7 @@ class rah_backup__dropbox {
 	public function upload($event, $files) {
 		
 		if(!$this->import_api()) {
+			rah_backup::get()->announce(array(__CLASS__.'_unable_import_api', E_ERROR));
 			return;
 		}
 	

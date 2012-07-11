@@ -12,3 +12,4 @@ rah_backup__dropbox_connection_error => Unable to connect to Dropbox. Please try
 rah_backup__dropbox_token_error => Unable to retrieve oAuth token.
 rah_backup__dropbox_set_keys => Set above options and <strong>save</strong>, a link will appear
 rah_backup__dropbox_authorize => Authorize
+rah_backup__dropbox_unable_import_api => Unable to import Dropbox SDK. Please check API directory's status and option.
