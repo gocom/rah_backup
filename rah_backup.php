@@ -125,6 +125,12 @@ class rah_backup {
 	public $message = array();
 	
 	/**
+	 * @var array List of invoked announcements
+	 */
+	
+	private $announce = array();
+	
+	/**
 	 * @var array List of invoked errors/notices
 	 */
 	
@@ -397,6 +403,16 @@ class rah_backup {
 			</script>
 EOF;
 	}
+	
+	/**
+	 * Announce message
+	 * @return obj
+	 */
+	
+	public function announce($message) {
+		$this->announce[] = $message;
+		return $this;
+	}
 
 	/**
 	 * The main listing
@@ -494,6 +510,10 @@ EOF;
 		}
 		
 		$out = implode(n, $out);
+		
+		if($this->announce) {
+			$message = $this->announce[0];
+		}
 		
 		if($app_mode == 'async') {
 			send_script_response($theme->announce_async($message).n.'$("#rah_backup_list").html("'.escape_js($out).'");');
