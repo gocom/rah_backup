@@ -298,13 +298,15 @@ class rah_backup__dropbox {
 	 * Uploads latest backups
 	 */
 	
-	public function upload() {
+	public function upload($event, $files) {
 	
 		if(!$this->token || !$this->connect()) {
 			return;
 		}
 		
-		$this->dropbox->putFile(rah_backup::get()->created, basename(rah_backup::get()->created));
+		foreach($files as $name => $path) {
+			$this->dropbox->putFile($path, $name);
+		}
 	}
 	
 	/**

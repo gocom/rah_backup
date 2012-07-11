@@ -26,7 +26,7 @@
  * Sends new backup files to remote server
  */
 
-	function rah_backup__module_sftp_offsite() {
+	function rah_backup__module_sftp_offsite($event, $files) {
 		
 		global $rah_backup__module_sftp_offsite;
 		
@@ -49,8 +49,9 @@
 			
 			if($sftp->login($cfg['user'], $cfg['pass'])) {
 				if(!$cfg['path'] || $sftp->chdir($cfg['path'])) {
-					$file = rah_backup::get()->created;
-					$sftp->put(basename($file), $file, NET_SFTP_LOCAL_FILE);
+					foreach($files as $name => $path) {
+						$sftp->put($name, $path, NET_SFTP_LOCAL_FILE);
+					}
 				}
 			}
 		}

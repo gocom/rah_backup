@@ -24,7 +24,7 @@
  * Sends new backup files to off site
  */
 
-	function rah_backup__module_ftp_offsite() {
+	function rah_backup__module_ftp_offsite($event, $files) {
 		
 		global $rah_backup__module_ftp_offsite;
 		
@@ -42,8 +42,9 @@
 				ftp_pasv($ftp, (bool) $cfg['passive']);
 				
 				if(!$cfg['path'] || @ftp_chdir($ftp, $cfg['path'])) {
-					$file = rah_backup::get()->created;
-					@ftp_put($ftp, basename($file), $file, ($cfg['as_binary'] ? FTP_BINARY : FTP_ASCII));
+					foreach($files as $name => $path) {
+						@ftp_put($ftp, $name, $path, $cfg['as_binary'] ? FTP_BINARY : FTP_ASCII);
+					}
 				}
 			}
 		
