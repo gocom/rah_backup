@@ -598,7 +598,6 @@ EOF;
 		}
 		
 		callback_event('rah_backup.created');
-		callback_event('rah_backup.done');
 
 		if(txpinterface == 'public') {
 			exit;

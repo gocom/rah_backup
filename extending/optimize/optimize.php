@@ -14,7 +14,7 @@
  */
 
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__module_optimize', 'rah_backup.done');
+		register_callback('rah_backup__module_optimize', 'rah_backup.created');
 	}
 
 /**
