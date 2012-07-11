@@ -324,11 +324,11 @@ class rah_backup__dropbox {
 	 */
 	
 	static public function prefs() {
-		header('Location: ?event=prefs&step=advanced_prefs#prefs-rah_backup__dropbox_key');
+		header('Location: ?event=prefs&step=advanced_prefs#prefs-rah_backup__dropbox_api_dir');
 		
 		echo 
 			'<p>'.n.
-			'	<a href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup__dropbox_key">'.gTxt('continue').'</a>'.n.
+			'	<a href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup__dropbox_api_dir">'.gTxt('continue').'</a>'.n.
 			'</p>';
 	}
 }
