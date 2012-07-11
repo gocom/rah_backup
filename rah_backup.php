@@ -406,6 +406,7 @@ EOF;
 	
 	/**
 	 * Announce message
+	 * @param string|array $message
 	 * @return obj
 	 */
 	
