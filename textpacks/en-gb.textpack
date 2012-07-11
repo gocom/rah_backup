@@ -33,6 +33,7 @@ rah_backup_mysql => Path to MySQL
 rah_backup_tar => Path to TAR
 rah_backup_gzip => Path to Gzip
 rah_backup_copy_paths => Directories to backup (comma-separated)
+rah_backup_exclude_files => Files excluded from backups (comma-separated)
 rah_backup_can_not_download => Can not download the selected file.
 rah_backup_define_preferences => Some settings need to be set before backups can be made. {start_by}.
 rah_backup_dir_not_found => Backup directory <strong>{path}</strong> not found.

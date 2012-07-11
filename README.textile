@@ -53,6 +53,14 @@ p. Sets which directories are backed up and included in created TAR archives. Se
 
 bc. ./../
 
+h3. Files excluded from backups (comma-separated)
+
+p. Sets files that are excluded from filesystem backups. This option can be useful for keeping sensitive files secure incase a backup is lost or leaks due to compromised backup server or cloud file hosting account. Specified file paths are relative to directories specified in the above *Directories to backup* option. Files that match a path name pattern will not be not be backed up. Multiple files can be separated with commas (@,@).
+
+p. On a single site installation with the default *Directories to backup* option of @./../@, following rule would exclude @config.php@, containing database credentials, from backups:
+
+bc. textpattern/config.php
+
 h3. Path to MySQL
 
 p. Sets path to MySQL command line application. This option and direct command line access MySQL is used to restore taken backups. This path should be a absolute filesystem path to mysql. If you are uncertain what the path to MySQL is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.

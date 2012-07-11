@@ -94,6 +94,12 @@ class rah_backup {
 	private $copy_paths = array();
 	
 	/**
+	 * @var array List of excluded files
+	 */
+	
+	private $exclude_files = array();
+	
+	/**
 	 * @var array List of ignored tables
 	 */
 	
@@ -196,6 +202,12 @@ class rah_backup {
 			}
 		}
 		
+		foreach(do_list($prefs['rah_backup_exclude_files']) as $f) {
+			if($f) {
+				$this->exclude_files[$f] = '--exclude='.$this->arg($f);
+			}
+		}
+		
 		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
 			
 			$value = $prefs['rah_backup_'.$n];
@@ -250,6 +262,7 @@ class rah_backup {
 			array(
 				'path' => array('text_input', ''),
 				'copy_paths' => array('text_input', './../'),
+				'exclude_files' => array('text_input', ''),
 				'mysql' => array('text_input', 'mysql'),
 				'mysqldump' => array('text_input', 'mysqldump'),
 				'tar' => array('text_input', 'tar'),
@@ -561,7 +574,7 @@ EOF;
 			' --user='.$this->arg($txpcfg['user']).
 			' --password='.$this->arg($txpcfg['pass']).
 			' --result-file='.$this->arg($path).
-			' '.implode(' ', $this->ignore_tables).
+			($this->ignore_tables ? ' '.implode(' ', $this->ignore_tables) : '').
 			' '.$this->arg($txpcfg['db'])
 		);
 		
@@ -591,7 +604,10 @@ EOF;
 				$options = '-c -v -p -z -f';
 			}
 			
-			$this->exec_command($this->tar, $options.' '.$this->arg($path).' '.implode(' ', $this->copy_paths));
+			$this->exec_command($this->tar, $options.' '.$this->arg($path).
+				($this->exclude_files ? ' '.implode(' ', $this->exclude_files) : '').
+				' '.implode(' ', $this->copy_paths)
+			);
 			
 			if(file_exists($path)) {
 				$this->created[basename($path)] = $path;
