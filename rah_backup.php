@@ -436,7 +436,7 @@ EOF;
 			foreach($backups as $backup) {
 				
 				$td = array();
-				$name = htmlspecialchars($backup['name']);
+				$name = txpspecialchars($backup['name']);
 				
 				if($methods) {
 					$td[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
