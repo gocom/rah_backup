@@ -17,7 +17,7 @@ bc. $rah_backup__module_sftp_offsite[] = array(
 
 p. Where options are as follows:
 
-* *host* SFTP server's address (i.e. domain.ltd or IP)
+* *host* SFTP server's address (e.g. domain.tld or IP)
 * *port* remote server's SSH (SFTP) port number
 * *user* remote server's username
 * *pass* remote server's password
