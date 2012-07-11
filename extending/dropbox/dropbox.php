@@ -293,7 +293,8 @@ class rah_backup__dropbox {
 		}
 		
 		catch(exception $e) {
-			//rah_backup::get()->warning[] = 'Dropbox SDK said: '.$e->getMessage();
+			rah_backup::get()->announce(array('Dropbox SDK said: '.$e->getMessage(), E_ERROR));
+			return false;
 		}
 		
 		$this->connected = true;
