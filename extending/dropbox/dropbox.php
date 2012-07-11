@@ -148,6 +148,7 @@ class rah_backup__dropbox {
 	
 	/**
 	 * Import Dropbox SDK. We don't use autoloading due to this going to CMS
+	 * @return bool
 	 */
 	
 	public function import_api() {
@@ -155,7 +156,7 @@ class rah_backup__dropbox {
 		static $imported = false;
 		
 		if(!$this->api_dir || $imported == true) {
-			return;
+			return $imported;
 		}
 		
 		if(strpos($this->api_dir, './') === 0) {
@@ -165,7 +166,7 @@ class rah_backup__dropbox {
 		$this->api_dir = rtrim($this->api_dir, '\\/');
 	
 		if(!file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->api_dir)) {
-			return;
+			return false;
 		}
 		
 		foreach(array(
@@ -188,6 +189,7 @@ class rah_backup__dropbox {
 		}
 		
 		$imported = true;
+		return true;
 	}
 	
 	/**
