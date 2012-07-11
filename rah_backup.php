@@ -584,7 +584,7 @@ EOF;
 			}
 			
 			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.tar';
-			$this->exec_command($prefs['rah_backup_tar'], '-cvpzf '.$this->arg($path).' '.implode(' ', $this->copy_paths));
+			$this->exec_command($this->tar, '-cvpzf '.$this->arg($path).' '.implode(' ', $this->copy_paths));
 			
 			if($prefs['rah_backup_compress']) {
 				$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
