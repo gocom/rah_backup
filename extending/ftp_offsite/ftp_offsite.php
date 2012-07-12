@@ -12,27 +12,39 @@
  * <http://www.php.net/manual/en/book.ftp.php>
  */
 
-/**
- * Registers the function. Hook to event 'rah_backup.done'.
- */
-
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__ftp_offsite', 'rah_backup.created');
+		new rah_backup__ftp_offsite();
 	}
 
-/**
- * Sends new backup files to off site
- */
-
-	function rah_backup__ftp_offsite($event, $files) {
-		
+class rah_backup__ftp_offsite {
+	
+	protected $cfg = array();
+	
+	/**
+	 * Constructor
+	 */
+	
+	public function __construct() {
 		global $rah_backup__ftp_offsite;
+		
+		if($rah_backup__ftp_offsite && is_array($rah_backup__ftp_offsite)) {
+			$this->cfg = $rah_backup__ftp_offsite;
+		}
+		
+		register_callback(array($this, 'upload'), 'rah_backup.created');
+	}
+	
+	/**
+	 * Sends new backup files to off site
+	 */
+	
+	public function upload($event, $files) {
 		
 		if(!is_callable('ftp_connect')) {
 			return;
 		}
 		
-		foreach((array) $rah_backup__ftp_offsite as $cfg) {
+		foreach($this->cfg as $cfg) {
 		
 			if(empty($cfg['host']) || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp)) {
 				continue;
@@ -53,4 +65,6 @@
 		
 		return;
 	}
+}
+
 ?>
