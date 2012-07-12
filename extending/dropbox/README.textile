@@ -17,4 +17,24 @@ p. Todo.
 
 h2. Preferences
 
-p. Todo.
+p. The module adds few options to "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences, neatly organized under _Dropbox module for rah_backup_ section. All these options are mandatory and must be configured before the module can be used. Options are as follows.
+
+h3. Dropbox SDK installation directory
+
+p. Path to your "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox installation directory. The specified directory should contain files as _API.php_, _Exception.php_ and _OAuth_. The path should be an absolute and point to a Dropbox's SDK's installation directory that is readable PHP. Using relative paths is possible too. A path that starts with @./@ will be relative to Textpattern's installation directory (i.e. @./textpattern@).
+
+h3. Dropbox app key
+
+p. Is your personal Dropbox App key. Due to rah_backup being open source project written in PHP, for security reasons every user of the module needs to sign their own app to Dropbox and use their own keys. You can create your personal app key and secret by creating a new application in Dropbox's "Developer Center":https://www.dropbox.com/developers/apps.
+
+p. When you name the application give it an unique name that doesn't interfere with other uses. Good name could be @rah_backup.Textpattern@yoursitedomain.tld@. Don't try to publish the application or anything, just create a personal developer keys.
+
+h3. Dropbox app secret
+
+p. Is your personal Dropbox App key. See *Dropbox app key* above.
+
+h3. Account actions
+
+p. The last option you see isn't actually a configurable field, but an row with links. This the row that gets populated by buttons used for linking and unlinking your application keys and rah_backup with Dropbox.
+
+p. After you have set all the module's preferences, this line gets a _Authorize_ link, which you then would use to do linking of the application and Dropbox. After a successful authorization, this line would display _Unlink account and app_ link.
