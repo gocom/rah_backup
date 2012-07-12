@@ -303,6 +303,8 @@ class rah_backup__dropbox {
 	
 	/**
 	 * Uploads latest backups
+	 * @param string $event
+	 * @param array $files
 	 */
 	
 	public function upload($event, $files) {
@@ -316,8 +318,14 @@ class rah_backup__dropbox {
 			return;
 		}
 		
-		foreach($files as $name => $path) {
-			$this->dropbox->putFile($path, $name);
+		try {
+			foreach($files as $name => $path) {
+				$this->dropbox->putFile($path, $name);
+			}
+		}
+		
+		catch(exception $e) {
+			rah_backup::get()->announce(array('Dropbox SDK said: '.$e->getMessage(), E_ERROR));
 		}
 	}
 	
