@@ -31,7 +31,7 @@ p. When you name the application give it an unique name that doesn't interfere w
 
 h3. Dropbox app secret
 
-p. Is your personal Dropbox App key. See *Dropbox app key* above.
+p. Is your personal Dropbox app secret. See *Dropbox app key* above.
 
 h3. Account actions
 
