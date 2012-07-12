@@ -32,6 +32,17 @@ class rah_backup__ftp_offsite {
 		}
 		
 		register_callback(array($this, 'upload'), 'rah_backup.created');
+		register_callback(array($this, 'requirements'), 'rah_backup', '', 1);
+	}
+	
+	/**
+	 * Requirements
+	 */
+	
+	public function requirements() {
+		if($this->cfg && !is_callable('ftp_connect')) {
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_ftp_required'), E_ERROR));
+		}
 	}
 	
 	/**

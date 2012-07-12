@@ -1,0 +1,3 @@
+#@admin
+#Default language, en-us, en-gb
+rah_backup__ftp_offsite => PHP's FTP extension isn't installed. rah_backup__ftp_offsite module requires it.
