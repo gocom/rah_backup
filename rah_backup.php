@@ -774,7 +774,7 @@ EOF;
 		
 		foreach($this->get_backups() as $name => $file) {
 			if(in_array($name, $selected)) {
-				$this->deleted[] = $file;
+				$this->deleted[basename($file)] = $file;
 				@unlink($file['path']);
 			}
 		}
