@@ -112,11 +112,16 @@ class rah_backup {
 	private $filestamp = '';
 	
 	/**
-	 * @var array Path to created backup file
-	 * @todo requires remodelling
+	 * @var array Path to created backup files
 	 */
 	
 	public $created = array();
+	
+	/**
+	 * @var array Path to deleted backup files
+	 */
+	
+	public $deleted = array();
 
 	/**
 	 * @var array List of invoked messages
@@ -769,10 +774,12 @@ EOF;
 		
 		foreach($this->get_backups() as $name => $file) {
 			if(in_array($name, $selected)) {
+				$this->deleted[] = $file;
 				@unlink($file['path']);
 			}
 		}
 		
+		callback_event('rah_backup.deleted', $this->deleted);
 		$this->browser(gTxt('rah_backup_removed'));
 	}
 	
