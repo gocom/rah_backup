@@ -1,3 +1,8 @@
 #@admin
 #Default language, en-us, en-gb
-rah_backup__ftp_offsite => PHP's FTP extension isn't installed. rah_backup__ftp_offsite module requires it.
+rah_backup__ftp_offsite_ftp_required => PHP's FTP extension isn't installed. rah_backup__ftp_offsite module requires it.
+rah_backup__ftp_offsite_connection_error => Unable connect with FTP to <strong>{host}</strong>.
+rah_backup__ftp_offsite_login_error => Unable login to <strong>{host}</strong> as <strong>{user}</strong> over FTP.
+rah_backup__ftp_offsite_chdir_error => Unable to access <strong>{path}</strong> directory on <strong>{host}</strong> over FTP.
+rah_backup__ftp_offsite_delete_error => Unable to delete backups from <strong>{host}</strong> over FTP.
+rah_backup__ftp_offsite_put_error => Unable to upload backups to <strong>{host}</strong> over FTP.

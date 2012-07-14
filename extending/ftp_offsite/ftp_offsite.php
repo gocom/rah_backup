@@ -18,7 +18,17 @@
 
 class rah_backup__ftp_offsite {
 	
-	protected $cfg = array();
+	/**
+	 * @var array Configuration stack
+	 */
+	
+	public $cfg = array();
+	
+	/**
+	 * @var array Accepted configuration options
+	 */
+	
+	public $atts = array();
 	
 	/**
 	 * Constructor
@@ -31,7 +41,18 @@ class rah_backup__ftp_offsite {
 			$this->cfg = $rah_backup__ftp_offsite;
 		}
 		
-		register_callback(array($this, 'upload'), 'rah_backup.created');
+		$this->atts = array(
+			'host' => '',
+			'port' => 21,
+			'user' => '',
+			'pass' => '',
+			'path' => '',
+			'passive' => true,
+			'as_binary' => true,
+		);
+		
+		register_callback(array($this, 'sync'), 'rah_backup.created');
+		register_callback(array($this, 'sync'), 'rah_backup.deleted');
 		register_callback(array($this, 'requirements'), 'rah_backup', '', 1);
 	}
 	
@@ -46,35 +67,74 @@ class rah_backup__ftp_offsite {
 	}
 	
 	/**
-	 * Sends new backup files to off site
+	 * Syncs backup files over FTP
 	 */
 	
-	public function upload($event, $files) {
+	public function sync() {
 		
 		if(!is_callable('ftp_connect')) {
 			return;
 		}
 		
 		foreach($this->cfg as $cfg) {
-		
-			if(empty($cfg['host']) || (($ftp = ftp_connect($cfg['host'], $cfg['port'])) && !$ftp)) {
+			
+			extract(lAtts($this->atts, $cfg));
+			
+			if(!$host || !$port) {
 				continue;
 			}
 			
-			if(@ftp_login($ftp, $cfg['user'], $cfg['pass'])) {
+			@$ftp = ftp_connect($host, $port);
+			
+			if(!$ftp) {
+				rah_backup::get()->announce(array(gTxt(
+					__CLASS__.'_connection_error',
+					array('{host}' => $host.':'.$port)
+				), E_ERROR));
+				continue;
+			}
+			
+			if(!ftp_login($ftp, $user, $pass)) {
+				rah_backup::get()->announce(array(gTxt(
+					__CLASS__.'_login_error',
+					array('{host}' => $host, '{user}' => $user)
+				), E_ERROR));
+			}
+			
+			else {
 				ftp_pasv($ftp, (bool) $cfg['passive']);
 				
-				if(!$cfg['path'] || @ftp_chdir($ftp, $cfg['path'])) {
-					foreach($files as $name => $path) {
-						@ftp_put($ftp, $name, $path, $cfg['as_binary'] ? FTP_BINARY : FTP_ASCII);
+				if($path && @ftp_chdir($ftp, $path) === false) {
+					rah_backup::get()->announce(array(gTxt(
+						__CLASS__.'_chdir_error',
+						array('{host}' => $host, '{user}' => $user)
+					), E_ERROR));
+				}
+				
+				else {
+					
+					foreach(rah_backup::get()->created as $name => $filepath) {
+						if(ftp_put($ftp, $name, $filepath, $as_binary ? FTP_BINARY : FTP_ASCII) === false) {
+							rah_backup::get()->announce(array(gTxt(
+								__CLASS__.'_put_error',
+								array('{host}' => $host)
+							), E_ERROR));
+						}
+					}
+					
+					foreach(rah_backup::get()->deleted as $name => $filepath) {
+						if(ftp_delete($ftp, $name) === false) {
+							rah_backup::get()->announce(array(gTxt(
+								__CLASS__.'_delete_error',
+								array('{host}' => $host)
+							), E_ERROR));
+						}
 					}
 				}
 			}
 		
 			ftp_close($ftp);
 		}
-		
-		return;
 	}
 }
 
