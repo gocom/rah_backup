@@ -130,7 +130,8 @@ class rah_backup__dropbox {
 	public function __construct() {
 		self::install();
 		add_privs('plugin_prefs.'.__CLASS__, '1,2');
-		register_callback(array($this, 'upload'), 'rah_backup.created');
+		register_callback(array($this, 'sync'), 'rah_backup.created');
+		register_callback(array($this, 'sync'), 'rah_backup.deleted');
 		register_callback(array($this, 'authentication'), 'textpattern');
 		
 		if(txpinterface == 'admin') {
@@ -302,12 +303,12 @@ class rah_backup__dropbox {
 	}
 	
 	/**
-	 * Uploads latest backups
+	 * Syncs backups
 	 * @param string $event
 	 * @param array $files
 	 */
 	
-	public function upload($event, $files) {
+	public function sync($event, $files) {
 		
 		if(!$this->import_api()) {
 			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unable_import_api'), E_ERROR));
@@ -319,7 +320,11 @@ class rah_backup__dropbox {
 		}
 		
 		try {
-			foreach($files as $name => $path) {
+			foreach(rah_backup::get()->deleted as $name => $path) {
+				$this->dropbox->delete($name);
+			}
+			
+			foreach(rah_backup::get()->created as $name => $path) {
 				$this->dropbox->putFile($path, $name);
 			}
 		}
