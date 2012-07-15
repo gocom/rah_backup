@@ -412,11 +412,12 @@ EOF;
 	/**
 	 * Announce message
 	 * @param string|array $message
+	 * @param string $type message|inform|warning
 	 * @return obj
 	 */
 	
-	public function announce($message) {
-		$this->announce[] = $message;
+	public function announce($message, $type=-1) {
+		$this->announce[$type][] = $message;
 		return $this;
 	}
 
@@ -517,8 +518,8 @@ EOF;
 		
 		$out = implode(n, $out);
 		
-		if($this->announce) {
-			$message = $this->announce[0];
+		if(!empty($this->announce[-1])) {
+			$message = $this->announce[-1][0];
 		}
 		
 		if($app_mode == 'async') {
@@ -526,9 +527,17 @@ EOF;
 			return;
 		}
 		
-		$out = 
-			($this->warning ? '<p id="warning">'.$this->warning[0].'</p>' : '').
+		if($this->warning) {
+			$pane[] = '<p id="warning">'.$this->warning[0].'</p>';
+		}
 		
+		foreach(array('success', 'warning', 'error', 'information', 'highlight') as $type) {
+			if(!empty($this->announce[$type])) {
+				$pane[] = tag(implode('</p>', $this->announce[$type]), 'p', ' class="'.$type.'"');
+			}
+		}
+		
+		$pane[] = 
 			'<div class="txp-listtables">'.n.
 			'<table class="txp-list">'.n.
 			'	<thead>'.
@@ -541,10 +550,10 @@ EOF;
 			'</div>'.n;
 		
 		if($methods) {
-			$out .= multi_edit($methods, $event, 'multi_edit');
+			$pane[] = multi_edit($methods, $event, 'multi_edit');
 		}
 		
-		$this->build_pane($out, $message);
+		$this->build_pane($pane, $message);
 	}
 	
 	/**
