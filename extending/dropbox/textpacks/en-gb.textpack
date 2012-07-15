@@ -13,3 +13,4 @@ rah_backup__dropbox_token_error => Unable to retrieve oAuth token.
 rah_backup__dropbox_set_keys => Please set above options and hit <strong>{save}</strong> before <strong>authorizing</strong>.
 rah_backup__dropbox_authorize => Authorize
 rah_backup__dropbox_unable_import_api => Unable to import Dropbox SDK from <strong>{path}</strong>. Please check API directory's status.
+rah_backup__dropbox_unsupported_php => Your PHP version <strong>{version}</strong> is unsupported by Dropbox module.

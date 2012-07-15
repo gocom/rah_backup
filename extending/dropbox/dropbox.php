@@ -151,6 +151,11 @@ class rah_backup__dropbox {
 		}
 		
 		$this->api_dir = rtrim($this->api_dir, '\\/');
+		
+		if(version_compare(PHP_VERSION, '5.3.1') < 0) {
+			$this->api_dir = null;
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unsupported_php', array('{version}' => PHP_VERSION)), E_ERROR));
+		}
 	}
 	
 	/**
