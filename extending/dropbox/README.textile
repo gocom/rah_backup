@@ -27,11 +27,11 @@ p. When you are asked about application's _Access type_, set it as _App folder_.
 
 p. After you have done, your application details should look similar to this:
 
-bq. * *App name:* rah_backup@yoursitedomain.tld
-* *App status:* Development
-* *App key:* 12345x789a
-* *App secret:* 12345x789a
-* *Name of app folder:* rah_backup@yoursitedomain.tld
+bq. *App name:* rah_backup@yoursitedomain.tld
+*App status:* Development
+*App key:* 12345x789a
+*App secret:* 12345x789a
+*Name of app folder:* rah_backup@yoursitedomain.tld
 
 h3. Setting up preferences
 
