@@ -533,7 +533,7 @@ EOF;
 		
 		foreach(array('success', 'warning', 'error', 'information', 'highlight') as $type) {
 			if(!empty($this->announce[$type])) {
-				$pane[] = tag(implode('</p>', $this->announce[$type]), 'p', ' class="'.$type.'"');
+				$pane[] = '<p><span class="'.$type.'">'.implode('</span><br /><span class="'.$type.'">', $this->announce[$type]).'</span></p>';
 			}
 		}
 		
