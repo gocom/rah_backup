@@ -6,7 +6,7 @@ h2. Configuring
 
 p. To set the FTP connection details, add following rule (or multiple) to your *config.php* file, located by default in your *textpattern* directory.
 
-bc. $rah_backup__ftp_offsite[] = array(
+bc. $rah_backup__ftp[] = array(
 	'host' => 'ftp.example.com',
 	'port' => 21,
 	'user' => 'myusername',

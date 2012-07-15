@@ -1,6 +1,6 @@
 <manifest>
 
-	<name>rah_backup__ftp_offsite</name>
+	<name>rah_backup__ftp</name>
 	<description>FTP module for rah_backup</description>
 
 	<version>0.1</version>

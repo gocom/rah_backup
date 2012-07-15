@@ -13,10 +13,10 @@
  */
 
 	if(defined('txpinterface')) {
-		new rah_backup__ftp_offsite();
+		new rah_backup__ftp();
 	}
 
-class rah_backup__ftp_offsite {
+class rah_backup__ftp {
 	
 	/**
 	 * @var array Configuration stack
@@ -35,10 +35,10 @@ class rah_backup__ftp_offsite {
 	 */
 	
 	public function __construct() {
-		global $rah_backup__ftp_offsite;
+		global $rah_backup__ftp;
 		
-		if($rah_backup__ftp_offsite && is_array($rah_backup__ftp_offsite)) {
-			$this->cfg = $rah_backup__ftp_offsite;
+		if($rah_backup__ftp && is_array($rah_backup__ftp)) {
+			$this->cfg = $rah_backup__ftp;
 		}
 		
 		$this->atts = array(

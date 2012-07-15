@@ -10,7 +10,7 @@ h2. dropbox
 
 p. Uploads backups to your Dropbox account. The module requires Ben Tadiar's "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox, cURL and PHP 5.3.1.
 
-h2. ftp_offsite
+h2. ftp
 
 p. Transfers backups to offsite location via FTP. The module requires PHP's "FTP extension":http://www.php.net/manual/en/book.ftp.php.
 
