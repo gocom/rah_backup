@@ -18,6 +18,6 @@ h2. optimize
 
 p. Optimizes all database tables when taking a backup. The operation will defragment the database data file, and reclaims lost unused space. If contents in tables are changed extensively this may also lead to improved performance.
 
-h2. sftp_offsite
+h2. sftp
 
 p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":http://phpseclib.sourceforge.net/ for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.

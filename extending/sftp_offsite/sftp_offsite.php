@@ -15,10 +15,10 @@
  */
 
 	if(defined('txpinterface')) {
-		new rah_backup__sftp_offsite();
+		new rah_backup__sftp();
 	}
 
-class rah_backup__sftp_offsite {
+class rah_backup__sftp {
 	
 	/**
 	 * @var array Configuration stack
@@ -43,14 +43,14 @@ class rah_backup__sftp_offsite {
 	 */
 	
 	public function __construct() {
-		global $rah_backup__sftp_offsite;
+		global $rah_backup__sftp;
 		
-		if($rah_backup__sftp_offsite && is_array($rah_backup__sftp_offsite)) {
-			$this->cfg = $rah_backup__sftp_offsite;
+		if($rah_backup__sftp && is_array($rah_backup__sftp)) {
+			$this->cfg = $rah_backup__sftp;
 		}
 		
-		if(defined('rah_backup__sftp_offsite_phpseclib_path')) {
-			$this->api_dir = rtrim(rah_backup__sftp_offsite_phpseclib_path, '\\/');
+		if(defined('rah_backup__sftp_phpseclib_path')) {
+			$this->api_dir = rtrim(rah_backup__sftp_phpseclib_path, '\\/');
 		}
 		
 		$this->atts = array(

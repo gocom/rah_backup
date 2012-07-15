@@ -1,6 +1,6 @@
 <manifest>
 
-	<name>rah_backup__sftp_offsite</name>
+	<name>rah_backup__sftp</name>
 	<description>SFTP module for rah_backup</description>
 
 	<version>0.1</version>

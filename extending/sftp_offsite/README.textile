@@ -6,7 +6,7 @@ h2. Configuration
 
 p. To set SFTP connection details add following rules to your Textpattern's *config.php* file, by default located in your *textpattern* directory.
 
-bc.. $rah_backup__sftp_offsite[] = array(
+bc.. $rah_backup__sftp[] = array(
 	'host' => 'example.com',
 	'port' => 22,
 	'timeout' => 90,
@@ -15,7 +15,7 @@ bc.. $rah_backup__sftp_offsite[] = array(
 	'path' => '/path/to/remote/directory/',
 );
 
-define('rah_backup__sftp_offsite_phpseclib_path', '/path/to/phpseclib/installation/directory/');
+define('rah_backup__sftp_phpseclib_path', '/path/to/phpseclib/installation/directory/');
 
 p. Where options are as follows:
 

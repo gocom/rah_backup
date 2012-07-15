@@ -1,8 +1,8 @@
 #@admin
 #Default language, en-us, en-gb
-rah_backup__sftp_offsite_connection_error => Unable connect with SFTP to <strong>{host}</strong>.
-rah_backup__sftp_offsite_login_error => Unable login to <strong>{host}</strong> as <strong>{user}</strong> over SFTP.
-rah_backup__ftp_offsite_chdir_error => Unable to access <strong>{path}</strong> directory on <strong>{host}</strong> over SFTP.
-rah_backup__ftp_offsite_delete_error => Unable to delete backups from <strong>{host}</strong> over SFTP.
-rah_backup__ftp_offsite_put_error => Unable to upload backups to <strong>{host}</strong> over SFTP.
-rah_backup__sftp_offsite_unable_import_api => Unable to import phpseclib from <strong>{path}</strong>. Please check API directory's status.
+rah_backup__sftp_connection_error => Unable connect with SFTP to <strong>{host}</strong>.
+rah_backup__sftp_login_error => Unable login to <strong>{host}</strong> as <strong>{user}</strong> over SFTP.
+rah_backup__sftp_chdir_error => Unable to access <strong>{path}</strong> directory on <strong>{host}</strong> over SFTP.
+rah_backup__sftp_delete_error => Unable to delete backups from <strong>{host}</strong> over SFTP.
+rah_backup__sftp_put_error => Unable to upload backups to <strong>{host}</strong> over SFTP.
+rah_backup__sftp_unable_import_api => Unable to import phpseclib from <strong>{path}</strong>. Please check API directory's status.
