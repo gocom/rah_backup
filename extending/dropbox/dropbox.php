@@ -145,6 +145,12 @@ class rah_backup__dropbox {
 		foreach(array('key', 'secret', 'api_dir', 'token') as $name) {
 			$this->$name = get_pref(__CLASS__.'_'.$name);
 		}
+		
+		if(strpos($this->api_dir, './') === 0) {
+			$this->api_dir = txpath.'/'.substr($this->api_dir, 2);
+		}
+		
+		$this->api_dir = rtrim($this->api_dir, '\\/');
 	}
 	
 	/**
@@ -160,12 +166,6 @@ class rah_backup__dropbox {
 			return $imported;
 		}
 		
-		if(strpos($this->api_dir, './') === 0) {
-			$this->api_dir = txpath.'/'.substr($this->api_dir, 2);
-		}
-		
-		$this->api_dir = rtrim($this->api_dir, '\\/');
-	
 		if(!file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->api_dir)) {
 			return false;
 		}
