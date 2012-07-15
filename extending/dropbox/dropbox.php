@@ -131,16 +131,6 @@ class rah_backup__dropbox {
 		self::install();
 		add_privs('plugin_prefs.'.__CLASS__, '1,2');
 		
-		if(version_compare(PHP_VERSION, '5.3.1') < 0) {
-			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unsupported_php', array('{version}' => PHP_VERSION)), E_ERROR));
-			return;
-		}
-		
-		if(!function_exists('curl_init')) {
-			rah_backup::get()->announce(array(gTxt(__CLASS__.'_curl_missing'), E_ERROR));
-			return;
-		}
-		
 		register_callback(array($this, 'sync'), 'rah_backup.created');
 		register_callback(array($this, 'sync'), 'rah_backup.deleted');
 		register_callback(array($this, 'authentication'), 'textpattern');
@@ -149,6 +139,7 @@ class rah_backup__dropbox {
 			register_callback(array($this, 'unlink_account'), 'prefs');
 			register_callback(array(__CLASS__, 'prefs'), 'plugin_prefs.'.__CLASS__);
 			register_callback(array(__CLASS__, 'install'), 'plugin_lifecycle.'.__CLASS__);
+			register_callback(array($this, 'requirements'), 'rah_backup', '', 1);
 		}
 		
 		$this->callback_uri = hu.'?'.__CLASS__.'_oauth=accesstoken';
@@ -162,6 +153,23 @@ class rah_backup__dropbox {
 		}
 		
 		$this->api_dir = rtrim($this->api_dir, '\\/');
+	}
+	
+	/**
+	 * Requirements check
+	 */
+	
+	public function requirements() {
+		
+		if(!function_exists('curl_init')) {
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_curl_missing'), E_ERROR));
+			return;
+		}
+		
+		if(version_compare(PHP_VERSION, '5.3.1') < 0) {
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unsupported_php', array('{version}' => PHP_VERSION)), E_ERROR));
+			return;
+		}
 	}
 	
 	/**
