@@ -33,7 +33,15 @@ bq. *App name:* rah_backup@yoursitedomain.tld
 
 h3. Setting up preferences
 
+p. After you have your application keys, it's time to deploy them. You can find set them in use from Textpattern's Advanced preferences. The modules settings are organized under _Dropbox module for rah_backup_ section. For there you will find a field to set your app key, secret and Dropbox SDK's installation directory. Please refer to *Preferences* section for detailed information about each available settings.
+
+p. Fill in the three fields and *save*.
+
 h3. Authorizing application
+
+p. After you have saved your app keys, scroll back to the module's preferences section, _Dropbox module for rah_backup_. You will see that there is an _Authorize_ link present. Press it to start your _Authorization_ process. The process is pretty much automated and should only take couple of seconds. You will be asked to login with the account you want to link if you aren't already logged in your browser, and to authorize the application by a press of a button. That's it. If everything went well you should see a following message in the end:
+
+bq. Authenticated successfully. You can now go to your Textpattern control panel.
 
 h2. Preferences
 
