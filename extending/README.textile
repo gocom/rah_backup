@@ -2,15 +2,15 @@ h1. Modules for rah_backup
 
 p. This directory contains modules for rah_backup, a site backup manager for Textpattern CMS.
 
-h2. clearlogs
+h2. Clearlogs
 
 p. Empties visitor logs before taking a backup. The module will empty the actual table, not just records from backup files. Current visitor logs will be permanently lost.
 
-h2. dropbox
+h2. Dropbox
 
 p. Uploads backups to your Dropbox account. The module requires Ben Tadiar's "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox, cURL and PHP 5.3.1.
 
-h2. ftp
+h2. FTP
 
 p. Transfers backups to offsite location via FTP. The module requires PHP's "FTP extension":http://www.php.net/manual/en/book.ftp.php.
 
@@ -18,6 +18,6 @@ h2. optimize
 
 p. Optimizes all database tables when taking a backup. The operation will defragment the database data file, and reclaims lost unused space. If contents in tables are changed extensively this may also lead to improved performance.
 
-h2. sftp
+h2. SFTP
 
 p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":http://phpseclib.sourceforge.net/ for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.
