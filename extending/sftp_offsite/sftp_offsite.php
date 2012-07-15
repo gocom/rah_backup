@@ -14,46 +14,154 @@
  * transfering in binary-mode.
  */
 
-/**
- * Registers the function. Hook to event 'rah_backup.done'
- */
-
 	if(defined('txpinterface')) {
-		register_callback('rah_backup__sftp_offsite', 'rah_backup.created');
+		new rah_backup__sftp_offsite();
 	}
 
-/**
- * Sends new backup files to remote server
- */
+class rah_backup__sftp_offsite {
+	
+	/**
+	 * @var array Configuration stack
+	 */
+	
+	protected $cfg;
+	
+	/**
+	 * @var array Accepted configuration options
+	 */
+	
+	protected $atts;
+	
+	/**
+	 * @var string Path to phpseclib installation directory
+	 */
+	
+	protected $api_dir;
 
-	function rah_backup__sftp_offsite($event, $files) {
-		
+	/**
+	 * Constructor
+	 */
+	
+	public function __construct() {
 		global $rah_backup__sftp_offsite;
 		
-		foreach((array) $rah_backup__sftp_offsite as $cfg) {
+		if($rah_backup__sftp_offsite && is_array($rah_backup__sftp_offsite)) {
+			$this->cfg = $rah_backup__sftp_offsite;
+		}
+		
+		if(defined('rah_backup__sftp_offsite_phpseclib_path')) {
+			$this->api_dir = rtrim(rah_backup__sftp_offsite_phpseclib_path, '\\/');
+		}
+		
+		$this->atts = array(
+			'host' => '',
+			'port' => 22,
+			'timeout' => 90,
+			'user' => '',
+			'pass' => '',
+			'path' => '',
+		);
+		
+		register_callback(array($this, 'sync'), 'rah_backup.created');
+		register_callback(array($this, 'sync'), 'rah_backup.deleted');
+	}
+	
+	/**
+	 * Import API
+	 */
+	
+	public function import_api() {
+	
+		if(class_exists('Net_SFTP')) {
+			return true;
+		}
+	
+		if(!$this->api_dir || !file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->dir)) {
+			return false;
+		}
+	
+		$path = set_include_path($this->api_dir);
 			
-			if(empty($cfg['host'])) {
+		if($path !== false) {
+			include_once 'Net/SFTP.php';
+			set_include_path($path);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Syncs backups over SFTP
+	 */
+	
+	public function sync() {
+		
+		if(!$this->cfg) {
+			return;
+		}
+		
+		if(!$this->import_api()) {
+			rah_backup::get()->announce(array(gTxt(
+				__CLASS__.'_unable_import_api',
+				array('{path}' => $this->api_dir)
+			), E_ERROR));
+			return;
+		}
+		
+		foreach($this->cfg as $cfg) {
+			
+			extract(lAtts($this->atts, $cfg));
+			
+			if(!$host || !$port) {
+				continue;
+			}
+			
+			$sftp = new Net_SFTP($host, (int) $port, 90);
+			
+			if(!$sftp) {
+				rah_backup::get()->announce(array(gTxt(
+					__CLASS__.'_connection_error',
+					array('{host}' => $host.':'.$port)
+				), E_ERROR));
+				continue;
+			}
+			
+			
+			if(!$sftp->login($user, $pass)) {
+				rah_backup::get()->announce(array(gTxt(
+					__CLASS__.'_login_error',
+					array('{host}' => $host, '{user}' => $user)
+				), E_ERROR));
+				continue;
+			}
+			
+			if($path && $sftp->chdir($path) === false) {
+				rah_backup::get()->announce(array(gTxt(
+						__CLASS__.'_chdir_error',
+						array('{host}' => $host, '{user}' => $user)
+				), E_ERROR));
 				continue;
 			}
 				
-			if(!class_exists('Net_SFTP')) {
-				$path = set_include_path($cfg['phpseclib_path']);
-				
-				if($path !== false) {
-					include_once 'Net/SFTP.php';
-					set_include_path($path);
+			foreach(rah_backup::get()->created as $name => $filepath) {
+				if($sftp->put($name, $filepath, NET_SFTP_LOCAL_FILE) === false) {
+					rah_backup::get()->announce(array(gTxt(
+						__CLASS__.'_put_error',
+						array('{host}' => $host)
+					), E_ERROR));
 				}
 			}
-			
-			$sftp = new Net_SFTP($cfg['host'], (int) $cfg['port'], 90);
-			
-			if($sftp->login($cfg['user'], $cfg['pass'])) {
-				if(!$cfg['path'] || $sftp->chdir($cfg['path'])) {
-					foreach($files as $name => $path) {
-						$sftp->put($name, $path, NET_SFTP_LOCAL_FILE);
-					}
+					
+			foreach(rah_backup::get()->deleted as $name => $filepath) {
+				if($sftp->delete($name) === false) {
+					rah_backup::get()->announce(array(gTxt(
+						__CLASS__.'_delete_error',
+						array('{host}' => $host)
+					), E_ERROR));
 				}
 			}
 		}
 	}
+}
+
 ?>
