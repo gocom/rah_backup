@@ -136,6 +136,11 @@ class rah_backup__dropbox {
 			return;
 		}
 		
+		if(!function_exists('curl_init')) {
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_curl_missing'), E_ERROR));
+			return;
+		}
+		
 		register_callback(array($this, 'sync'), 'rah_backup.created');
 		register_callback(array($this, 'sync'), 'rah_backup.deleted');
 		register_callback(array($this, 'authentication'), 'textpattern');
