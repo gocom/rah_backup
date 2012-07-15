@@ -116,7 +116,7 @@ class rah_backup__sftp {
 				continue;
 			}
 			
-			$sftp = new Net_SFTP($host, (int) $port, 90);
+			$sftp = new Net_SFTP($host, (int) $port, (int) $timeout);
 			
 			if(!$sftp) {
 				rah_backup::get()->announce(array(gTxt(
