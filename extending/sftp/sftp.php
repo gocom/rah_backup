@@ -76,7 +76,7 @@ class rah_backup__sftp {
 			return true;
 		}
 	
-		if(!$this->api_dir || !file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->dir)) {
+		if(!$this->api_dir || !file_exists($this->api_dir) || !is_dir($this->api_dir) || !is_readable($this->api_dir)) {
 			return false;
 		}
 	
