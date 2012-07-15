@@ -15,3 +15,4 @@ rah_backup__dropbox_authorize => Authorize
 rah_backup__dropbox_unable_import_api => Unable to import Dropbox SDK from <strong>{path}</strong>. Please check API directory's status.
 rah_backup__dropbox_unsupported_php => Your PHP version <strong>{version}</strong> is unsupported by Dropbox module.
 rah_backup__dropbox_curl_missing => cURL is required by Dropbox module.
+rah_backup__dropbox_link_account => Dropbox module asks you to link your account. Go to <strong>Preferences</strong> to begin.

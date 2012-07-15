@@ -162,11 +162,17 @@ class rah_backup__dropbox {
 	public function requirements() {
 		
 		if(!function_exists('curl_init')) {
-			rah_backup::get()->announce(array(gTxt(__CLASS__.'_curl_missing'), E_ERROR));
+			rah_backup::get()->announce(gTxt(__CLASS__.'_curl_missing'), 'error');
+			return;
 		}
 		
 		if(version_compare(PHP_VERSION, '5.3.1') < 0) {
-			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unsupported_php', array('{version}' => PHP_VERSION)), E_ERROR));
+			rah_backup::get()->announce(gTxt(__CLASS__.'_unsupported_php', array('{version}' => PHP_VERSION)), 'error');
+			return;
+		}
+		
+		if(!$this->token) {
+			rah_backup::get()->announce(gTxt(__CLASS__.'_link_account'), 'information');
 		}
 	}
 	
