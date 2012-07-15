@@ -1,6 +1,6 @@
 h1. Dropbox module for rah_backup
 
-p. Transfers backups to your "Dropbox":https://www.dropbox.com/.
+p. Uploads backups to your "Dropbox":https://www.dropbox.com/ account.
 
 h2. Requirements
 
@@ -11,9 +11,31 @@ p. The module at minimum requires:
 * PHP 5.3.1 or newer.
 ** "cURL":http://www.php.net/manual/en/book.curl.php
 
-h2. Configuration
+h2. Getting started
 
-p. Todo.
+p. Before you go on and try using the module, please confirm that your server meets the requirements. You will need PHP 5.3.1, cURL and internet connection. The module uses "Ben Tadiar's "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox. Download it, and extract and upload it to your server where rah_backup is installed.
+
+h3. Creating Dropbox app keys
+
+p. For the Dropbox application to be able to connect to your Dropbox application, it needs to be register to Dropbox's application database. You can create your personal app key and secret by registering a new dummy application in Dropbox's "Developer Center":https://www.dropbox.com/developers/apps.
+
+p. This application is "dummy" and will be used just for your personal keys. Don't try to publish the application or anything, just create a personal developer keys.
+
+p. When you name the application give it an unique name that doesn't interfere with other, real applications. I suggest giving it a name following a pattern as _rah_backup@yoursitedomain.tld_, where _yoursitedomain.tld_ is your site's domain. If you don't own your own top-level domain name, you can use your real name or a random hash.
+
+p. When you are asked about application's _Access type_, set it as _App folder_. Applications description can be pretty much anything.
+
+p. After you have done, your application details should look similar to this:
+
+* *App name:* rah_backup@yoursitedomain.tld
+* *App status:* Development
+* *App key:* 12345x789a
+* *App secret:* 12345x789a
+* *Name of app folder:* rah_backup@rahforum.biz
+
+h3. Setting up preferences
+
+h3. Authorizing application
 
 h2. Preferences
 
@@ -27,7 +49,7 @@ h3. Dropbox app key
 
 p. Is your personal Dropbox App key. Due to rah_backup being open source project written in PHP, for security reasons every user of the module needs to sign their own app to Dropbox and use their own keys. You can create your personal app key and secret by creating a new application in Dropbox's "Developer Center":https://www.dropbox.com/developers/apps.
 
-p. When you name the application give it an unique name that doesn't interfere with other uses. Good name could be @rah_backup.Textpattern@yoursitedomain.tld@. Don't try to publish the application or anything, just create a personal developer keys.
+p. When you name the application give it an unique name that doesn't interfere with other uses. Good name could be @rah_backup@yoursitedomain.tld@. Don't try to publish the application or anything, just create a personal developer keys.
 
 h3. Dropbox app secret
 
