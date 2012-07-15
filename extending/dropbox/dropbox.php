@@ -311,7 +311,7 @@ class rah_backup__dropbox {
 	public function sync($event, $files) {
 		
 		if(!$this->import_api()) {
-			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unable_import_api'), E_ERROR));
+			rah_backup::get()->announce(array(gTxt(__CLASS__.'_unable_import_api', array('{path}' => $this->api_dir)), E_ERROR));
 			return;
 		}
 	
