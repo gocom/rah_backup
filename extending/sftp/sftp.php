@@ -126,7 +126,6 @@ class rah_backup__sftp {
 				continue;
 			}
 			
-			
 			if(!$sftp->login($user, $pass)) {
 				rah_backup::get()->announce(array(gTxt(
 					__CLASS__.'_login_error',
