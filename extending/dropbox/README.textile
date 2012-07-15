@@ -23,9 +23,7 @@ p. This application is "dummy" and will be used just for your personal keys. Don
 
 p. When you name the application give it an unique name that doesn't interfere with other, real applications. I suggest giving it a name following a pattern as _rah_backup@yoursitedomain.tld_, where _yoursitedomain.tld_ is your site's domain. If you don't own your own top-level domain name, you can use your real name or a random hash.
 
-p. When you are asked about application's _Access type_, set it as _App folder_. Applications description can be pretty much anything.
-
-p. After you have done, your application details should look similar to this:
+p. When you are asked about application's _Access type_, set it as _App folder_. Applications description can be pretty much anything. I would use _Rah_backup instance for yoursitedomain.tld_. After you have done, your application details should look similar to this:
 
 bq. *App name:* rah_backup@yoursitedomain.tld
 *App status:* Development
