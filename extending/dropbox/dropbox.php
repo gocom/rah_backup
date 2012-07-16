@@ -407,7 +407,7 @@ class rah_backup__dropbox {
 	function rah_backup__dropbox_key($name, $value) {
 		
 		if($value !== '') {
-			$value = str_pad(substr($value, 0, 3), max(3, strlen($value)-3), '*');
+			$value = str_pad('', strlen($value), '*');
 			return fInput('text', $name.'_null', $value, '', '', '', '', '', '', true);
 		}
 		
