@@ -528,12 +528,12 @@ EOF;
 		}
 		
 		if($this->warning) {
-			$pane[] = '<p id="warning">'.$this->warning[0].'</p>';
+			$pane[] = '<p class="alert-block warning">'.$this->warning[0].'</p>';
 		}
 		
 		foreach(array('success', 'warning', 'error', 'information', 'highlight') as $type) {
 			if(!empty($this->announce[$type])) {
-				$pane[] = '<p><span class="alert-block '.$type.'">'.implode('</span><br /><span class="'.$type.'">', $this->announce[$type]).'</span></p>';
+				$pane[] = '<p class="alert-block '.$type.'">'.implode('</p><p class="alert-block '.$type.'">', $this->announce[$type]).'</p>';
 			}
 		}
 		
