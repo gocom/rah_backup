@@ -1,0 +1,18 @@
+#@admin
+#@language fi-fi
+rah_bckp_db => Dropbox moduuli rah_backup:lle
+rah_backup__dropbox_key => Dropbox sovelluksen avain
+rah_backup__dropbox_secret => Dropbox sovelluksen sala-avain
+rah_backup__dropbox_token => Tilin toiminnot
+rah_backup__dropbox_api_dir => Dropbox SDK:n asennushakemisto
+rah_backup__dropbox_unlink => Pura tilin ja sovelluksen linkitys
+rah_backup__dropbox_reset => Nollaa avaimet
+rah_backup__dropbox_authenticated => Yhteys todennettu onnistuneesti. Voit nyt siirtyä takaisin Textpattern:in käyttöliittymään.
+rah_backup__dropbox_connection_error => Yhteys Dropbox:iin epäonnistui. Ole hyvä ja yritä myöhemmin uudelleen.
+rah_backup__dropbox_token_error => oAuth-kortin hakeminen epäonnistui.
+rah_backup__dropbox_set_keys => Määritä yllä olevat asetukset ja <strong>tallenna</strong> ennen <strong>valtuuttamista</strong>.
+rah_backup__dropbox_authorize => Valtuuta yhteys
+rah_backup__dropbox_unable_import_api => Dropbox SDK:n tuonti hakemistosta <strong>{path}</strong> epäonnistui. Tarkasta API-hakemiston tila.
+rah_backup__dropbox_unsupported_php => Dropbox moduuli ei tue PHP-versioitasi <strong>{version}</strong>.
+rah_backup__dropbox_curl_missing => Dropbox moduuli vaatii cURL:in.
+rah_backup__dropbox_link_account => Dropbox moduuli pyytää että linkität tilisi. Siirry <strong>Asetuksiin</strong> aloittaaksesi.
