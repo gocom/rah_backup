@@ -383,24 +383,26 @@ class rah_backup {
 							var message = textpattern.gTxt('rah_backup_confirm_restore');
 						}
 								
-						if(obj.hasClass('rah_backup_active') || !verify(message)) {
+						if(obj.hasClass('disabled') || !verify(message)) {
 							return false;
 						}
 						
 						if(obj.hasClass('rah_backup_take')) {
 							$.globalEval('{$msg['backup']}');
+							obj.parent().append(' <span class="spinner"></span>');
 						}
 						else {
 							$.globalEval('{$msg['restore']}');
 						}
 						
 						var href = $(this).attr('href');
-						obj.addClass('rah_backup_active').attr('href', '#');
+						obj.addClass('disabled').attr('href', '#');
 						
 						sendAsyncEvent(href.substr(1), null, 'script').error(function() {
 							$.globalEval('{$msg['error']}');
 						}).complete(function() {
-							obj.removeClass('rah_backup_active').attr('href', href);
+							obj.removeClass('disabled').attr('href', href);
+							obj.parent().find('.spinner').remove();
 						});
 					});
 				});
