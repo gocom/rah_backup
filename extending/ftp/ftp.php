@@ -62,7 +62,7 @@ class rah_backup__ftp {
 	
 	public function requirements() {
 		if(!is_callable('ftp_connect')) {
-			rah_backup::get()->announce(gTxt(__CLASS__.'_ftp_required'), 'error');
+			rah_backup::get()->announce(gTxt(__CLASS__.'_ftp_required'), 'warning');
 		}
 	}
 	
