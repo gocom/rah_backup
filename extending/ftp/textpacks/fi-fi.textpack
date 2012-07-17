@@ -1,0 +1,8 @@
+#@admin
+#@language fi-fi
+rah_backup__ftp_ftp_required => PHP:n FTP-lisäosa ei ole asennettuna. FTP-moduuli vaatii sen.
+rah_backup__ftp_connection_error => Yhteys <strong>{host}</strong> ei onnistunut FTP:llä.
+rah_backup__ftp_login_error => Kirjautuminen <strong>{host}</strong> ei onnistunut käyttäjänä <strong>{user}</strong> FTP:n yli.
+rah_backup__ftp_chdir_error => Pääsy <strong>{path}</strong> hakemistoon ei onnistunut FTP:n osoitteessa <strong>{host}</strong>.
+rah_backup__ftp_delete_error => Varmuuskopioiden poistaminen osoitteessa <strong>{host}</strong> epäonnistui FTP:n yli.
+rah_backup__ftp_put_error => Varmuuskopioiden siirtäminen osoitteeseen <strong>{host}</strong> epäonnistui FTP:n yli.
