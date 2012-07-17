@@ -928,7 +928,7 @@ EOF;
 		
 		echo 
 			n.
-			
+			'<h1 class="txp-heading">'.gTxt('rah_backup').'</h1>'.n.
 			'<form action="index.php" method="post" class="txp-container multi_edit_form">'.n.
 			'	'.tInput().n.
 			
