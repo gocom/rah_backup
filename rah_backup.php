@@ -261,10 +261,7 @@ class rah_backup {
 			return;
 		}
 		
-		$current = isset($prefs['rah_backup_version']) ?
-			(string) $prefs['rah_backup_version'] : 'base';
-		
-		if($current === self::$version)
+		if((string) get_pref(__CLASS__.'_version') === self::$version)
 			return;
 		
 		$position = 250;
@@ -285,28 +282,18 @@ class rah_backup {
 				'key' => array('text_input', md5(uniqid(mt_rand(), TRUE))),
 			) as $name => $val
 		) {
-			$n = 'rah_backup_'.$name;
+			$n = __CLASS__.'_'.$name;
 			
 			if(!isset($prefs[$n])) {
-				safe_insert(
-					'txp_prefs',
-					"prefs_id=1,
-					name='$n',
-					val='".doSlash($val[1])."',
-					type=1,
-					event='rah_backup',
-					html='".doSlash($val[0])."',
-					position=".$position
-				);
-				
+				set_pref($n, $val[1], __CLASS__, PREF_ADVANCED, $val[0], $position);
 				$prefs[$n] = $val[1];
 			}
 			
 			$position++;
 		}
 		
-		set_pref('rah_backup_version', self::$version, 'rah_backup', 2, '', 0);
-		$prefs['rah_backup_version'] = self::$version;
+		set_pref(__CLASS__.'_version', self::$version, __CLASS__, 2, '', 0);
+		$prefs[__CLASS__.'_version'] = self::$version;
 	}
 
 	/**
