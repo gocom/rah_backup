@@ -227,13 +227,7 @@ class rah_backup {
 				$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
 			}
 			
-			$this->$n = $value;
-			
-			if(DS != '/' && @ini_get('safe_mode')) {
-				$this->$n =  str_replace('\\', '/', $this->$n);
-			}
-			
-			$this->$n = rtrim(trim($this->$n),'/\\');
+			$this->$n = rtrim(trim($value), '/\\');
 		}
 		
 		if(!$prefs['rah_backup_overwrite']) {
