@@ -223,7 +223,7 @@ class rah_backup {
 			
 			$value = $prefs['rah_backup_'.$n];
 			
-			if(@ini_get('safe_mode') && (strpos($value, '..') !== false || strpos($value, './') !== false)) {
+			if(@ini_get('safe_mode') && strpos($value, '../') !== false) {
 				$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
 			}
 			
