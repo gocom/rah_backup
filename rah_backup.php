@@ -112,13 +112,13 @@ class rah_backup {
 	private $filestamp = '';
 	
 	/**
-	 * @var array Path to created backup files
+	 * @var array Paths to created backup files
 	 */
 	
 	public $created = array();
 	
 	/**
-	 * @var array Path to deleted backup files
+	 * @var array Paths to deleted backup files
 	 */
 	
 	public $deleted = array();
