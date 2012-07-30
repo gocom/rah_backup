@@ -471,7 +471,7 @@ EOF;
 				
 				$td[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
 				$td[] = td(gTxt('rah_backup_type_'.$backup['type']));
-				$td[] = td($this->format_size($backup['size']));
+				$td[] = td(format_filesize($backup['size']));
 				
 				if(has_privs('rah_backup_restore')) {
 					
@@ -803,24 +803,6 @@ EOF;
 		}
 		
 		return exec($command.' '.$args);
-	}
-
-	/**
-	 * Format filesize
-	 * @param int $bytes Size in bytes.
-	 * @return string Formatted size.
-	 * @todo Should actually divide by 1000, or use different prefix
-	 */
-
-	public function format_size($bytes) {
-		$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-		$pow = min($pow, count($units) - 1);
-		$bytes /= pow(1024, $pow);
-		$separators = localeconv();
-		$sep_dec = isset($separators['decimal_point']) ? $separators['decimal_point'] : '.';
-		$sep_thous = isset($separators['thousands_sep']) ? $separators['thousands_sep'] : ',';
-		return number_format($bytes, 2, $sep_dec, $sep_thous) . ' ' . $units[$pow];
 	}
 	
 	/**
