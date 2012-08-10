@@ -10,7 +10,6 @@ rah_backup_download => Lataa
 rah_backup_restore => Palauta
 rah_backup_size => Koko
 rah_backup_dateformat => %d.%m.%Y %H:%M:%S
-rah_backup_with_selected => Valituilla...
 rah_backup_delete => Poista
 rah_backup_removed => Valitut poistettu.
 rah_backup_no_backups => Yhtään varmuuskopioita ei ole luotu.

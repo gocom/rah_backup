@@ -10,7 +10,6 @@ rah_backup_download => Télécharger
 rah_backup_restore => Restaurer
 rah_backup_size => Taille
 rah_backup_dateformat => %d %m %Y %H:%M:%S
-rah_backup_with_selected => Avec la sélection…
 rah_backup_delete => Supprimer
 rah_backup_removed => Les élements sélectionnés ont été supprimés.
 rah_backup_no_backups => Aucune sauvegarde pour l'instant.
