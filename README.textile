@@ -151,3 +151,13 @@ p. Where @key@ is the value set in _Security key for the public callback_ field,
 h3. Security key for the public callback
 
 p. A key for that is used to restrict unwanted access to the callback URL. This should be set as a long, strong value, containing any kind of numbers, characters and symbols possible. Required if public callback URL is enabled.
+
+h2. Thanks to
+
+* French translation by "Patrick Lefevre":https://twitter.com/lowel.
+
+h2. Changelog
+
+h3. Version 0.1 - upcoming
+
+* Initial release.
