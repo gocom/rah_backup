@@ -8,8 +8,6 @@
  * @license GNU GPLv2
  * @link https://github.com/gocom/rah_backup
  *
- * Requires Textpattern v4.4.1 or newer and PHP 5.2.0 or newer.
- *
  * Copyright (C) 2012 Jukka Svahn <http://rahforum.biz>
  * Licensed under GNU Genral Public License version 2
  * http://www.gnu.org/licenses/gpl-2.0.html
