@@ -13,25 +13,20 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-	if(@txpinterface == 'admin') {
-		rah_backup::install();
-		add_privs('rah_backup', '1,2');
-		add_privs('rah_backup_create', '1,2');
-		add_privs('rah_backup_restore', '1');
-		add_privs('rah_backup_download', '1,2');
-		add_privs('rah_backup_multi_edit', '1,2');
-		add_privs('rah_backup_delete', '1');
-		add_privs('rah_backup_preferences', '1');
-		add_privs('plugin_prefs.rah_backup', '1,2');
-		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
-		register_callback(array('rah_backup', 'pane'), 'rah_backup');
-		register_callback(array('rah_backup', 'head'), 'admin_side','head_end');
-		register_callback(array('rah_backup', 'prefs'), 'plugin_prefs.rah_backup');
-		register_callback(array('rah_backup', 'install'), 'plugin_lifecycle.rah_backup');
-	}
-	elseif(@txpinterface == 'public') {
-		register_callback(array('rah_backup', 'call_backup'), 'textpattern');
-	}
+	add_privs('rah_backup', '1,2');
+	add_privs('rah_backup_create', '1,2');
+	add_privs('rah_backup_restore', '1');
+	add_privs('rah_backup_download', '1,2');
+	add_privs('rah_backup_multi_edit', '1,2');
+	add_privs('rah_backup_delete', '1');
+	add_privs('rah_backup_preferences', '1');
+	add_privs('plugin_prefs.rah_backup', '1,2');
+	register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
+	register_callback(array('rah_backup', 'pane'), 'rah_backup');
+	register_callback(array('rah_backup', 'head'), 'admin_side','head_end');
+	register_callback(array('rah_backup', 'prefs'), 'plugin_prefs.rah_backup');
+	register_callback(array('rah_backup', 'install'), 'plugin_lifecycle.rah_backup');
+	register_callback(array('rah_backup', 'call_backup'), 'textpattern');
 
 class rah_backup {
 	
