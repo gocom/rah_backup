@@ -142,7 +142,7 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
-		if(!is_callable('exec')) {
+		if(!is_callable('exec') || !function_exists('exec')) {
 			$this->warning[] = gTxt('rah_backup_exec_disabled');
 		}
 		
@@ -788,7 +788,7 @@ EOF;
 		static $disabled = NULL;
 		
 		if($disabled === NULL) {
-			$disabled = @ini_get('safe_mode') || !is_callable('escapeshellcmd');
+			$disabled = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || !is_callable('escapeshellcmd');
 		}
 		
 		if(!$disabled) {
