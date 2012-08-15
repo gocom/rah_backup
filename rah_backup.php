@@ -142,7 +142,7 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
-		if(!is_callable('exec') || !function_exists('exec')) {
+		if($this->exec_command() === false) {
 			$this->warning[] = gTxt('rah_backup_exec_disabled');
 		}
 		
@@ -783,12 +783,22 @@ EOF;
 	 * @return bool
 	 */
 
-	public function exec_command($command, $args) {
+	public function exec_command($command=null, $args=null) {
 	
 		static $disabled = NULL;
 		
 		if($disabled === NULL) {
 			$disabled = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || !is_callable('escapeshellcmd');
+		}
+		
+		$r = callback_event('rah_backup.exec', '', 0, $command, $args);
+		
+		if($r !== '') {
+			return $r;
+		}
+		
+		if($command === null && $args === null) {
+			return $r !== '' || (function_exists('exec') && is_callable('exec'));
 		}
 		
 		if(!$disabled) {
