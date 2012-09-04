@@ -11,10 +11,8 @@
  * Requires rah_backup, Ben Tadiar's Dropbox SDK <https://github.com/BenTheDesigner/Dropbox>,
  * PHP 5.3.1 or newer and cURL.
  */
- 
- 	if(defined('txpinterface')) {
- 		new rah_backup__dropbox();
- 	}
+
+	new rah_backup__dropbox();
 
 class rah_backup__dropbox {
 
