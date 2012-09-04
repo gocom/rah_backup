@@ -12,9 +12,7 @@
  * <http://www.php.net/manual/en/book.ftp.php>
  */
 
-	if(defined('txpinterface')) {
-		new rah_backup__ftp();
-	}
+	new rah_backup__ftp();
 
 class rah_backup__ftp {
 	

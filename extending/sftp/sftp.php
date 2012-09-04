@@ -14,9 +14,7 @@
  * transfering in binary-mode.
  */
 
-	if(defined('txpinterface')) {
-		new rah_backup__sftp();
-	}
+	new rah_backup__sftp();
 
 class rah_backup__sftp {
 	

@@ -9,13 +9,7 @@
  * @license GLPv2
  */
 
-/**
- * Registers the function. Hook to event 'rah_backup_tasks', step 'backup_done'.
- */
-
-	if(defined('txpinterface')) {
-		register_callback('rah_backup__optimize', 'rah_backup.created');
-	}
+	register_callback('rah_backup__optimize', 'rah_backup.created');
 
 /**
  * Optimizes database tables

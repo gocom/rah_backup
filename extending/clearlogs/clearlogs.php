@@ -12,13 +12,7 @@
  * Visitor logs will be permanently lost.
  */
 
-/**
- * Registers the function. Hook to event 'rah_backup.create'.
- */
-
-	if(defined('txpinterface')) {
-		register_callback('rah_backup__clearlogs', 'rah_backup.create');
-	}
+	register_callback('rah_backup__clearlogs', 'rah_backup.create');
 
 /**
  * Empties txp_log table.
