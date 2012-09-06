@@ -56,30 +56,6 @@ class rah_backup {
 	
 	private $backup_dir;
 	
-	/**
-	 * @var string MySQL command
-	 */
-	
-	private $mysql;
-	
-	/**
-	 * @var string MySQLdump command
-	 */
-	
-	private $mysqldump;
-	
-	/**
-	 * @var string TAR command
-	 */
-	
-	private $tar;
-	
-	/**
-	 * @var string Gzip command
-	 */
-	
-	private $gzip;
-	
 	/** 
 	 * @var array List of backed up files
 	 */
@@ -142,15 +118,7 @@ class rah_backup {
 
 		global $prefs, $txpcfg;
 		
-		if($this->exec_command() === false) {
-			$this->warning[] = gTxt('rah_backup_exec_disabled');
-		}
-		
-		if(strpos($txpcfg['db'], '\\') !== false) {
-			$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
-		}
-		
-		if(!$prefs['rah_backup_path'] || !$prefs['rah_backup_mysql'] || !$prefs['rah_backup_mysqldump'] || ($prefs['rah_backup_copy_paths'] && !$prefs['rah_backup_tar']) || ($prefs['rah_backup_compress'] && !$prefs['rah_backup_gzip'])) {
+		if(!$prefs['rah_backup_path']) {
 			$this->message[] = gTxt('rah_backup_define_preferences', array(
 				'{start_by}' => 
 					'<a href="?event=prefs&amp;'.
@@ -191,8 +159,7 @@ class rah_backup {
 			}
 			
 			if(in_array(PFX.$table, $tables)) {
-				$tbl = $txpcfg['db'].'.'.safe_pfx($table);
-				$this->ignore_tables[$tbl] = '--ignore-table='.$this->arg($tbl);
+				$this->ignore_tables[PFX.$tbl] = PFX.$tbl;
 			}
 			
 			else {
@@ -201,26 +168,26 @@ class rah_backup {
 		}
 		
 		foreach(do_list($prefs['rah_backup_copy_paths']) as $f) {
-			if($f && ($f = $this->path($f)) && file_exists($f) && is_dir($f) && is_readable($f)) {
-				$this->copy_paths[$f] = $this->arg($f);
+		
+			if(!$f) {
+				continue;
+			}
+			
+			$f = $this->path($f);
+		
+			if(file_exists($f) && is_readable($f)) {
+				$this->copy_paths[$f] = $f;
+			}
+			
+			else {
+				$this->warning[] = gTxt('rah_backup_invalid_ignored_file', array('{name}' => $f));
 			}
 		}
 		
 		foreach(do_list($prefs['rah_backup_exclude_files']) as $f) {
 			if($f) {
-				$this->exclude_files[$f] = '--exclude='.$this->arg($f);
+				$this->exclude_files[$f] = $f;
 			}
-		}
-		
-		foreach(array('mysql', 'mysqldump', 'tar', 'gzip') as $n) {
-			
-			$value = $prefs['rah_backup_'.$n];
-			
-			if(@ini_get('safe_mode') && strpos($value, '../') !== false) {
-				$this->warning[] = gTxt('rah_backup_safe_mode_no_exec_access');
-			}
-			
-			$this->$n = rtrim(trim($value), '/\\');
 		}
 		
 		if(!$prefs['rah_backup_overwrite']) {
@@ -258,10 +225,6 @@ class rah_backup {
 				'path' => array('text_input', ''),
 				'copy_paths' => array('text_input', './../'),
 				'exclude_files' => array('text_input', ''),
-				'mysql' => array('text_input', 'mysql'),
-				'mysqldump' => array('text_input', 'mysqldump'),
-				'tar' => array('text_input', 'tar'),
-				'gzip' => array('text_input', 'gzip'),
 				'ignore_tables' => array('text_input', ''),
 				'compress' => array('yesnoradio', 0),
 				'overwrite' => array('yesnoradio', 0),
@@ -578,23 +541,17 @@ EOF;
 		
 		$path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
 		
-		$this->exec_command(
-			$this->mysqldump,
-			' --opt --skip-comments'.
-			' --host='.$this->arg($txpcfg['host']).
-			' --user='.$this->arg($txpcfg['user']).
-			' --password='.$this->arg($txpcfg['pass']).
-			' --result-file='.$this->arg($path).
-			($this->ignore_tables ? ' '.implode(' ', $this->ignore_tables) : '').
-			' '.$this->arg($txpcfg['db'])
-		);
+		$dump = new rah_backup_mysqldump();
+		$dump->filename = $path;
+		$dump->run();
 		
 		if($prefs['rah_backup_compress'] && file_exists($path)) {
-			$this->exec_command($this->gzip, '-c6 '.$this->arg($path).' > '.$this->arg($path.'.gz'));
+			$archive = new PclZip($path.'.zip');
+			$archive->create((array) $path, PCLZIP_OPT_REMOVE_ALL_PATH);
 			unlink($path);
-			$path .= '.gz';
+			$path .= '.zip';
 		}
-		
+
 		if(file_exists($path)) {
 			$this->created[basename($path)] = $path;
 		}
@@ -607,20 +564,11 @@ EOF;
 				$path = 'filesystem';
 			}
 			
-			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.tar';
-			$options = '-c -v -p -f';
+			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.zip';
 			
-			if($prefs['rah_backup_compress']) {
-				$path .= '.gz'; 
-				$options = '-c -v -p -z -f';
-			}
+			$archive = new PclZip($path);
 			
-			$this->exec_command($this->tar, $options.' '.$this->arg($path).
-				($this->exclude_files ? ' '.implode(' ', $this->exclude_files) : '').
-				' '.implode(' ', $this->copy_paths)
-			);
-			
-			if(file_exists($path)) {
+			if($archive->create($this->copy_paths)) {
 				$this->created[basename($path)] = $path;
 			}
 		}
@@ -639,6 +587,10 @@ EOF;
 	 */
 
 	private function restore() {
+		
+		$this->browser(array('Restoring is not implemented yet.', E_WARNING));
+		return;
+	
 		global $txpcfg, $prefs;
 		
 		$file = (string) gps('file');
@@ -654,26 +606,16 @@ EOF;
 		@set_time_limit(0);
 		@ignore_user_abort(true);
 		
-		if($ext == 'gz') {
-			$this->exec_command($this->gzip, '-cd '.$this->arg($path).' > '.$this->arg($path.'.tmp'));
+		if($ext == 'zip') {
 			$path .= '.tmp';
 		}
 		
-		if(
-			$this->exec_command(
-				$prefs['rah_backup_mysql'], 
-				' --host='.$this->arg($txpcfg['host']).
-				' --user='.$this->arg($txpcfg['user']).
-				' --password='.$this->arg($txpcfg['pass']).
-				' '.$this->arg($txpcfg['db']).
-				' < '.$this->arg($path)
-			) === false
-		) {
+		if(1 == 0) {
 			$this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
 			return;
 		}
 		
-		if($ext === 'gz') {
+		if($ext === 'zip') {
 			@unlink($path);
 		}
 		
@@ -769,46 +711,6 @@ EOF;
 	}
 	
 	/**
-	 * Escape shell argument
-	 */
-	
-	public function arg($arg) {
-		return "'".str_replace("'", "'\\''", $arg)."'";
-	}
-
-	/**
-	 * Execute shell command
-	 * @param string $command The program to run.
-	 * @param string $args The arguments passed to the application.
-	 * @return bool
-	 */
-
-	public function exec_command($command=null, $args=null) {
-	
-		static $disabled = NULL;
-		
-		if($disabled === NULL) {
-			$disabled = @ini_get('safe_mode') || !function_exists('escapeshellcmd') || !is_callable('escapeshellcmd');
-		}
-		
-		$r = callback_event('rah_backup.exec', '', 0, $command, $args);
-		
-		if($r !== '') {
-			return $r;
-		}
-		
-		if($command === null && $args === null) {
-			return $r !== '' || (function_exists('exec') && is_callable('exec'));
-		}
-		
-		if(!$disabled) {
-			$command = escapeshellcmd($command);
-		}
-		
-		return exec($command.' '.$args);
-	}
-	
-	/**
 	 * Gets a list of backups
 	 * @param string $sort
 	 * @param string $direction
@@ -837,7 +739,7 @@ EOF;
 		
 		foreach(
 			(array) glob(
-				preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.tar|.gz]',
+				preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.zip]',
 				GLOB_NOSORT
 			) as $file
 		) {
@@ -855,7 +757,7 @@ EOF;
 				'type' => self::BACKUP_FILESYSTEM,
 			);
 			
-			if($backup['ext'] === 'sql' || ($backup['ext'] === 'gz' && substr($backup['name'], -7, 4) === '.sql')) {
+			if($backup['ext'] === 'sql' || ($backup['ext'] === 'zip' && substr($backup['name'], -8, 4) === '.sql')) {
 				$backup['type'] = self::BACKUP_DATABASE;
 			}
 			
@@ -916,7 +818,7 @@ EOF;
 			$content.n.
 			'</form>'.n;
 	}
-	
+
 	/**
 	 * Format a path
 	 * @param string $path
