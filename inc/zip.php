@@ -77,7 +77,7 @@ class rah_backup_zip {
 					$count = 0;
 				}
 				
-				if(is_link($file)) { // || in_array(substr($file, strrpos($file, '/')+1), array('.', '..'))) {
+				if(is_link($file)) {
 					continue;
 				}
 				
