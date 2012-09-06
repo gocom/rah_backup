@@ -26,9 +26,16 @@ class rah_backup_zip {
 
 	public function extract($filename, $target) {
 		$zip = new ZipArchive;
-		$zip->open($filename);
-		$zip->extractTo($target);
-		$zip->close();
+		
+		if(!$zip || !$zip->open($filename)) {
+			return false;
+		}
+		
+		if(!$zip->extractTo($target)) {
+			return false;
+		}
+		
+		return $zip->close();
 	}
 
 	/**
