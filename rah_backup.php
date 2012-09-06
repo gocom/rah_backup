@@ -561,6 +561,7 @@ EOF;
 		if($prefs['rah_backup_compress'] && file_exists($path)) {
 			
 			$zip = new rah_backup_zip();
+			$zip->ignored = $this->exclude_files;
 			
 			if($zip->create($path, $path.'.zip')) {
 				unlink($path);

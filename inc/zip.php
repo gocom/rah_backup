@@ -16,6 +16,12 @@ class rah_backup_zip {
 	 */
 
 	public $descriptor_limit = 200;
+	
+	/**
+	 * @var array Ignored files
+	 */
+	
+	public $ignored = array();
 
 	/**
 	 * Extract
@@ -103,6 +109,19 @@ class rah_backup_zip {
 				}
 				
 				if(is_link($file)) {
+					continue;
+				}
+				
+				$ignore = false;
+				
+				foreach((array) $this->ignored as $f) {
+					if(strpos($file, $f) !== false) {
+						$ignore = true;
+						break;
+					}
+				}
+				
+				if($ignore) {
 					continue;
 				}
 				
