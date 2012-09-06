@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Wrapper for ZipArchive extension.
+ * 
+ * @package rah_backup
+ * @author Jukka Svahn <http://rahforum.biz/>
+ * @copyright (c) 2012 Jukka Svahn
+ * @license GLPv2
+ */
+
 class rah_backup_zip {
 
 	/**
