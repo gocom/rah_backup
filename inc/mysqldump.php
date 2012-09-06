@@ -35,8 +35,10 @@ class rah_backup_mysqldump {
 	
 	public function run() {
 		$this->get_tables();
+		$this->lock_tables();
 		$this->filter_ignored();
 		$this->dump();
+		$this->unlock_tables();
 	}
 	
 	/**
@@ -64,9 +66,7 @@ class rah_backup_mysqldump {
 	 */
 	
 	public function lock_tables() {
-		foreach($this->tables as $table) {
-			safe_query('LOCK TABLES `'.$table.'` WRITE');
-		}
+		safe_query('LOCK TABLES `' . implode('` WRITE, `', $this->tables).'` WRITE');
 	}
 	
 	/**
@@ -86,7 +86,7 @@ class rah_backup_mysqldump {
 		$fp = fopen($this->filename, 'wb');
 
 		foreach($this->tables as $table) {
-		
+			
 			$create = 
 				n.'DROP TABLE IF EXISTS `' . $table . '`;'.
 				n.end(getRow('SHOW CREATE TABLE `'.$table.'`')).';'.n;
@@ -103,6 +103,8 @@ class rah_backup_mysqldump {
 				$insert = n.'INSERT INTO `'.$table.'` VALUES ('.implode(',', array_map(array($this, 'escape'), $a)).');';
 				fwrite($fp, $insert, strlen($insert));
 			}
+			
+			safe_query('UNLOCK TABLES');
 		}
 
 		fclose($fp);
