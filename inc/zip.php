@@ -65,11 +65,11 @@ class rah_backup_zip {
 				$files = (array) $source;
 			}
 			
-			$source = rtrim(str_replace('\\', '/', $source), '/') . '/';
+			$source = rtrim(str_replace('\\', '/', dirname($source)), '/') . '/';
 			$sourceLenght = strlen($source);
 			
 			foreach($files as $file) {
-					
+				
 				if(($count++) === $this->descriptor_limit) {
 					$zip->close();
 					$zip = new ZipArchive();
