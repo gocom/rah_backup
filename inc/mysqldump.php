@@ -34,11 +34,11 @@ class rah_backup_mysqldump {
 	 */
 	
 	public function run() {
-		$this->get_tables();
-		$this->lock_tables();
-		$this->filter_ignored();
-		$this->dump();
-		$this->unlock_tables();
+		foreach(array('get_tables', 'filter_ignored', 'lock_tables',  'dump', 'unlock_tables') as $method) {
+			if($this->$method() === false) {
+				return false;
+			}
+		}
 	}
 	
 	/**
@@ -46,7 +46,11 @@ class rah_backup_mysqldump {
 	 */
 	
 	public function get_tables() {
-		$this->tables = getThings('SHOW TABLES');
+		if($this->tables = getThings('SHOW TABLES')) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -66,7 +70,7 @@ class rah_backup_mysqldump {
 	 */
 	
 	public function lock_tables() {
-		safe_query('LOCK TABLES `' . implode('` WRITE, `', $this->tables).'` WRITE');
+		return safe_query('LOCK TABLES `' . implode('` WRITE, `', $this->tables).'` WRITE');
 	}
 	
 	/**
@@ -74,7 +78,7 @@ class rah_backup_mysqldump {
 	 */
 	
 	public function unlock_tables() {
-		safe_query('UNLOCK TABLES');
+		return safe_query('UNLOCK TABLES');
 	}
 	
 	/**
@@ -84,14 +88,26 @@ class rah_backup_mysqldump {
 	public function dump() {
 
 		$fp = fopen($this->filename, 'wb');
+		
+		if(!$fp) {
+			return false;
+		}
 
 		foreach($this->tables as $table) {
 			
+			$structure = getRow('SHOW CREATE TABLE `'.$table.'`');
+			
+			if(!$structure) {
+				return;
+			}
+			
 			$create = 
 				n.'DROP TABLE IF EXISTS `' . $table . '`;'.
-				n.end(getRow('SHOW CREATE TABLE `'.$table.'`')).';'.n;
+				n.end($structure).';'.n;
 		
-			fwrite($fp, $create, strlen($create));
+			if(fwrite($fp, $create, strlen($create)) === false) {
+				return false;
+			}
 			
 			$rs = startRows('SELECT * FROM `'.$table.'`');
 			
@@ -101,13 +117,13 @@ class rah_backup_mysqldump {
 			
 			while($a = nextRow($rs)) {
 				$insert = n.'INSERT INTO `'.$table.'` VALUES ('.implode(',', array_map(array($this, 'escape'), $a)).');';
-				fwrite($fp, $insert, strlen($insert));
+				if(fwrite($fp, $insert, strlen($insert)) === false) {
+					return false;
+				}
 			}
-			
-			safe_query('UNLOCK TABLES');
 		}
 
-		fclose($fp);
+		return fclose($fp);
 	}
 
 	/**
@@ -117,10 +133,6 @@ class rah_backup_mysqldump {
 	public function escape($value) {
 		if(is_null($value)) {
 			return 'NULL';
-		}
-		
-		if(is_int($value)) {
-			return $value;
 		}
 		
 		return "'".doSlash($value)."'";
