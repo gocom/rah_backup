@@ -9,14 +9,7 @@ h2. Requirements
 p. Rah_backups' minimum requirements:
 
 * Textpattern 4.5.0 or newer.
-* PHP: Access to "exec":http://php.net/manual/en/function.exec.php function.
-* Access to console applications from PHP:
-** "MySQL":http://dev.mysql.com/doc/refman/5.5/en/mysql.html
-** "MySQLdump":http://dev.mysql.com/doc/refman/5.1/en/mysqldump.html
-** "TAR":http://www.gnu.org/software/tar/
-** "Gzip":http://www.gzip.org/
-
-p. If you are unsure wether your server meets the requirements, contact your server administrator or hosting service provider. Please keep in mind that not every access limited and inexpensive shared hosting packages will be able to support rah_backup.
+* PHP 5.2 or newer.
 
 h2. Installing
 
@@ -67,60 +60,6 @@ p. Sets files that are excluded from filesystem backups. This setting can be use
 p. On a single site installation with the default *Directories to backup* setting of @./../@, following rule would exclude @config.php@, containing database credentials, from backups:
 
 bc. textpattern/config.php
-
-h3. Path to MySQL
-
-p. Sets path to MySQL command line application. This setting and direct command line access MySQL is used to restore taken backups. This path should be a absolute filesystem path to mysql. If you are uncertain what the path to MySQL is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
-
-p. Common paths to MySQL include, but are not limited to:
-
-* @mysql@
-* @/usr/bin/mysql@
-* @/usr/local/bin/mysql@
-* @/usr/mysql/bin/mysql@
-* @C:\XAMPP\mysql\bin\mysql.exe@ (for XAMPP on Windows)
-* @/Applications/MAMP/Library/bin/mysql@ (for MAMP on Mac)
-
-p. On Linux you may also try to find the path by using @which mysql@ command via SSH or "rah_terminal":https://github.com/gocom/rah_terminal, or checking out "phpinfo":http://php.net/manual/en/function.phpinfo.php.
-
-h3. Path to MySQLdump
-
-p. Sets path to MySQLdump command line application. This setting and direct command line access MySQLdump is used to take backups of databases. This path should be a absolute filesystem path to mysqldump. If you are uncertain what the path to MySQLdump is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
-
-p. Common paths to MySQLdump include, but are not limited to:
-
-* @mysqldump@
-* @/usr/bin/mysqldump@
-* @/usr/local/bin/mysqldump@
-* @/usr/mysql/bin/mysqldump@
-* @C:\XAMPP\mysql\bin\mysqldump.exe@ (for XAMPP on Windows)
-* @/Applications/MAMP/Library/bin/mysqldump@ (for MAMP on Mac)
-
-p. On Linux you may also try to find the path by using @which mysqldump@ command via SSH or "rah_terminal":https://github.com/gocom/rah_terminal.
-
-h3. Path to TAR
-
-p. Sets path to TAR command line application. This setting and direct command line access TAR is used to take backups of directories and files. This path should be a absolute filesystem path to TAR. If you are uncertain what the location of TAR is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
-
-p. Common paths to TAR include, but are not limited to:
-
-* @tar@
-* @/usr/bin/tar@
-* @/usr/local/bin/tar@
-
-p. On Linux you may also try to find the path by using @which tar@ command via SSH or "rah_terminal":https://github.com/gocom/rah_terminal.
-
-h3. Path to Gzip
-
-p. Sets path to gzip command line application. This setting and direct command line access gzip is used to compress created backups. This path should be a absolute filesystem path to gzip. If you are uncertain what the location of gzip is, you should contact your server administrator or hosting service provider. They should be able to tell you the correct location.
-
-p. Common paths to Gzip include, but are not limited to:
-
-* @gzip@
-* @/usr/bin/gzip@
-* @/usr/local/bin/gzip@
-
-p. On Linux you may also try to find the path by using @which gzip@ command via SSH or "rah_terminal":https://github.com/gocom/rah_terminal.
 
 h3. Ignore database tables (comma-separated)
 
