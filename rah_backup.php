@@ -13,20 +13,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-	add_privs('rah_backup', '1,2');
-	add_privs('rah_backup_create', '1,2');
-	add_privs('rah_backup_restore', '1');
-	add_privs('rah_backup_download', '1,2');
-	add_privs('rah_backup_multi_edit', '1,2');
-	add_privs('rah_backup_delete', '1');
-	add_privs('rah_backup_preferences', '1');
-	add_privs('plugin_prefs.rah_backup', '1,2');
-	register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
-	register_callback(array('rah_backup', 'pane'), 'rah_backup');
-	register_callback(array('rah_backup', 'head'), 'admin_side','head_end');
-	register_callback(array('rah_backup', 'prefs'), 'plugin_prefs.rah_backup');
-	register_callback(array('rah_backup', 'install'), 'plugin_lifecycle.rah_backup');
-	register_callback(array('rah_backup', 'call_backup'), 'textpattern');
+	rah_backup::get();
 
 class rah_backup {
 	
@@ -115,6 +102,27 @@ class rah_backup {
 	 */
 
 	public function __construct() {
+		add_privs('rah_backup', '1,2');
+		add_privs('rah_backup_create', '1,2');
+		add_privs('rah_backup_restore', '1');
+		add_privs('rah_backup_download', '1,2');
+		add_privs('rah_backup_multi_edit', '1,2');
+		add_privs('rah_backup_delete', '1');
+		add_privs('rah_backup_preferences', '1');
+		add_privs('plugin_prefs.rah_backup', '1,2');
+		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
+		register_callback(array(__CLASS__, 'install'), 'plugin_lifecycle.rah_backup');
+		register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
+		register_callback(array($this, 'pane'), 'rah_backup');
+		register_callback(array($this, 'head'), 'admin_side', 'head_end');
+		register_callback(array($this, 'call_backup'), 'textpattern');
+	}
+	
+	/**
+	 * Initializes
+	 */
+	
+	public function initialize() {
 
 		global $prefs, $txpcfg;
 		
@@ -215,8 +223,9 @@ class rah_backup {
 			return;
 		}
 		
-		if((string) get_pref(__CLASS__.'_version') === self::$version)
+		if((string) get_pref(__CLASS__.'_version') === self::$version) {
 			return;
+		}
 		
 		$position = 250;
 		
@@ -264,7 +273,7 @@ class rah_backup {
 	 * Delivers panels
 	 */
 
-	static public function pane() {
+	public function pane() {
 		require_privs('rah_backup');
 		global $step;
 		
@@ -277,18 +286,20 @@ class rah_backup {
 				'multi_edit' => true,
 			);
 		
-		if(rah_backup::get()->message || rah_backup::get()->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
+		$this->initialize();
+		
+		if($this->message || $this->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
 			$step = 'browser';
 		}
 
-		rah_backup::get()->$step();
+		$this->$step();
 	}
 
 	/**
 	 * Adds the panel's CSS to the head segment.
 	 */
 
-	static public function head() {
+	public function head() {
 		global $event, $theme;
 		
 		if($event != 'rah_backup')
@@ -499,7 +510,7 @@ EOF;
 	 * Backup callback
 	 */
 	
-	static public function call_backup() {
+	public function call_backup() {
 		
 		global $prefs;
 		
@@ -511,8 +522,10 @@ EOF;
 		)
 			return;
 		
-		if(!rah_backup::get()->message) {
-			rah_backup::get()->create();
+		$this->initialize();
+		
+		if(!$this->message) {
+			$this->create();
 		}
 	}
 	
@@ -841,7 +854,7 @@ EOF;
 	 * Redirect to the admin-side interface
 	 */
 
-	static public function prefs() {
+	public function prefs() {
 		header('Location: ?event=rah_backup');
 		echo 
 			'<p>'.n.
