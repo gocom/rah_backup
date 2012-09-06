@@ -40,7 +40,7 @@ class rah_backup_zip {
 
 		$zip = new ZipArchive();
 
-		if(!$zip->open($destination, ZIPARCHIVE::OVERWRITE)) {
+		if(!$zip || !$zip->open($destination, ZIPARCHIVE::OVERWRITE)) {
 			return false;
 		}
 
@@ -65,15 +65,27 @@ class rah_backup_zip {
 				$files = (array) $source;
 			}
 			
+			if(!$files) {
+				return false;
+			}
+			
 			$source = rtrim(str_replace('\\', '/', dirname($source)), '/') . '/';
 			$sourceLenght = strlen($source);
 			
 			foreach($files as $file) {
 				
 				if(($count++) === $this->descriptor_limit) {
-					$zip->close();
+					
+					if(!$zip->close()) {
+						return false;
+					}
+					
 					$zip = new ZipArchive();
-					$zip->open($destination);
+					
+					if(!$zip || !$zip->open($destination)) {
+						return false;
+					}
+					
 					$count = 0;
 				}
 				
@@ -88,11 +100,15 @@ class rah_backup_zip {
 				}
 				
 				if(is_dir($file)) {
-					$zip->addEmptyDir($localname);
+					if(!$zip->addEmptyDir($localname)) {
+						return false;
+					}
 				}
 				
 				else if(is_file($file)) {
-					$zip->addFile($file, $localname);
+					if(!$zip->addFile($file, $localname)) {
+						return false;
+					}
 				}
 			}
 		}
