@@ -546,10 +546,13 @@ EOF;
 		$dump->run();
 		
 		if($prefs['rah_backup_compress'] && file_exists($path)) {
-			$archive = new PclZip($path.'.zip');
-			$archive->create((array) $path, PCLZIP_OPT_REMOVE_ALL_PATH);
-			unlink($path);
-			$path .= '.zip';
+			
+			$zip = new rah_backup_zip();
+			
+			if($zip->create($path, $path.'.zip')) {
+				unlink($path);
+				$path .= '.zip';
+			}
 		}
 
 		if(file_exists($path)) {
@@ -566,9 +569,9 @@ EOF;
 			
 			$path = $this->backup_dir . '/' . $path . $this->filestamp . '.zip';
 			
-			$archive = new PclZip($path);
+			$zip = new rah_backup_zip();
 			
-			if($archive->create($this->copy_paths)) {
+			if($zip->create($this->copy_paths, $path)) {
 				$this->created[basename($path)] = $path;
 			}
 		}
