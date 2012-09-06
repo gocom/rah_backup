@@ -13,5 +13,6 @@
 	<flags>3</flags>
 
 	<help file="./README.textile" />
+	<code file="./rah_backup.php, ./inc/mysqldump.php" />
 
 </manifest>
