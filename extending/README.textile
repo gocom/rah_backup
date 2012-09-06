@@ -20,4 +20,4 @@ p. Optimizes all database tables when taking a backup. The operation will defrag
 
 h2. SFTP
 
-p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":http://phpseclib.sourceforge.net/ for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.
+p. Transfers backups to offsite location via SSH File Transfer Protocol. The module requires "phpseclib":https://github.com/phpseclib/phpseclib for its wonderful SFTP API. SFTP offsite module is only compatible with UNIX-platforms (Linux, Mac OS), SFTPv3 and only support transfers in binary-mode.
