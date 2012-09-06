@@ -16,20 +16,26 @@ class rah_backup_zip {
 	 */
 
 	public $descriptor_limit = 200;
-	
+
 	/**
 	 * Extract
+	 * @param string $filename
+	 * @param string $destination
+	 * @return bool
 	 */
-	
-	public function extract($filename, $destination) {
+
+	public function extract($filename, $target) {
 		$zip = new ZipArchive;
 		$zip->open($filename);
-		$zip->extractTo($destination);
+		$zip->extractTo($target);
 		$zip->close();
 	}
 
 	/**
 	 * Compresses a directory or a file
+	 * @param string|array $sources
+	 * @param string $destination
+	 * @return bool
 	 */
 
 	public function create($sources, $destination) {
