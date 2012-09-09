@@ -18,7 +18,7 @@
 	function rah_backup__optimize() {
 		@$tables = getThings('SHOW TABLES');
 		
-		foreach((array) $tables as $table) {
+		foreach($tables as $table) {
 			@safe_query('OPTIMIZE TABLE `'.$table.'`');
 		}
 	}
