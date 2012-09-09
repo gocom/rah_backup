@@ -590,7 +590,7 @@ EOF;
 			}
 		}
 		
-		callback_event('rah_backup.created', $this->created);
+		callback_event('rah_backup.created');
 
 		if(txpinterface == 'public') {
 			exit;
@@ -723,7 +723,7 @@ EOF;
 			}
 		}
 		
-		callback_event('rah_backup.deleted', $this->deleted);
+		callback_event('rah_backup.deleted');
 		$this->browser(gTxt('rah_backup_removed'));
 	}
 	
