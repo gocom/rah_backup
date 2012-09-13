@@ -21,7 +21,7 @@ p. For the Dropbox application to be able to connect to your Dropbox application
 
 p. This application is "dummy" and will be used just for your personal keys. Don't try to publish the application or anything, just create a personal developer keys.
 
-p. When you name the application give it an unique name that doesn't interfere with other, real applications. I suggest giving it a name following a pattern as _rah_backup@yoursitedomain.tld_, where _yoursitedomain.tld_ is your site's domain. If you don't own your own top-level domain name, you can use your real name or a random hash.
+p. When you name the application give it an unique name that doesn't interfere with other, real applications. I suggest giving it a name following a pattern as ==rah_backup@yoursitedomain.tld==, where _yoursitedomain.tld_ is your site's domain. If you don't own your own top-level domain name, you can use your real name or a random hash.
 
 p. When you are asked about application's _Access type_, set it as _App folder_. Applications description can be pretty much anything. I would use _Rah_backup instance for yoursitedomain.tld_. After you have done, your application details should look similar to this:
 
@@ -55,7 +55,7 @@ h3. Dropbox app key
 
 p. Is your personal Dropbox App key. Due to rah_backup being open source project written in PHP, for security reasons every user of the module needs to sign their own app to Dropbox and use their own keys. You can create your personal app key and secret by creating a new application in Dropbox's "Developer Center":https://www.dropbox.com/developers/apps.
 
-p. When you name the application give it an unique name that doesn't interfere with other uses. Good name could be @rah_backup@yoursitedomain.tld@. Don't try to publish the application or anything, just create a personal developer keys.
+p. When you name the application give it an unique name that doesn't interfere with other uses. Good name could be ==rah_backup@yoursitedomain.tld==. Don't try to publish the application or anything, just create a personal developer keys.
 
 h3. Dropbox app secret
 
