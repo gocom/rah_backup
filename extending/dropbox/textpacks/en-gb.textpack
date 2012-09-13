@@ -1,4 +1,4 @@
-#@admin
+#@common
 #Default language, en-us, en-gb
 rah_bckp_db => Dropbox module for rah_backup
 rah_backup__dropbox_key => Dropbox app key

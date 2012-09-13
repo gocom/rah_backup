@@ -1,4 +1,4 @@
-#@admin
+#@common
 #@language fi-fi
 rah_bckp_db => Dropbox moduuli rah_backup:lle
 rah_backup__dropbox_key => Dropbox sovelluksen avain
