@@ -555,6 +555,7 @@ EOF;
 		$path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
 		
 		$dump = new rah_backup_mysqldump();
+		$dump->ignored = $this->ignore_tables;
 		$dump->filename = $path;
 		$dump->run();
 		
