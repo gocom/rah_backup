@@ -37,11 +37,11 @@ p. Rah_backup offers number of preferences that can be used to configure the plu
 
 h3. Absolute filesystem path to a directory used to store backups
 
-p. Sets a directory used to store database dumps and TAR tapes. The path should be an absolute and point to an existing, empty directory that is both readable and writeable by PHP. Using relative paths is possible too. A path that starts with @./@ will be relative to Textpattern's installation directory (e.g. @./textpattern@).
+p. Sets a directory used to store database dumps and TAR tapes. The path should be an absolute and point to an existing, empty directory that is both readable and writeable by PHP. Using relative paths is possible too. A path that starts with @./@ will be relative to Textpattern's installation directory (e.g. @./textpattern@) and with @../@ to the parent.
 
 p. A backup directory path might look something like this:
 
-bc. ./../../site_backups
+bc. ../../site_backups
 
 p. Which would create backups to a directory named *site_backups*, located two directories up from Textpattern's installation directory. This relative path would do the same as providing an absolute path to the same directory starting from the top:
 
@@ -49,15 +49,15 @@ bc. /users/some/example/path/to/site_backups
 
 h3. Directories to backup (comma-separated)
 
-p. Sets which directories are backed up and included in created TAR archives. Separate multiple paths with commas (@,@). As with backup directory, also this setting supports relative paths. A path that starts with @./@ will be relative to Textpattern's installation directory (e.g. @./textpattern@). On a single site setup, following would back up the directory containing Textpattern (i.e. @textpattern@ directory and @index.php@ file):
+p. Sets which directories are backed up and included in created TAR archives. Separate multiple paths with commas (@,@). As with backup directory, also this setting supports relative paths. A path that starts with @./@ will be relative to Textpattern's installation directory (e.g. @./textpattern@) and one with a @../@ to the parent. On a single site setup, following would back up the directory containing Textpattern (i.e. @textpattern@ directory and @index.php@ file):
 
-bc. ./../
+bc. ../
 
 h3. Files excluded from backups (comma-separated)
 
-p. Sets files that are excluded from filesystem backups. This setting can be useful for keeping sensitive files secure incase a backup is lost or leaks due to compromised backup server or cloud file hosting account. Specified file paths are relative to directories specified in the above *Directories to backup* setting. Files that match a path name pattern will not be not be backed up. Multiple files can be separated with commas (@,@).
+p. Sets files that are excluded from the filesystem backup. This setting can be useful for keeping sensitive files secure incase a backup is lost or leaks due to compromised backup server or a cloud file hosting account. Values used in the setting are searched from backed up files' paths. Any file that path contains any of the values, will be excluded from the backup. Multiple files can be separated with a comma (@,@).
 
-p. On a single site installation with the default *Directories to backup* setting of @./../@, following rule would exclude @config.php@, containing database credentials, from backups:
+p. On a single site installation the following rule would exclude Textpattern's config.php@ from the backup:
 
 bc. textpattern/config.php
 
