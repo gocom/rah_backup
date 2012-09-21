@@ -232,7 +232,7 @@ class rah_backup {
 		foreach(
 			array(
 				'path' => array('text_input', ''),
-				'copy_paths' => array('text_input', './../'),
+				'copy_paths' => array('text_input', '../'),
 				'exclude_files' => array('text_input', ''),
 				'ignore_tables' => array('text_input', ''),
 				'compress' => array('yesnoradio', 0),
