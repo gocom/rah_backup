@@ -69,10 +69,6 @@ p. This setting can be used to exclude sensitive information or temporary data f
 
 bc. txp_users, txp_log
 
-h3. Compress backups using Gzip?
-
-p. If set to Yes, created backups are compressed using Gzip. Requires access to gzip application.
-
 h3. Only keep the latest backup?
 
 p. If set to Yes, only newest backup files are kept. Each time site is backed up, older backups are rewritten. If the setting is set to No, each time new set of backup files are created.
