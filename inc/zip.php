@@ -67,17 +67,11 @@ class rah_backup_zip {
 		
 		foreach((array) $sources as $source) {
 		
-			$sourceDirname = '';
-		
 			if(is_dir($source)) {
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($source, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS),
 					RecursiveIteratorIterator::SELF_FIRST
 				);
-				
-				if(count($sources) > 1) {
-					$sourceDirname = md5($source).'/';
-				}
 			}
 			
 			else {
@@ -86,6 +80,12 @@ class rah_backup_zip {
 			
 			if(!$files) {
 				return false;
+			}
+			
+			$sourceDirname = '';
+			
+			if(count($sources) > 1) {
+				$sourceDirname = md5($source).'/';
 			}
 			
 			$source = $this->normalize_path(dirname($source));
