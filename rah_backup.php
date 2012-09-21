@@ -848,6 +848,10 @@ EOF;
 			$path = txpath.'/'.substr($path, 2);
 		}
 		
+		else if(strpos($path, '../') === 0) {
+			$path = dirname(txpath).'/'.substr($path, 3);
+		}
+		
 		return rtrim($path, "/\\");
 	}
 
