@@ -110,15 +110,13 @@ class rah_backup__dropbox {
 			$n = __CLASS__.'_'.$name;
 			
 			if(!isset($prefs[$n])) {
-				set_pref($n, $val[1], 'rah_bckp_db',  1, $val[0], $position);
-				$prefs[$n] = $val[1];
+				set_pref($n, $val[1], 'rah_bckp_db', PREF_ADVANCED, $val[0], $position);
 			}
 			
 			$position++;
 		}
 		
-		set_pref(__CLASS__.'_version', self::$version, 'rah_bckp_db', 2, '', 0);
-		$prefs[__CLASS__.'_version'] = self::$version;
+		set_pref(__CLASS__.'_version', self::$version, 'rah_bckp_db', PREF_HIDDEN);
 	}
 
 	/**
