@@ -88,8 +88,8 @@ class rah_backup_zip {
 				return false;
 			}
 			
-			$source = rtrim(str_replace('\\', '/', dirname($source)), '/') . '/';
-			$sourceLenght = strlen($source);
+			$source = $this->normalize_path(dirname($source));
+			$sourceLenght = strlen($source)+1;
 			
 			foreach($files as $file) {
 				
@@ -127,7 +127,7 @@ class rah_backup_zip {
 				
 				$localname = $file;
 				
-				if(strpos(str_replace('\\', '/', $file), $source) === 0) {
+				if(strpos($this->normalize_path($file).'/', $source.'/') === 0) {
 					$localname = $sourceDirname.substr($file, $sourceLenght);
 				}
 				
@@ -146,6 +146,14 @@ class rah_backup_zip {
 		}
 
 		return $zip->close();
+	}
+	
+	/**
+	 * Normalize path name
+	 */
+	
+	public function normalize_path($path) {
+		return rtrim(str_replace('\\', '/', $path), '/');
 	}
 }
 
