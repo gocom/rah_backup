@@ -338,7 +338,7 @@ class rah_backup
 					$('.rah_backup_restore, .rah_backup_take').live('click', function(e) {
 						e.preventDefault();
 						var obj = $(this);
-						
+
 						if (obj.hasClass('rah_backup_take'))
 						{
 							var message = textpattern.gTxt('rah_backup_confirm_backup');
@@ -347,12 +347,14 @@ class rah_backup
 						{
 							var message = textpattern.gTxt('rah_backup_confirm_restore');
 						}
-								
-						if (obj.hasClass('disabled') || !verify(message)) {
+	
+						if (obj.hasClass('disabled') || !verify(message))
+						{
 							return false;
 						}
-						
-						if (obj.hasClass('rah_backup_take')) {
+
+						if (obj.hasClass('rah_backup_take'))
+						{
 							$.globalEval('{$msg['backup']}');
 							obj.parent().append(' <span class="spinner"></span>');
 						}
@@ -360,10 +362,10 @@ class rah_backup
 						{
 							$.globalEval('{$msg['restore']}');
 						}
-						
+
 						var href = $(this).attr('href');
 						obj.addClass('disabled').attr('href', '#');
-						
+
 						sendAsyncEvent(href.substr(1), null, 'script').error(function() {
 							$.globalEval('{$msg['error']}');
 						}).complete(function() {
