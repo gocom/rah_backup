@@ -333,9 +333,7 @@ class rah_backup
 			'error' => escape_js($theme->announce_async(gTxt('rah_backup_task_error'))),
 		);
 
-		echo <<<EOF
-			<script type="text/javascript">
-				<!--
+		$js = <<<EOF
 				$(document).ready(function(){
 					$('.rah_backup_restore, .rah_backup_take').live('click', function(e) {
 						e.preventDefault();
@@ -374,9 +372,9 @@ class rah_backup
 						});
 					});
 				});
-				//-->
-			</script>
 EOF;
+
+		echo script_js($js);
 	}
 
 	/**
