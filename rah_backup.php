@@ -3,10 +3,10 @@
 /**
  * Rah_backup plugin for Textpattern CMS.
  *
- * @author Jukka Svahn
- * @date 2012-
+ * @author  Jukka Svahn
+ * @date    2012-
  * @license GNU GPLv2
- * @link https://github.com/gocom/rah_backup
+ * @link    https://github.com/gocom/rah_backup
  *
  * Copyright (C) 2012 Jukka Svahn <http://rahforum.biz>
  * Licensed under GNU Genral Public License version 2
@@ -15,90 +15,126 @@
 
 	rah_backup::get();
 
+/**
+ * The plugin class.
+ */
+
 class rah_backup
 {
+	/**
+	 * Version number.
+	 *
+	 * @var string
+	 */
+
 	static public $version = '0.1';
 
 	/**
-	 * @const int Filesystem backup type
+	 * Filesystem backup type.
+	 *
+	 * @const int
 	 */
 
 	const BACKUP_FILESYSTEM = 1;
 
 	/**
-	 * @const int Database backup type
+	 * Database backup type.
+	 *
+	 * @const int
 	 */
 
 	const BACKUP_DATABASE = 2;
 
 	/**
-	 * @var obj Stores instances
+	 * Stores instances.
+	 *
+	 * @var rah_backup
 	 */
 
 	static public $instance = NULL;
 
 	/**
-	 * @var string Path to directory storing backups
+	 * Path to directory storing backups.
+	 *
+	 * @var string 
 	 */
 
 	private $backup_dir;
 
-	/** 
-	 * @var array List of backed up files
+	/**
+	 * List of backed up files.
+	 *
+	 * @var array
 	 */
 
 	private $copy_paths = array();
 
 	/**
-	 * @var array List of excluded files
+	 * List of excluded files.
+	 *
+	 * @var array
 	 */
 
 	private $exclude_files = array();
 
 	/**
-	 * @var array List of ignored tables
+	 * List of ignored tables.
+	 *
+	 * @var array
 	 */
 
 	private $ignore_tables = array();
 
 	/**
-	 * @var string Timestamp append to backup archives
+	 * Timestamp append to backup archives.
+	 *
+	 * @var string
 	 */
 
 	private $filestamp = '';
 
 	/**
-	 * @var array Paths to created backup files
+	 * Paths to created backup files.
+	 *
+	 * @var array
 	 */
 
 	public $created = array();
 
 	/**
-	 * @var array Paths to deleted backup files
+	 * Paths to deleted backup files.
+	 *
+	 * @var array
 	 */
 
 	public $deleted = array();
 
 	/**
-	 * @var array List of invoked messages
+	 * List of invoked messages.
+	 *
+	 * @var array
 	 */
 
 	public $message = array();
 
 	/**
-	 * @var array List of invoked announcements
+	 * List of invoked announcements.
+	 *
+	 * @var array
 	 */
 
 	private $announce = array();
 
 	/**
-	 * @var array List of invoked errors/notices
+	 * List of invoked errors/notices.
+	 *
+	 * @var array
 	 */
 
 	public $warning = array();
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 
 	public function __construct()
@@ -121,7 +157,7 @@ class rah_backup
 	}
 
 	/**
-	 * Initializes
+	 * Initializes.
 	 */
 
 	public function initialize()
@@ -218,9 +254,10 @@ class rah_backup
 	}
 
 	/**
-	 * Installer
-	 * @param string $event Admin-side event.
-	 * @param string $step Admin-side, plugin-lifecycle step.
+	 * Installer.
+	 *
+	 * @param string $event Admin-side event
+	 * @param string $step  Admin-side, plugin-lifecycle step
 	 */
 
 	static public function install($event = '', $step = '')
@@ -266,8 +303,9 @@ class rah_backup
 	}
 
 	/**
-	 * Gets an instance of the class
-	 * @return obj
+	 * Gets an instance of the class.
+	 *
+	 * @return rah_backup
 	 */
 
 	static public function get()
@@ -281,7 +319,7 @@ class rah_backup
 	}
 
 	/**
-	 * Delivers panels
+	 * Delivers panels.
 	 */
 
 	public function pane()
@@ -310,7 +348,7 @@ class rah_backup
 	}
 
 	/**
-	 * Adds the panel's CSS to the head segment.
+	 * Adds the panel's CSS and JavaScript to the &lt;head&gt;.
 	 */
 
 	public function head()
@@ -380,10 +418,11 @@ EOF;
 	}
 
 	/**
-	 * Announce message
-	 * @param string|array $message
-	 * @param string $type message|inform|warning
-	 * @return obj
+	 * Announces a message.
+	 *
+	 * @param  string|array $message The message
+	 * @param  string       $type    The type, either 'message', 'inform', 'warning'
+	 * @return rah_backup
 	 */
 
 	public function announce($message, $type=-1)
@@ -393,8 +432,9 @@ EOF;
 	}
 
 	/**
-	 * The main listing
-	 * @param string $message Activity message.
+	 * The main panel listing backups.
+	 *
+	 * @param string|array $message The activity message
 	 */
 
 	private function browser($message = '')
@@ -544,11 +584,11 @@ EOF;
 
 		$this->build_pane($pane, $message);
 	}
-	
+
 	/**
-	 * Backup callback
+	 * Public callback end-point for creating backups.
 	 */
-	
+
 	public function call_backup()
 	{
 		global $prefs;
@@ -572,9 +612,10 @@ EOF;
 	}
 
 	/**
-	 * Sanitize filename
-	 * @param string $filename
-	 * @return string
+	 * Sanitizes filename.
+	 *
+	 * @param  string $filename The filename
+	 * @return string A safe filename
 	 */
 
 	public function sanitize($filename)
@@ -584,7 +625,7 @@ EOF;
 	}
 
 	/**
-	 * Creates a new backup
+	 * Creates a new backup.
 	 */
 
 	private function create()
@@ -650,7 +691,9 @@ EOF;
 	}
 
 	/**
-	 * Restores backup
+	 * Restores backup.
+	 *
+	 * @todo Not ready
 	 */
 
 	private function restore()
@@ -694,7 +737,7 @@ EOF;
 	}
 
 	/**
-	 * Downloads a backup file
+	 * Streams backups for downloading.
 	 */
 
 	private function download()
@@ -739,7 +782,7 @@ EOF;
 	}
 	
 	/**
-	 * Multi-edit handler
+	 * Multi-edit handler.
 	 */
 
 	private function multi_edit()
@@ -768,7 +811,7 @@ EOF;
 	}
 
 	/**
-	 * Deletes selected backups
+	 * Deletes selected backups.
 	 */
 
 	private function multi_option_delete()
@@ -789,14 +832,15 @@ EOF;
 	}
 
 	/**
-	 * Gets a list of backups
-	 * @param string $sort
-	 * @param string $direction
-	 * @param int $offset
-	 * @param int $limit
+	 * Gets a list of backups.
+	 *
+	 * @param  string $sort      Sorting criteria, either 'name', 'ext', 'date', 'size', 'type'
+	 * @param  string $direction Sorting direction, either 'asc' or 'desc'
+	 * @param  int    $offset    Offset
+	 * @param  int    $limit     Limit results
 	 * @return array
 	 */
-	
+
 	public function get_backups($sort = 'name', $direction = 'asc', $offset = 0, $limit = NULL)
 	{
 		global $prefs;
@@ -861,7 +905,8 @@ EOF;
 	}
 
 	/**
-	 * Echoes the panels and header
+	 * Prints the panel markup and a header.
+	 *
 	 * @param string|array $content Pane's HTML markup.
 	 * @param string|array $message The activity message.
 	 */
@@ -903,11 +948,12 @@ EOF;
 	}
 
 	/**
-	 * Format a path
-	 * @param string $path
-	 * @return string|bool
+	 * Formats a path.
+	 *
+	 * @param  string $path The path
+	 * @return string
 	 */
-	
+
 	public function path($path)
 	{
 		if (strpos($path, './') === 0)
@@ -923,6 +969,8 @@ EOF;
 	}
 
 	/**
+	 * The plugin's options panel.
+	 *
 	 * Redirect to the admin-side interface.
 	 */
 
