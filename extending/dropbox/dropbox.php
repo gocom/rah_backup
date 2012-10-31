@@ -125,6 +125,7 @@ class rah_backup__dropbox {
 
 	public function __construct() {
 		add_privs('plugin_prefs.'.__CLASS__, '1,2');
+		add_privs('prefs.rah_bckp_db', '1');
 		register_callback(array($this, 'sync'), 'rah_backup.created');
 		register_callback(array($this, 'sync'), 'rah_backup.deleted');
 		register_callback(array($this, 'authentication'), 'textpattern');

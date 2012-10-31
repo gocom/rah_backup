@@ -110,6 +110,7 @@ class rah_backup {
 		add_privs('rah_backup_delete', '1');
 		add_privs('rah_backup_preferences', '1');
 		add_privs('plugin_prefs.rah_backup', '1,2');
+		add_privs('prefs.rah_backup', '1');
 		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
 		register_callback(array(__CLASS__, 'install'), 'plugin_lifecycle.rah_backup');
 		register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
