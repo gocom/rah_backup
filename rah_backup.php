@@ -964,5 +964,3 @@ EOF;
 		echo '<p><a href="?event=rah_backup">'.gTxt('continue').'</a></p>';
 	}
 }
-
-?>
