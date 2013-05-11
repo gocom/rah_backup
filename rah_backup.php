@@ -257,18 +257,19 @@ class rah_backup
 
 		foreach (
 			array(
-				'path' => array('text_input', ''),
-				'copy_paths' => array('text_input', '../'),
+				'path'          => array('text_input', ''),
+				'copy_paths'    => array('text_input', '../'),
 				'exclude_files' => array('text_input', ''),
 				'ignore_tables' => array('text_input', ''),
-				'compress' => array('yesnoradio', 0),
-				'overwrite' => array('yesnoradio', 0),
-				'callback' => array('yesnoradio', 0),
-				'key' => array('text_input', md5(uniqid(mt_rand(), TRUE))),
+				'compress'      => array('yesnoradio', 0),
+				'overwrite'     => array('yesnoradio', 0),
+				'callback'      => array('yesnoradio', 0),
+				'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
 			) as $name => $val
-		) {
+		)
+		{
 			$n = 'rah_backup_'.$name;
-			
+
 			if (!isset($prefs[$n]))
 			{
 				set_pref($n, $val[1], 'rah_backup', PREF_ADVANCED, $val[0], $position);
