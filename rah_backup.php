@@ -140,7 +140,8 @@ class rah_backup
 		add_privs('plugin_prefs.rah_backup', '1,2');
 		add_privs('prefs.rah_backup', '1');
 		register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
-		register_callback(array(__CLASS__, 'install'), 'plugin_lifecycle.rah_backup');
+		register_callback(array($this, 'install'), 'plugin_lifecycle.rah_backup', 'installed');
+		register_callback(array($this, 'uninstall'), 'plugin_lifecycle.rah_backup', 'deleted');
 		register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
 		register_callback(array($this, 'pane'), 'rah_backup');
 		register_callback(array($this, 'head'), 'admin_side', 'head_end');
@@ -246,20 +247,11 @@ class rah_backup
 
 	/**
 	 * Installer.
-	 *
-	 * @param string $event Admin-side event
-	 * @param string $step  Admin-side, plugin-lifecycle step
 	 */
 
-	static public function install($event = '', $step = '')
+	public function install()
 	{
 		global $prefs;
-
-		if ($step == 'deleted')
-		{
-			safe_delete('txp_prefs', "name like 'rah\_backup\_%'");
-			return;
-		}
 
 		$position = 250;
 
@@ -284,6 +276,15 @@ class rah_backup
 
 			$position++;
 		}
+	}
+
+	/**
+	 * Uninstaller.
+	 */
+
+	public function uninstall()
+	{
+		safe_delete('txp_prefs', "name like 'rah\_backup\_%'");
 	}
 
 	/**
