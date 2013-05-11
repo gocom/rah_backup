@@ -251,8 +251,6 @@ class rah_backup
 
 	public function install()
 	{
-		global $prefs;
-
 		$position = 250;
 
 		foreach (
@@ -270,7 +268,7 @@ class rah_backup
 		{
 			$n = 'rah_backup_'.$name;
 
-			if (!isset($prefs[$n]))
+			if (get_pref($n, false) === false)
 			{
 				set_pref($n, $val[1], 'rah_backup', PREF_ADVANCED, $val[0], $position);
 			}
