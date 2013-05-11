@@ -21,14 +21,6 @@
 class rah_backup
 {
 	/**
-	 * Version number.
-	 *
-	 * @var string
-	 */
-
-	static public $version = '0.1';
-
-	/**
 	 * Filesystem backup type.
 	 *
 	 * @const int
@@ -269,11 +261,6 @@ class rah_backup
 			return;
 		}
 
-		if ((string) get_pref(__CLASS__.'_version') === self::$version)
-		{
-			return;
-		}
-
 		$position = 250;
 
 		foreach (
@@ -297,8 +284,6 @@ class rah_backup
 
 			$position++;
 		}
-
-		set_pref(__CLASS__.'_version', self::$version, __CLASS__, PREF_HIDDEN);
 	}
 
 	/**
