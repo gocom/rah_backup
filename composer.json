@@ -4,6 +4,7 @@
     "keywords": ["textpattern", "plugin"],
     "homepage": "https://github.com/gocom/rah_backup",
     "license": "GPL-2.0",
+    "type": "textpattern-plugin",
     "authors": [
         {
             "name": "Jukka Svahn",
