@@ -267,11 +267,11 @@ class rah_backup
 				'key' => array('text_input', md5(uniqid(mt_rand(), TRUE))),
 			) as $name => $val
 		) {
-			$n = __CLASS__.'_'.$name;
+			$n = 'rah_backup_'.$name;
 			
 			if (!isset($prefs[$n]))
 			{
-				set_pref($n, $val[1], __CLASS__, PREF_ADVANCED, $val[0], $position);
+				set_pref($n, $val[1], 'rah_backup', PREF_ADVANCED, $val[0], $position);
 			}
 
 			$position++;
