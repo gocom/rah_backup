@@ -12,8 +12,6 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-	rah_backup::get();
-
 /**
  * The plugin class.
  */
@@ -964,3 +962,5 @@ EOF;
 		echo '<p><a href="?event=rah_backup">'.gTxt('continue').'</a></p>';
 	}
 }
+
+rah_backup::get();
