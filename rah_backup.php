@@ -664,6 +664,8 @@ EOF;
 			$path .= '.gz';
 		}
 
+		$this->created[basename($path)] = $path;
+
 		$config = new Rah_Danpu_Dump();
 		$config
 			->file($path)
@@ -678,11 +680,7 @@ EOF;
 		}
 		catch(Exception $e)
 		{
-		}
-
-		if (file_exists($path))
-		{
-			$this->created[basename($path)] = $path;
+			array_pop($this->created);
 		}
 
 		if ($this->copy_paths)
