@@ -469,7 +469,7 @@ EOF;
 		{
 			$backups = $this->get_backups($sort, $dir);
 
-			foreach($backups as $backup)
+			foreach ($backups as $backup)
 			{
 				$td = array();
 				$name = txpspecialchars($backup['name']);
