@@ -666,19 +666,18 @@ EOF;
 
 		$config = new Rah_Danpu_Dump();
 		$config
-		    ->file($path)
-		    ->db($txpcfg['db'])
-		    ->user($txpcfg['user'])
-		    ->pass($txpcfg['pass'])
-		    ->temp(get_pref('tempdir'));
+			->file($path)
+			->db($txpcfg['db'])
+			->user($txpcfg['user'])
+			->pass($txpcfg['pass'])
+			->temp(get_pref('tempdir'));
 
 		try
 		{
-		    new Rah_Danpu_Export($config);
+			new Rah_Danpu_Export($config);
 		}
 		catch(Exception $e)
 		{
-		    trigger_error($e->getMessage());
 		}
 
 		if (file_exists($path))
