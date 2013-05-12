@@ -515,13 +515,10 @@ EOF;
 
 		if ($this->message)
 		{
-			$out[] = 
-				'			<tr>'.n.
-				'				<td colspan="'.count($column).'">'.$this->message[0].'</td>'.n.
-				'			</tr>'.n;
+			$out[] = tr(tda($this->message[0], array('colspan' => count($column))));
 		}
 
-		$out = implode(n, $out);
+		$out = implode('', $out);
 
 		if (!empty($this->announce[-1]))
 		{
@@ -547,24 +544,63 @@ EOF;
 			}
 		}
 
-		$pane[] = 
-			'<div class="txp-listtables">'.n.
-			'<table class="txp-list">'.n.
-			'	<thead>'.
-			tr(implode(n, $column)).
-			'	</thead>'.n.
-			'	<tbody id="rah_backup_list">'.n.
-				$out.n.
-			'	</tbody>'.n.
-			'</table>'.n.
-			'</div>'.n;
+		$pane[] =
+			n.tag_start('div', array('class' => 'txp-listtables')).
+			n.tag_start('table', array('class' => 'txp-list')).
+			n.tag_start('head').
+			tr(implode('', $column)).
+			n.tag_end('head').
+			n.tag_start('tbody', array('id' => 'rah_backup_list')).
+			$out.
+			n.tag_end('tbody').
+			n.tag_end('table').
+			n.tag_end('div');
 
 		if ($methods)
 		{
 			$pane[] = multi_edit($methods, $event, 'multi_edit');
 		}
 
-		$this->build_pane($pane, $message);
+		pagetop(gTxt('rah_backup'), $message);
+
+		echo
+			hed(gTxt('rah_backup'), 1, array('class' => 'txp-heading')).
+
+			n.tag_start('div', array(
+				'class' => 'txp-container',
+			)).
+
+			n.tag_start('div', array('class' => 'txp-control-panel')).
+			n.tag_start('p', array('class' => 'txp-buttons'));
+
+		if (has_privs('rah_backup_create') && !$this->warning)
+		{
+			echo n.href(gTxt('rah_backup_create'), array(
+				'event'      => $event,
+				'step'       => 'create',
+				'_txp_token' => form_token(),
+			), array(
+				'class' => 'rah_backup_take',
+			));
+		}
+
+		if (has_privs('prefs') && has_privs('rah_backup_preferences'))
+		{
+			echo n.href(gTxt('rah_backup_preferences'), '?event=prefs#prefs-rah_backup_path');
+		}
+
+		echo
+			n.tag_end('p').
+			n.tag_end('div').
+			n.tag_start('form', array(
+				'action' => 'index.php',
+				'method' => 'post',
+				'class'  => 'multi_edit_form',
+			)).
+			tInput().
+			n.implode('', $pane).
+			n.tag_end('form').
+			n.tag_end('div');
 	}
 
 	/**
@@ -887,49 +923,6 @@ EOF;
 	}
 
 	/**
-	 * Prints the panel markup and a header.
-	 *
-	 * @param string|array $content Pane's HTML markup.
-	 * @param string|array $message The activity message.
-	 */
-
-	private function build_pane($content, $message = '')
-	{
-		global $event;
-
-		pagetop(gTxt('rah_backup'), $message);
-
-		if (is_array($content))
-		{
-			$content = implode('', $content);
-		}
-
-		echo 
-			n.
-			'<h1 class="txp-heading">'.gTxt('rah_backup').'</h1>'.n.
-			'<form action="index.php" method="post" class="txp-container multi_edit_form">'.n.
-			'	'.tInput().n.
-			
-			'	<p class="txp-buttons">'.
-			
-			(has_privs('rah_backup_create') && !$this->warning ? 
-				'<a class="rah_backup_take" href="?event='.$event.'&amp;step=create&amp;_txp_token='.form_token().'">'.
-					gTxt('rah_backup_create').
-				'</a> ' : ''
-			).
-			
-			(has_privs('prefs') && has_privs('rah_backup_preferences') ? 
-				'<a href="?event=prefs&amp;step=advanced_prefs#prefs-rah_backup_path">'.
-					gTxt('rah_backup_preferences').
-				'</a>' : ''
-			).
-					
-			'</p>'.n.
-			$content.n.
-			'</form>'.n;
-	}
-
-	/**
 	 * Formats a path.
 	 *
 	 * @param  string $path The path
@@ -959,7 +952,7 @@ EOF;
 	public function prefs()
 	{
 		header('Location: ?event=rah_backup');
-		echo '<p><a href="?event=rah_backup">'.gTxt('continue').'</a></p>';
+		echo graf(href(gTxt('continue'), array('event' => 'rah_backup')));
 	}
 }
 
