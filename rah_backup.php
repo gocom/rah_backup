@@ -565,7 +565,6 @@ EOF;
 				'class' => 'txp-container',
 			)).
 
-			n.tag_start('div', array('class' => 'txp-control-panel')).
 			n.tag_start('p', array('class' => 'txp-buttons'));
 
 		if (has_privs('rah_backup_create') && !$this->warning)
@@ -586,7 +585,6 @@ EOF;
 
 		echo
 			n.tag_end('p').
-			n.tag_end('div').
 			n.tag_start('form', array(
 				'action' => 'index.php',
 				'method' => 'post',
