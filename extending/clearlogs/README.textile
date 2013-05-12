@@ -1,3 +1,0 @@
-h1. Clear logs module for rah_backup
-
-p. Empties visitor logs before taking a backup. The module will empty the actual table, not just records from backup files. Current visitor logs will be permanently lost.
