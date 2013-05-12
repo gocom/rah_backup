@@ -880,7 +880,7 @@ EOF;
 
 		foreach (
 			(array) glob(
-				preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.sql|.zip]',
+				preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.gz|.sql|.zip]',
 				GLOB_NOSORT
 			) as $file
 		) {
@@ -898,7 +898,7 @@ EOF;
 				'type' => self::BACKUP_FILESYSTEM,
 			);
 
-			if ($backup['ext'] === 'sql' || ($backup['ext'] === 'zip' && substr($backup['name'], -8, 4) === '.sql'))
+			if (preg_match('/\.sql[\.zip|\.gz]?$/i', $backup['name']))
 			{
 				$backup['type'] = self::BACKUP_DATABASE;
 			}
