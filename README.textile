@@ -1,8 +1,16 @@
 h1. rah_backup
 
+p. "Packagist":https://packagist.org/packages/rah/rah_backup | "Twitter":http://twitter.com/gocom | "Donate":http://rahforum.biz/donate/rah_backup
+
 p. Rah_backup keeps your important site safe from disastrous events. Rah_backup is an admin-side backup utility plugin for "Textpattern CMS":http://www.textpattern.com. Backs up both your files and databases with single click of button, and restores as easily. To support its features the plugin packs a clean, user-friendly interface that feels like it was part of Textpattern itself.
 
 p. The plugin also supports modules of it's own. Modules can be used to extend rah_backup's functionality, from uploading the files to offsite location to email notifications and beyond. We ourselves offer couple extra modules, including "Dropbox":https://dropbox.com, FTP uploading and more.
+
+h2. Installing
+
+p. Using "Composer":http://getcomposer.org:
+
+bc. $ composer.phar require rah/rah_backup
 
 h2. Requirements
 
@@ -10,18 +18,6 @@ p. Rah_backups' minimum requirements:
 
 * Textpattern 4.5.0 or newer.
 * PHP 5.2 or newer.
-
-h2. Installing
-
-p. Rah_backup's installation starts with the simple three-steps all plugin normally use:
-
-# Download plugin installation file and copy its the contents to clipboard.
-# Paste the copied contents into the _Install plugin_ field at the top of the "Plugins panel":http://textpattern.net/wiki/index.php?title=plugins, and click *Upload*. 
-# You will be shown a preview of the plugin and its documentation. Click *Install* at the bottom of the screen.
-# You will be returned to the plugin list when the plugin has been installed.
-# Now activate the plugin by clicking its *No* link, which toggles the status to Yes and activates it.
-
-p. If everything worked fine, the plugin is now installed and active. The plugin's admin-interface should be accessible under _Extensions/Backups_ area.
 
 h2. Configuration
 
@@ -95,6 +91,6 @@ h2. Thanks to
 
 h2. Changelog
 
-h3. Version 0.1 - upcoming
+h3. Version 0.1.0 - upcoming
 
 * Initial release.
