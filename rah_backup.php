@@ -157,13 +157,8 @@ class rah_backup
 		if (!$prefs['rah_backup_path'])
 		{
 			$this->message[] = gTxt('rah_backup_define_preferences', array(
-				'{start_by}' => 
-					'<a href="?event=prefs&amp;'.
-						'step=advanced_prefs#prefs-rah_backup_path">'.
-						gTxt('rah_backup_start_by').
-					'</a>'
-			),
-			false);
+				'{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
+			), false);
 		}
 
 		else
