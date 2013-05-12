@@ -672,6 +672,7 @@ EOF;
 			->db($txpcfg['db'])
 			->user($txpcfg['user'])
 			->pass($txpcfg['pass'])
+			->host($txpcfg['host'])
 			->temp(get_pref('tempdir'));
 
 		try
