@@ -644,6 +644,8 @@ EOF;
 
 	/**
 	 * Creates a new backup.
+	 *
+	 * @todo Implement table ignoring
 	 */
 
 	private function create()
@@ -657,20 +659,26 @@ EOF;
 
 		$path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
 
-		$dump = new rah_backup_mysqldump();
-		$dump->ignored = $this->ignore_tables;
-		$dump->filename = $path;
-		$dump->run();
+		if (get_pref('rah_backup_compress'))
+		{
+			$path .= '.gz';
+		}
 
-		if ($prefs['rah_backup_compress'] && file_exists($path))
-		{	
-			$zip = new rah_backup_zip();
+		$config = new Rah_Danpu_Dump();
+		$config
+		    ->file($path)
+		    ->db($txpcfg['db'])
+		    ->user($txpcfg['user'])
+		    ->pass($txpcfg['pass'])
+		    ->temp(get_pref('tempdir'));
 
-			if ($zip->create($path, $path.'.zip'))
-			{
-				unlink($path);
-				$path .= '.zip';
-			}
+		try
+		{
+		    new Rah_Danpu_Export($config);
+		}
+		catch(Exception $e)
+		{
+		    trigger_error($e->getMessage());
 		}
 
 		if (file_exists($path))

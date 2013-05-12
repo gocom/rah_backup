@@ -8,5 +8,5 @@
 	"order"       : 5,
 	"flags"       : 3,
 	"help"        : {"file" : "./README.textile"},
-	"code"        : {"file" : ["./rah_backup.php", "./inc/mysqldump.php", "./inc/zip.php"]}
+	"code"        : {"file" : ["./rah_backup.php", "./inc/zip.php"]}
 }
