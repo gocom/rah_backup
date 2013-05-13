@@ -35,14 +35,6 @@ class rah_backup
 	const BACKUP_DATABASE = 2;
 
 	/**
-	 * Stores instances.
-	 *
-	 * @var rah_backup
-	 */
-
-	static public $instance = NULL;
-
-	/**
 	 * Path to directory storing backups.
 	 *
 	 * @var string 
@@ -277,22 +269,6 @@ class rah_backup
 	public function uninstall()
 	{
 		safe_delete('txp_prefs', "name like 'rah\_backup\_%'");
-	}
-
-	/**
-	 * Gets an instance of the class.
-	 *
-	 * @return rah_backup
-	 */
-
-	static public function get()
-	{
-		if (self::$instance === NULL)
-		{
-			self::$instance = new rah_backup();
-		}
-
-		return self::$instance;
 	}
 
 	/**
@@ -955,4 +931,4 @@ EOF;
 	}
 }
 
-rah_backup::get();
+new rah_backup();
