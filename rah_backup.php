@@ -71,14 +71,6 @@ class rah_backup
 	private $filestamp = '';
 
 	/**
-	 * Paths to created backup files.
-	 *
-	 * @var array
-	 */
-
-	public $created = array();
-
-	/**
 	 * Paths to deleted backup files.
 	 *
 	 * @var array
@@ -629,8 +621,6 @@ EOF;
 			$path .= '.gz';
 		}
 
-		$this->created[basename($path)] = $path;
-
 		$config = new Rah_Danpu_Dump();
 		$config
 			->file($path)
@@ -640,13 +630,16 @@ EOF;
 			->host($txpcfg['host'])
 			->temp(get_pref('tempdir'));
 
+		$created = array();
+		$created[basename($path)] = $path;
+
 		try
 		{
 			new Rah_Danpu_Export($config);
 		}
 		catch(Exception $e)
 		{
-			array_pop($this->created);
+			array_pop($created);
 		}
 
 		if ($this->copy_paths)
@@ -665,11 +658,13 @@ EOF;
 
 			if ($zip->create($this->copy_paths, $path))
 			{
-				$this->created[basename($path)] = $path;
+				$created[basename($path)] = $path;
 			}
 		}
 
-		callback_event('rah_backup.created');
+		callback_event('rah_backup.created', '', 0, array(
+			'files' => $created,
+		));
 
 		if (txpinterface == 'public')
 		{
