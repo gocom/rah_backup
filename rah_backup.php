@@ -87,14 +87,6 @@ class rah_backup
 	public $message = array();
 
 	/**
-	 * List of invoked announcements.
-	 *
-	 * @var array
-	 */
-
-	private $announce = array();
-
-	/**
 	 * List of invoked errors/notices.
 	 *
 	 * @var array
@@ -359,20 +351,6 @@ EOF;
 	}
 
 	/**
-	 * Announces a message.
-	 *
-	 * @param  string|array $message The message
-	 * @param  string       $type    The type, either 'message', 'inform', 'warning'
-	 * @return rah_backup
-	 */
-
-	public function announce($message, $type=-1)
-	{
-		$this->announce[$type][] = $message;
-		return $this;
-	}
-
-	/**
 	 * The main panel listing backups.
 	 *
 	 * @param string|array $message The activity message
@@ -479,11 +457,6 @@ EOF;
 
 		$out = implode('', $out);
 
-		if (!empty($this->announce[-1]))
-		{
-			$message = $this->announce[-1][0];
-		}
-
 		if ($app_mode == 'async')
 		{
 			send_script_response($theme->announce_async($message).n.'$("#rah_backup_list").html("'.escape_js($out).'");');
@@ -493,14 +466,6 @@ EOF;
 		if ($this->warning)
 		{
 			$pane[] = '<p class="alert-block warning">'.$this->warning[0].'</p>';
-		}
-
-		foreach (array('success', 'warning', 'error', 'information', 'highlight') as $type)
-		{
-			if (!empty($this->announce[$type]))
-			{
-				$pane[] = '<p class="alert-block '.$type.'">'.implode('</p><p class="alert-block '.$type.'">', $this->announce[$type]).'</p>';
-			}
 		}
 
 		$pane[] =
