@@ -591,8 +591,8 @@ EOF;
 
 		try
 		{
-    		$config = new Rah_Backup_Danpu_Dump();
-            $config->file($path);
+			$config = new Rah_Backup_Danpu_Dump();
+			$config->file($path);
 			new Rah_Danpu_Export($config);
 		}
 		catch(Exception $e)
@@ -878,26 +878,6 @@ EOF;
 		header('Location: ?event=rah_backup');
 		echo graf(href(gTxt('continue'), array('event' => 'rah_backup')));
 	}
-}
-
-/**
- * Configuration.
- */
-
-class Rah_Backup_Danpu_Dump extends Rah_Danpu_Dump
-{
-    /**
-     * Constructor.
-     */
-
-    public function __construct()
-    {
-        global $txpcfg;
-        $this->dsn = 'mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'];
-        $this->user = $txpcfg['user'];
-        $this->pass = $txpcfg['pass'];
-        $this->tmp = get_pref('tempdir');
-    }
 }
 
 new rah_backup();
