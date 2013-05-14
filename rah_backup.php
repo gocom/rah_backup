@@ -600,6 +600,7 @@ EOF;
 			array_pop($created);
 		}
 
+		/*
 		if ($this->copy_paths)
 		{
 			$path = $this->sanitize($prefs['siteurl']);
@@ -619,6 +620,7 @@ EOF;
 				$created[basename($path)] = $path;
 			}
 		}
+		*/
 
 		callback_event('rah_backup.created', '', 0, array(
 			'files' => $created,
