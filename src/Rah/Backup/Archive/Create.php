@@ -1,15 +1,10 @@
 <?php
 
 /**
- * Wrapper for ZipArchive extension.
- * 
- * @package rah_backup
- * @author Jukka Svahn <http://rahforum.biz/>
- * @copyright (c) 2012 Jukka Svahn
- * @license GLPv2
+ * Creates an archive.
  */
 
-class Rah_Backup_Compress
+class Rah_Backup_Archive_Create extends Rah_Backup_Archive_Base
 {
 	/**
 	 * Compresses a directory or a file.
@@ -20,7 +15,7 @@ class Rah_Backup_Compress
 		$this->zip->open(ZIPARCHIVE::OVERWRITE);
 		$count = 0;
 
-		foreach((array) $this->config->source as $source)
+		foreach ((array) $this->config->source as $source)
 		{
 			$files = $this->fileList($source);
 			$sourceDirname = '';

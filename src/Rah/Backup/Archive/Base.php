@@ -28,6 +28,11 @@ class Rah_Backup_Archive_Base
 
 	public function __construct()
 	{
+		if (!class_exists('ZipArchive'))
+		{
+			throw new Exception('ZipArchive is not installed.');
+		}
+
 		$this->zip = new ZipArchive();
 		$this->init();
 	}
