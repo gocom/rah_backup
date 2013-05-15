@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * The configuration options.
+ */
+
 abstract class Rah_Backup_Archive_Config
 {
 	/**
@@ -9,6 +13,12 @@ abstract class Rah_Backup_Archive_Config
 	 */
 
 	public $file;
+
+    /**
+     * Source files or directories.
+     */
+
+    public $source = array();
 
 	/**
 	 * The file descriptor limit and a reset point.
@@ -25,4 +35,12 @@ abstract class Rah_Backup_Archive_Config
 	 */
 
 	public $ignore = array();
+
+    /**
+     * Path to temporary directory.
+     *
+     * @var string
+     */
+
+    public $tmp = '/tmp';
 }

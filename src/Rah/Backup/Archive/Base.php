@@ -22,12 +22,25 @@ abstract class Rah_Backup_Archive_Base
 
 	protected $zip;
 
+    /**
+     * Path to a temporary file.
+     *
+     * @var string
+     */
+
+    protected $temp;
+
 	/**
 	 * Constructor.
+	 *
+	 * @param Rah_Backup_Archive_Config
 	 */
 
-	public function __construct()
+	public function __construct($config)
 	{
+		$this->config = $config;
+        //$this->temp = tempnam($this->config->tmp, 'Rah_Zip');
+
 		if (!class_exists('ZipArchive'))
 		{
 			throw new Exception('ZipArchive is not installed.');
@@ -40,6 +53,7 @@ abstract class Rah_Backup_Archive_Base
 	/**
 	 * Normalizes a filename.
 	 *
+	 * @param  string $path
 	 * @return string
 	 */
 
@@ -50,6 +64,8 @@ abstract class Rah_Backup_Archive_Base
 
 	/**
 	 * Opens a file.
+	 *
+	 * @param int $flags
 	 */
 
 	protected function open($flags = ZIPARCHIVE::OVERWRITE)
