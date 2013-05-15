@@ -17,7 +17,17 @@ class Rah_Backup_Archive_Create extends Rah_Backup_Archive_Base
 
 		foreach ((array) $this->config->source as $source)
 		{
-			$files = $this->fileList($source);
+			if (is_dir($source))
+			{
+				$files = new RecursiveDirectoryIterator($source);
+				$file = new RecursiveIteratorIterator($files, RecursiveIteratorIterator::SELF_FIRST);
+			}
+			else
+			{
+				$this->addFile($source);
+				continue;
+			}
+
 			$sourceDirname = '';
 
 			if (is_array($this->config->source) && count($this->config->source) > 1)
@@ -28,34 +38,19 @@ class Rah_Backup_Archive_Create extends Rah_Backup_Archive_Base
 			$source = $this->normalizePath(dirname($source));
 			$sourceLenght = strlen($source) + 1;
 
-			foreach ($files as $file)
+			while ($file->valid())
 			{
-				if(($count++) === $this->config->descriptor_limit)
+				if ($file->isDot() || $file->isLink() || $file->isReadable() === false || $this->isIgnored($file->getFileName()))
+				{
+					$this->next();
+					continue;
+				}
+
+				if (($count++) === $this->config->descriptor_limit)
 				{
 					$this->close();
 					$this->open();
 					$count = 0;
-				}
-
-				if (is_link($file))
-				{
-					continue;
-				}
-
-				$ignore = false;
-
-				foreach ((array) $this->config->ignored as $f)
-				{
-					if (strpos($file, $f) !== false)
-					{
-						$ignore = true;
-						break;
-					}
-				}
-
-				if ($ignore)
-				{
-					continue;
 				}
 
 				$localname = $file;
@@ -86,19 +81,21 @@ class Rah_Backup_Archive_Create extends Rah_Backup_Archive_Base
 	}
 
 	/**
-	 * Collects a file list.
+	 * Whether the file is ignored.
 	 *
-	 * @return array|RecursiveIteratorIterator
+	 * @return string $file The filename
 	 */
 
-	protected function fileList($filename)
+	protected function isIgnored($file)
 	{
-		if (!is_dir($filename))
+		foreach ((array) $this->config->ignored as $f)
 		{
-			return (array) $filename;
+			if (strpos($file, $f) !== false)
+			{
+				return true;
+			}
 		}
 
-		$directory = new RecursiveDirectoryIterator($filename, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
-		return new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+		return false;
 	}
 }
