@@ -1,6 +1,6 @@
 <?php
 
-class Rah_Backup_Archive_Config
+abstract class Rah_Backup_Archive_Config
 {
 	/**
 	 * The filename.

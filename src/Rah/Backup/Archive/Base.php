@@ -4,7 +4,7 @@
  * Base class.
  */
 
-class Rah_Backup_Archive_Base
+abstract class Rah_Backup_Archive_Base
 {
 	/**
 	 * The config.
