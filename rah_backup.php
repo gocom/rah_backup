@@ -591,9 +591,15 @@ EOF;
 
         try
         {
-            $config = new Rah_Backup_Danpu_Dump();
-            $config->file($path);
-            new Rah_Danpu_Export($config);
+            $dump = new \Rah\Danpu\Dump;
+            $dump
+                ->file($path)
+                ->dsn('mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'])
+                ->user($txpcfg['user'])
+                ->pass($txpcfg['pass'])
+                ->tmp(get_pref('tempdir'));
+
+            new \Rah\Danpu\Export($dump);
         }
         catch(Exception $e)
         {

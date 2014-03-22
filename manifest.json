@@ -9,12 +9,10 @@
     "flags": 3,
     "help": {"file" : "./README.textile"},
     "code": {"file" : [
-        "./src/Rah/Backup/Danpu/Dump.php",
         "./src/Rah/Backup/Arcive/Base.php",
         "./src/Rah/Backup/Arcive/Compress.php",
         "./src/Rah/Backup/Arcive/Config.php",
         "./src/Rah/Backup/Arcive/Extract.php",
-        "./rah_backup.php",
-        "./inc/zip.php"
+        "./rah_backup.php"
     ]}
 }
