@@ -12,7 +12,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-class rah_backup
+class Rah_Backup
 {
     /**
      * Filesystem backup type.
@@ -126,86 +126,59 @@ class rah_backup
     {
         global $prefs, $txpcfg;
 
-        if (!$prefs['rah_backup_path'])
-        {
+        if (!$prefs['rah_backup_path']) {
             $this->message[] = gTxt('rah_backup_define_preferences', array(
                 '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
             ), false);
-        }
-
-        else
-        {
+        } else {
             $dir = $this->path($prefs['rah_backup_path']);
 
-            if (!file_exists($dir) || !is_dir($dir))
-            {
+            if (!file_exists($dir) || !is_dir($dir)) {
                 $this->warning[] = gTxt('rah_backup_dir_not_found', array('{path}' => $dir));
-            }
-
-            else if (!is_readable($dir))
-            {
+            } else if (!is_readable($dir)) {
                 $this->warning[] = gTxt('rah_backup_dir_not_readable', array('{path}' => $dir));
-            }
-
-            else if (!is_writable($dir))
-            {
+            } else if (!is_writable($dir)) {
                 $this->warning[] = gTxt('rah_backup_dir_not_writable', array('{path}' => $dir));
-            }
-
-            else
-            {
+            } else {
                 $this->backup_dir = $dir;
             }
         }
 
         @$tables = (array) getThings('SHOW TABLES');
 
-        foreach (do_list($prefs['rah_backup_ignore_tables']) as $table)
-        {
-            if (!$table)
-            {
+        foreach (do_list($prefs['rah_backup_ignore_tables']) as $table) {
+            if (!$table) {
                 continue;
             }
 
-            if (in_array(PFX.$table, $tables))
-            {
+            if (in_array(PFX.$table, $tables)) {
                 $this->ignore_tables[PFX.$tbl] = PFX.$tbl;
-            }
-            else
-            {
+            } else {
                 $this->warning[] = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
             }
         }
 
-        foreach (do_list($prefs['rah_backup_copy_paths']) as $f)
-        {
-            if (!$f)
-            {
+        foreach (do_list($prefs['rah_backup_copy_paths']) as $f) {
+            if (!$f) {
                 continue;
             }
 
             $f = $this->path($f);
 
-            if (file_exists($f) && is_readable($f))
-            {
+            if (file_exists($f) && is_readable($f)) {
                 $this->copy_paths[$f] = $f;
-            }
-            else
-            {
+            } else {
                 $this->warning[] = gTxt('rah_backup_invalid_ignored_file', array('{name}' => $f));
             }
         }
 
-        foreach (do_list($prefs['rah_backup_exclude_files']) as $f)
-        {
-            if ($f)
-            {
+        foreach (do_list($prefs['rah_backup_exclude_files']) as $f) {
+            if ($f) {
                 $this->exclude_files[$f] = $f;
             }
         }
 
-        if (!$prefs['rah_backup_overwrite'])
-        {
+        if (!$prefs['rah_backup_overwrite']) {
             $this->filestamp = '_'.safe_strtotime('now');
         }
     }
@@ -218,23 +191,19 @@ class rah_backup
     {
         $position = 250;
 
-        foreach (
-            array(
-                'path'          => array('text_input', ''),
-                'copy_paths'    => array('text_input', '../'),
-                'exclude_files' => array('text_input', ''),
-                'ignore_tables' => array('text_input', ''),
-                'compress'      => array('yesnoradio', 0),
-                'overwrite'     => array('yesnoradio', 0),
-                'callback'      => array('yesnoradio', 0),
-                'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
-            ) as $name => $val
-        )
-        {
+        foreach (array(
+            'path'          => array('text_input', ''),
+            'copy_paths'    => array('text_input', '../'),
+            'exclude_files' => array('text_input', ''),
+            'ignore_tables' => array('text_input', ''),
+            'compress'      => array('yesnoradio', 0),
+            'overwrite'     => array('yesnoradio', 0),
+            'callback'      => array('yesnoradio', 0),
+            'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
+        ) as $name => $val) {
             $n = 'rah_backup_'.$name;
 
-            if (get_pref($n, false) === false)
-            {
+            if (get_pref($n, false) === false) {
                 set_pref($n, $val[1], 'rah_backup', PREF_ADVANCED, $val[0], $position);
             }
 
@@ -261,19 +230,17 @@ class rah_backup
 
         require_privs('rah_backup');
 
-        $steps = 
-            array(
-                'browser' => false,
-                'create' => true,
-                'restore' => true,
-                'download' => true,
-                'multi_edit' => true,
-            );
+        $steps = array(
+            'browser' => false,
+            'create' => true,
+            'restore' => true,
+            'download' => true,
+            'multi_edit' => true,
+        );
 
         $this->initialize();
 
-        if ($this->message || $this->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step))
-        {
+        if ($this->message || $this->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
             $step = 'browser';
         }
 
@@ -288,8 +255,7 @@ class rah_backup
     {
         global $event, $theme;
 
-        if ($event != 'rah_backup')
-        {
+        if ($event != 'rah_backup') {
             return;
         }
 
@@ -305,46 +271,41 @@ class rah_backup
         );
 
         $js = <<<EOF
-                $(document).ready(function(){
-                    $('.rah_backup_restore, .rah_backup_take').live('click', function(e) {
-                        e.preventDefault();
-                        var obj = $(this);
+            $(document).ready(function ()
+            {
+                $('.rah_backup_restore, .rah_backup_take').live('click', function(e)
+                {
+                    e.preventDefault();
+                    var obj = $(this);
 
-                        if (obj.hasClass('rah_backup_take'))
-                        {
-                            var message = textpattern.gTxt('rah_backup_confirm_backup');
-                        }
-                        else
-                        {
-                            var message = textpattern.gTxt('rah_backup_confirm_restore');
-                        }
+                    if (obj.hasClass('rah_backup_take')) {
+                        var message = textpattern.gTxt('rah_backup_confirm_backup');
+                    } else {
+                        var message = textpattern.gTxt('rah_backup_confirm_restore');
+                    }
     
-                        if (obj.hasClass('disabled') || !verify(message))
-                        {
-                            return false;
-                        }
+                    if (obj.hasClass('disabled') || !verify(message)) {
+                        return false;
+                    }
 
-                        if (obj.hasClass('rah_backup_take'))
-                        {
-                            $.globalEval('{$msg['backup']}');
-                            obj.parent().append(' <span class="spinner"></span>');
-                        }
-                        else
-                        {
-                            $.globalEval('{$msg['restore']}');
-                        }
+                    if (obj.hasClass('rah_backup_take')) {
+                        $.globalEval('{$msg['backup']}');
+                        obj.parent().append(' <span class="spinner"></span>');
+                    } else {
+                        $.globalEval('{$msg['restore']}');
+                    }
 
-                        var href = $(this).attr('href');
-                        obj.addClass('disabled').attr('href', '#');
+                    var href = $(this).attr('href');
+                    obj.addClass('disabled').attr('href', '#');
 
-                        sendAsyncEvent(href.substr(1), null, 'script').error(function() {
-                            $.globalEval('{$msg['error']}');
-                        }).complete(function() {
-                            obj.removeClass('disabled').attr('href', href);
-                            obj.parent().find('.spinner').remove();
-                        });
+                    sendAsyncEvent(href.substr(1), null, 'script').error(function() {
+                        $.globalEval('{$msg['error']}');
+                    }).complete(function() {
+                        obj.removeClass('disabled').attr('href', href);
+                        obj.parent().find('.spinner').remove();
                     });
                 });
+            });
 EOF;
 
         echo script_js($js);
@@ -367,61 +328,62 @@ EOF;
 
         $methods = array();
 
-        if (has_privs('rah_backup_delete'))
-        {
+        if (has_privs('rah_backup_delete')) {
             $methods['delete'] = gTxt('rah_backup_delete');
         }
 
         $columns = array('name', 'date', 'type', 'size');
 
-        if ($dir !== 'desc' && $dir !== 'asc')
-        {
+        if ($dir !== 'desc' && $dir !== 'asc') {
             $dir = get_pref($event.'_sort_dir', 'asc');
         }
 
-        if (!in_array((string) $sort, $columns))
-        {
+        if (!in_array((string) $sort, $columns)) {
             $sort = get_pref($event.'_sort_column', 'name');
         }
 
-        if ($methods)
-        {
-            $column[] = hCell(fInput('checkbox', 'select_all', 0, '', '', '', '', '', 'select_all'), '', ' title="'.gTxt('toggle_all_selected').'" class="multi-edit"');
+        if ($methods) {
+            $column[] = hCell(
+                fInput('checkbox', 'select_all', 0, '', '', '', '', '', 'select_all'),
+                '',
+                ' title="'.gTxt('toggle_all_selected').'" class="multi-edit"'
+            );
         }
 
-        foreach ($columns as $name)
-        {
-            $column[] = column_head($event.'_'.$name, $name, $event, true, $name === $sort && $dir === 'asc' ? 'desc' : 'asc', '', '', $name === $sort ? $dir : '', 'browse');
+        foreach ($columns as $name) {
+            $column[] = column_head(
+                $event.'_'.$name,
+                $name,
+                $event,
+                true,
+                $name === $sort && $dir === 'asc' ? 'desc' : 'asc',
+                '',
+                '',
+                $name === $sort ? $dir : '', 'browse'
+            );
         }
 
-        if (has_privs('rah_backup_restore'))
-        {
+        if (has_privs('rah_backup_restore')) {
             $column[] = hCell(gTxt('rah_backup_restore'));
         }
 
         set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
         set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 
-        if (!$this->message)
-        {
+        if (!$this->message) {
             $backups = $this->get_backups($sort, $dir);
 
-            foreach ($backups as $backup)
-            {
+            foreach ($backups as $backup) {
                 $td = array();
                 $name = txpspecialchars($backup['name']);
 
-                if ($methods)
-                {
+                if ($methods) {
                     $td[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
                 }
 
-                if (has_privs('rah_backup_download'))
-                {
+                if (has_privs('rah_backup_download')) {
                     $td[] = td('<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>');
-                }
-                else
-                {
+                } else {
                     $td[] = td($name);
                 }
 
@@ -429,14 +391,10 @@ EOF;
                 $td[] = td(gTxt('rah_backup_type_'.$backup['type']));
                 $td[] = td(format_filesize($backup['size']));
 
-                if (has_privs('rah_backup_restore'))
-                {
-                    if ($backup['type'] === self::BACKUP_DATABASE && !$this->warning)
-                    {
+                if (has_privs('rah_backup_restore')) {
+                    if ($backup['type'] === self::BACKUP_DATABASE && !$this->warning) {
                         $td[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
-                    }
-                    else
-                    {
+                    } else {
                         $td[] = td('');
                     }
                 }
@@ -444,27 +402,23 @@ EOF;
                 $out[] = tr(implode(n, $td));
             }
 
-            if (!$backups)
-            {
+            if (!$backups) {
                 $this->message[] = gTxt('rah_backup_no_backups');
             }
         }
 
-        if ($this->message)
-        {
+        if ($this->message) {
             $out[] = tr(tda($this->message[0], array('colspan' => count($column))));
         }
 
         $out = implode('', $out);
 
-        if ($app_mode == 'async')
-        {
+        if ($app_mode == 'async') {
             send_script_response($theme->announce_async($message).n.'$("#rah_backup_list").html("'.escape_js($out).'");');
             return;
         }
 
-        if ($this->warning)
-        {
+        if ($this->warning) {
             $pane[] = '<p class="alert-block warning">'.$this->warning[0].'</p>';
         }
 
@@ -480,8 +434,7 @@ EOF;
             n.tag_end('table').
             n.tag_end('div');
 
-        if ($methods)
-        {
+        if ($methods) {
             $pane[] = multi_edit($methods, $event, 'multi_edit');
         }
 
@@ -496,8 +449,7 @@ EOF;
 
             n.tag_start('p', array('class' => 'txp-buttons'));
 
-        if (has_privs('rah_backup_create') && !$this->warning)
-        {
+        if (has_privs('rah_backup_create') && !$this->warning) {
             echo n.href(gTxt('rah_backup_create'), array(
                 'event'      => $event,
                 'step'       => 'create',
@@ -507,8 +459,7 @@ EOF;
             ));
         }
 
-        if (has_privs('prefs') && has_privs('rah_backup_preferences'))
-        {
+        if (has_privs('prefs') && has_privs('rah_backup_preferences')) {
             echo n.href(gTxt('rah_backup_preferences'), '?event=prefs#prefs-rah_backup_path');
         }
 
@@ -538,15 +489,13 @@ EOF;
             empty($prefs['rah_backup_callback']) || 
             empty($prefs['rah_backup_key']) || 
             $prefs['rah_backup_key'] !== gps('rah_backup')
-        )
-        {
+        ) {
             return;
         }
 
         $this->initialize();
 
-        if (!$this->message)
-        {
+        if (!$this->message) {
             $this->create();
         }
     }
@@ -581,16 +530,14 @@ EOF;
 
         $path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
 
-        if (get_pref('rah_backup_compress'))
-        {
+        if (get_pref('rah_backup_compress')) {
             $path .= '.gz';
         }
 
         $created = array();
         $created[basename($path)] = $path;
 
-        try
-        {
+        try {
             $dump = new \Rah\Danpu\Dump;
             $dump
                 ->file($path)
@@ -600,9 +547,7 @@ EOF;
                 ->tmp(get_pref('tempdir'));
 
             new \Rah\Danpu\Export($dump);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             array_pop($created);
         }
 
@@ -632,8 +577,7 @@ EOF;
             'files' => $created,
         ));
 
-        if (txpinterface == 'public')
-        {
+        if (txpinterface == 'public') {
             exit;
         }
 
@@ -650,40 +594,6 @@ EOF;
     {
         $this->browser(array('Restoring is not implemented yet.', E_WARNING));
         return;
-
-        global $txpcfg, $prefs;
-
-        $file = (string) gps('file');
-        $backups = $this->get_backups();
-
-        if (!isset($backups[$file]) || $backups[$file]['type'] != self::BACKUP_DATABASE)
-        {
-            $this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
-            return;
-        }
-
-        extract($backups[$file]);
-
-        @set_time_limit(0);
-        @ignore_user_abort(true);
-
-        if ($ext == 'zip')
-        {
-            $path .= '.tmp';
-        }
-
-        if (1 == 0)
-        {
-            $this->browser(array(gTxt('rah_backup_can_not_restore'), E_ERROR));
-            return;
-        }
-
-        if ($ext === 'zip')
-        {
-            @unlink($path);
-        }
-
-        $this->browser(gTxt('rah_backup_restored'));
     }
 
     /**
@@ -694,8 +604,7 @@ EOF;
     {
         $file = (string) gps('file');
 
-        if (!($backups = $this->get_backups()) || !isset($backups[$file]))
-        {
+        if (!($backups = $this->get_backups()) || !isset($backups[$file])) {
             $this->browser(array(gTxt('rah_backup_can_not_download'), E_ERROR));
             return;
         }
@@ -717,20 +626,19 @@ EOF;
         ob_flush();
         flush();
 
-        if ($f = fopen($path, 'rb'))
-        {
-            while(!feof($f) && connection_status() == 0)
-            {
+        if ($f = fopen($path, 'rb')) {
+            while(!feof($f) && connection_status() == 0) {
                 echo fread($f, 1024*64);
                 ob_flush();
                 flush();
             }
+
             fclose($f);
         }
 
         exit;
     }
-    
+
     /**
      * Multi-edit handler.
      */
@@ -744,16 +652,14 @@ EOF;
 
         require_privs('rah_backup_'.((string) $edit_method));
 
-        if (!is_string($edit_method) || empty($selected) || !is_array($selected))
-        {
+        if (!is_string($edit_method) || empty($selected) || !is_array($selected)) {
             $this->browser(array(gTxt('rah_backup_select_something'), E_WARNING));
             return;
         }
 
         $method = 'multi_option_' . $edit_method;
 
-        if (!method_exists($this, $method))
-        {
+        if (!method_exists($this, $method)) {
             $method = 'browse';
         }
 
@@ -768,10 +674,8 @@ EOF;
     {
         $selected = ps('selected');
 
-        foreach ($this->get_backups() as $name => $file)
-        {
-            if (in_array($name, $selected))
-            {
+        foreach ($this->get_backups() as $name => $file) {
+            if (in_array($name, $selected)) {
                 $this->deleted[$name] = $file['path'];
                 @unlink($file['path']);
             }
@@ -805,8 +709,7 @@ EOF;
             'type' => SORT_NUMERIC,
         );
 
-        if (!is_string($sort) || !isset($sort_crit[$sort]))
-        {
+        if (!is_string($sort) || !isset($sort_crit[$sort])) {
             $sort = 'name';
         }
 
@@ -816,8 +719,7 @@ EOF;
                 GLOB_NOSORT
             ) as $file
         ) {
-            if (!$file || !is_readable($file) || !is_file($file))
-            {
+            if (!$file || !is_readable($file) || !is_file($file)) {
                 continue;
             }
 
@@ -830,8 +732,7 @@ EOF;
                 'type' => self::BACKUP_FILESYSTEM,
             );
 
-            if (preg_match('/\.sql[\.zip|\.gz]?$/i', $backup['name']))
-            {
+            if (preg_match('/\.sql[\.zip|\.gz]?$/i', $backup['name'])) {
                 $backup['type'] = self::BACKUP_DATABASE;
             }
 
@@ -839,15 +740,13 @@ EOF;
             $order[$backup['name']] = $backup[$sort];
         }
 
-        if (!$files)
-        {
+        if (!$files) {
             return array();
         }
 
         array_multisort($order, $sort_crit[$sort], $files);
 
-        if ($direction === 'desc')
-        {
+        if ($direction === 'desc') {
             $files = array_reverse($files);
         }
 
@@ -863,12 +762,9 @@ EOF;
 
     public function path($path)
     {
-        if (strpos($path, './') === 0)
-        {
+        if (strpos($path, './') === 0) {
             $path = txpath.'/'.substr($path, 2);
-        }
-        else if (strpos($path, '../') === 0)
-        {
+        } elseif (strpos($path, '../') === 0) {
             $path = dirname(txpath).'/'.substr($path, 3);
         }
 
@@ -888,4 +784,4 @@ EOF;
     }
 }
 
-new rah_backup();
+new Rah_Backup();
