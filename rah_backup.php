@@ -508,7 +508,7 @@ EOF;
         }
 
         if ($this->copy_paths) {
-            $path = $this->backup_dir . '/filesystem' . $this->filestamp . '.tar';
+            $path = $this->backup_dir . '/filesystem' . $this->filestamp . '.tar.gz';
 
             if (exec(
                 'tar -c -v -p -z -f "'.addslashes($path).'"'.
