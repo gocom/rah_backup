@@ -6,7 +6,7 @@ p. Rah_backup keeps your important site safe from disastrous events. Rah_backup 
 
 p. The plugin also supports modules of it's own. Modules can be used to extend rah_backup's functionality, from uploading the files to offsite location to email notifications and beyond. We ourselves offer couple extra modules, including "Dropbox":https://dropbox.com, FTP uploading and more.
 
-h2. Installing
+h2. Install
 
 p. Using "Composer":http://getcomposer.org:
 
