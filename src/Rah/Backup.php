@@ -181,7 +181,7 @@ class Rah_Backup
         $position = 250;
 
         foreach (array(
-            'path'          => array('text_input', ''),
+            'path'          => array('text_input', '../../backups'),
             'copy_paths'    => array('text_input', '../'),
             'exclude_files' => array('text_input', ''),
             'ignore_tables' => array('text_input', ''),

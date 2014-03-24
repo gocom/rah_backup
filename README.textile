@@ -31,7 +31,7 @@ h2. Preferences
 
 p. Rah_backup offers number of preferences that can be used to configure the plugin. All settings can be found from "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences, organized under *Backups* section. Preferences allow defining paths to used command line application and set up backed up directories among other things. Following settings will be present.
 
-h3. Absolute filesystem path to a directory used to store backups
+h3. Path to a directory used to store backups
 
 p. The path should point to an existing, empty directory that is both readable and writeable by PHP. The path will be relative to Textpattern's installation directory (e.g. @./textpattern@). A backup directory path might look something like this:
 
