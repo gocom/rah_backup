@@ -21,7 +21,6 @@ rah_backup_path => Absoluuttinen tiedostopolku hakemistoon johon varmuuskopiot t
 rah_backup_ignore_tables => Poislue tietokanta taulut (pilkuin eroteltuna)
 rah_backup_key => Julkisen soittopyyntö-osoitteen käyttämä tietoturva-avain
 rah_backup_callback => Käytetäänkö julkista soittopyyntö-osoittetta?
-rah_backup_compress => Gzip-pakkaa varmuuskopiot?
 rah_backup_copy_paths => Tiedostopolut varmuuskopioitaviin hakemistoihin (pilkuin eroteltuna)
 rah_backup_exclude_files => Poislue varmuuskopioista tiedostot (pilkuin eroteltuna)
 rah_backup_can_not_download => Valitun tiedoston lataaminen epäonnistui.

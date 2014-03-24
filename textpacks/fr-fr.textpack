@@ -21,7 +21,6 @@ rah_backup_path => Chemin absolu vers le répertoire de stockage des sauvegardes
 rah_backup_ignore_tables => Tables à ignorer (séparées par une virgule)
 rah_backup_key => Clé de sécurité d'accès public (callback)
 rah_backup_callback => Activer l'accès public (callback) ?
-rah_backup_compress => Compresser les sauvegardes avec Gzip ?
 rah_backup_copy_paths => Répertoires de sauvegardes (séparés par une virgule)
 rah_backup_exclude_files => Fichiers a exclure dans les sauvegardes (séparés par une virgule)
 rah_backup_can_not_download => Impossible de télécharger le fichier sélectionné.

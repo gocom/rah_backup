@@ -185,7 +185,6 @@ class Rah_Backup
             'copy_paths'    => array('text_input', '../'),
             'exclude_files' => array('text_input', ''),
             'ignore_tables' => array('text_input', ''),
-            'compress'      => array('yesnoradio', 0),
             'overwrite'     => array('yesnoradio', 0),
             'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
         ) as $name => $val) {
@@ -490,12 +489,7 @@ EOF;
 
         callback_event('rah_backup.create');
 
-        $path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql';
-
-        if (get_pref('rah_backup_compress')) {
-            $path .= '.gz';
-        }
-
+        $path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql.gz';
         $created = array();
         $created[basename($path)] = $path;
 
