@@ -9,6 +9,6 @@
     "flags": 3,
     "help": {"file" : "./README.textile"},
     "code": {"file" : [
-        "./rah_backup.php"
+        "./src/Rah/Backup.php"
     ]}
 }
