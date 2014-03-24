@@ -102,7 +102,6 @@ class Rah_Backup
     {
         add_privs('rah_backup', '1,2');
         add_privs('rah_backup_create', '1,2');
-        add_privs('rah_backup_restore', '1');
         add_privs('rah_backup_download', '1,2');
         add_privs('rah_backup_multi_edit', '1,2');
         add_privs('rah_backup_delete', '1');
@@ -223,7 +222,6 @@ class Rah_Backup
         $steps = array(
             'browser' => false,
             'create' => true,
-            'restore' => true,
             'download' => true,
             'multi_edit' => true,
         );
@@ -250,30 +248,26 @@ class Rah_Backup
         }
 
         gTxtScript(array(
-            'rah_backup_confirm_restore',
             'rah_backup_confirm_backup',
         ));
 
         $msg = array(
             'backup' => escape_js($theme->announce_async(gTxt('rah_backup_taking'))),
-            'restore' => escape_js($theme->announce_async(gTxt('rah_backup_restoring'))),
             'error' => escape_js($theme->announce_async(gTxt('rah_backup_task_error'))),
         );
 
         $js = <<<EOF
             $(document).ready(function ()
             {
-                $('.rah_backup_restore, .rah_backup_take').live('click', function(e)
+                $('.rah_backup_take').on('click', function(e)
                 {
                     e.preventDefault();
                     var obj = $(this);
 
                     if (obj.hasClass('rah_backup_take')) {
                         var message = textpattern.gTxt('rah_backup_confirm_backup');
-                    } else {
-                        var message = textpattern.gTxt('rah_backup_confirm_restore');
                     }
-    
+
                     if (obj.hasClass('disabled') || !verify(message)) {
                         return false;
                     }
@@ -281,8 +275,6 @@ class Rah_Backup
                     if (obj.hasClass('rah_backup_take')) {
                         $.globalEval('{$msg['backup']}');
                         obj.parent().append(' <span class="spinner"></span>');
-                    } else {
-                        $.globalEval('{$msg['restore']}');
                     }
 
                     var href = $(this).attr('href');
@@ -353,10 +345,6 @@ EOF;
             );
         }
 
-        if (has_privs('rah_backup_restore')) {
-            $column[] = hCell(gTxt('rah_backup_restore'));
-        }
-
         set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
         set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 
@@ -380,15 +368,6 @@ EOF;
                 $td[] = td(safe_strftime(gTxt('rah_backup_dateformat'), $backup['date']));
                 $td[] = td(gTxt('rah_backup_type_'.$backup['type']));
                 $td[] = td(format_filesize($backup['size']));
-
-                if (has_privs('rah_backup_restore')) {
-                    if ($backup['type'] === self::BACKUP_DATABASE && !$this->warning) {
-                        $td[] = td('<a class="rah_backup_restore" title="'.$name.'" href="?event='.$event.'&amp;step=restore&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.gTxt('rah_backup_restore').'</a>');
-                    } else {
-                        $td[] = td('');
-                    }
-                }
-
                 $out[] = tr(implode(n, $td));
             }
 
@@ -560,18 +539,6 @@ EOF;
         }
 
         $this->browser(gTxt('rah_backup_done'));
-    }
-
-    /**
-     * Restores backup.
-     *
-     * @todo Not ready
-     */
-
-    private function restore()
-    {
-        $this->browser(array('Restoring is not implemented yet.', E_WARNING));
-        return;
     }
 
     /**
