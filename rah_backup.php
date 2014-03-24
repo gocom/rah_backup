@@ -668,9 +668,15 @@ EOF;
                 continue;
             }
 
+            $name = basename($file);
+
+            if (!preg_match('/^[a-z0-9\._\-]$/i', $name)) {
+                continue;
+            }
+
             $backup = array(
                 'path' => $file,
-                'name' => basename($file),
+                'name' => $name,
                 'ext' => pathinfo($file, PATHINFO_EXTENSION),
                 'date' => (int) filemtime($file),
                 'size' => (int) filesize($file),
