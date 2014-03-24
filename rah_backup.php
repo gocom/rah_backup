@@ -347,7 +347,7 @@ EOF;
         set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 
         if (!$this->message) {
-            $backups = $this->get_backups($sort, $dir);
+            $backups = $this->getBackups($sort, $dir);
 
             foreach ($backups as $backup) {
                 $td = array();
@@ -538,7 +538,7 @@ EOF;
     {
         $file = (string) gps('file');
 
-        if (!($backups = $this->get_backups()) || !isset($backups[$file])) {
+        if (!($backups = $this->getBackups()) || !isset($backups[$file])) {
             $this->browser(array(gTxt('rah_backup_can_not_download'), E_ERROR));
             return;
         }
@@ -608,7 +608,7 @@ EOF;
     {
         $selected = ps('selected');
 
-        foreach ($this->get_backups() as $name => $file) {
+        foreach ($this->getBackups() as $name => $file) {
             if (in_array($name, $selected)) {
                 $this->deleted[$name] = $file['path'];
                 @unlink($file['path']);
@@ -629,7 +629,7 @@ EOF;
      * @return array
      */
 
-    public function get_backups($sort = 'name', $direction = 'asc', $offset = 0, $limit = NULL)
+    public function getBackups($sort = 'name', $direction = 'asc', $offset = 0, $limit = null)
     {
         global $prefs;
 
