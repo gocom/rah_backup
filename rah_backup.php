@@ -131,7 +131,7 @@ class Rah_Backup
                 '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
             ), false);
         } else {
-            $dir = $this->path($prefs['rah_backup_path']);
+            $dir = txpath.'/'.$prefs['rah_backup_path'];
 
             if (!file_exists($dir) || !is_dir($dir)) {
                 $this->warning[] = gTxt('rah_backup_dir_not_found', array('{path}' => $dir));
@@ -158,23 +158,19 @@ class Rah_Backup
             }
         }
 
-        foreach (do_list($prefs['rah_backup_copy_paths']) as $f) {
-            if (!$f) {
-                continue;
-            }
+        foreach (do_list($prefs['rah_backup_copy_paths']) as $path) {
+            if ($path) {
+                $path = txpath . '/' . $path;
 
-            $f = $this->path($f);
-
-            if (file_exists($f) && is_readable($f)) {
-                $this->copy_paths[$f] = $f;
-            } else {
-                $this->warning[] = gTxt('rah_backup_invalid_ignored_file', array('{name}' => $f));
+                if (&& file_exists($path) && is_readable($path)) {
+                    $this->copy_paths[$path] = ' "'.addslashes($path).'"';
+                }
             }
         }
 
-        foreach (do_list($prefs['rah_backup_exclude_files']) as $f) {
-            if ($f) {
-                $this->exclude_files[$f] = $f;
+        foreach (do_list($prefs['rah_backup_exclude_files']) as $path) {
+            if ($path) {
+                $this->exclude_files[$path] = ' --exclude="'.addslashes($path).'"';
             }
         }
 
@@ -515,8 +511,6 @@ EOF;
 
     /**
      * Creates a new backup.
-     *
-     * @todo Implement table ignoring
      */
 
     private function create()
@@ -551,27 +545,17 @@ EOF;
             array_pop($created);
         }
 
-        /*
-        if ($this->copy_paths)
-        {
-            $path = $this->sanitize($prefs['siteurl']);
+        if ($this->copy_paths) {
+            $path = $this->backup_dir . '/filesystem' . $this->filestamp . '.tar';
 
-            if (!$path)
-            {
-                $path = 'filesystem';
-            }
-
-            $path = $this->backup_dir . '/' . $path . $this->filestamp . '.zip';
-
-            $zip = new rah_backup_zip();
-            $zip->ignored = $this->exclude_files;
-
-            if ($zip->create($this->copy_paths, $path))
-            {
+            if (exec(
+                'tar -c -v -p -z -f "'.addslashes($path).'"'.
+                implode('', $this->exclude_files).
+                implode('', $this->copy_paths)
+            ) !== false) {
                 $created[basename($path)] = $path;
             }
         }
-        */
 
         callback_event('rah_backup.created', '', 0, array(
             'files' => $created,
@@ -751,24 +735,6 @@ EOF;
         }
 
         return array_slice($files, $offset, $limit);
-    }
-
-    /**
-     * Formats a path.
-     *
-     * @param  string $path The path
-     * @return string
-     */
-
-    public function path($path)
-    {
-        if (strpos($path, './') === 0) {
-            $path = txpath.'/'.substr($path, 2);
-        } elseif (strpos($path, '../') === 0) {
-            $path = dirname(txpath).'/'.substr($path, 3);
-        }
-
-        return rtrim($path, "/\\");
     }
 
     /**
