@@ -1,71 +1,71 @@
 h1. rah_backup
 
-p. "Packagist":https://packagist.org/packages/rah/rah_backup | "Twitter":http://twitter.com/gocom | "Donate":http://rahforum.biz/donate/rah_backup
+"Packagist":https://packagist.org/packages/rah/rah_backup | "Twitter":http://twitter.com/gocom | "Donate":http://rahforum.biz/donate/rah_backup
 
-p. Rah_backup keeps your important site safe from disastrous events. Rah_backup is an admin-side backup utility plugin for "Textpattern CMS":http://www.textpattern.com. Backs up both your files and databases with single click of button, and restores as easily. To support its features the plugin packs a clean, user-friendly interface that feels like it was part of Textpattern itself.
+Rah_backup keeps your important site safe from disastrous events. Rah_backup is an admin-side backup utility plugin for "Textpattern CMS":http://www.textpattern.com. Backs up both your files and databases with single click of button, and restores as easily. To support its features the plugin packs a clean, user-friendly interface that feels like it was part of Textpattern itself.
 
-p. The plugin also supports modules of it's own. Modules can be used to extend rah_backup's functionality, from uploading the files to offsite location to email notifications and beyond. We ourselves offer couple extra modules, including "Dropbox":https://dropbox.com, FTP uploading and more.
+The plugin also supports modules of it's own. Modules can be used to extend rah_backup's functionality, from uploading the files to offsite location to email notifications and beyond. We ourselves offer couple extra modules, including "Dropbox":https://dropbox.com, FTP uploading and more.
 
 h2. Install
 
-p. Using "Composer":http://getcomposer.org:
+Using "Composer":http://getcomposer.org:
 
 bc. $ composer require rah/rah_backup:*
 
 h2. Requirements
 
-p. Rah_backups' minimum requirements:
+Rah_backups' minimum requirements:
 
 * Textpattern 4.5.0 or newer.
 * PHP 5.2 or newer.
 
 h2. Configuration
 
-p. When you go to the plugin's panel for the first time, you will be greeted with a following message:
+When you go to the plugin's panel for the first time, you will be greeted with a following message:
 
 bq. Some settings need to be set before backups can be made. Start by defining mandatory settings at Preferences pane.
 
-p. The message will direct you to "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences where you will be able to set set some mandatory settings.
+The message will direct you to "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences where you will be able to set set some mandatory settings.
 
 h2. Preferences
 
-p. Rah_backup offers number of preferences that can be used to configure the plugin. All settings can be found from "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences, organized under *Backups* section. Preferences allow defining paths to used command line application and set up backed up directories among other things. Following settings will be present.
+Rah_backup offers number of preferences that can be used to configure the plugin. All settings can be found from "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences, organized under *Backups* section. Preferences allow defining paths to used command line application and set up backed up directories among other things. Following settings will be present.
 
 h3. Path to a directory used to store backups
 
-p. The path should point to an existing, empty directory that is both readable and writeable by PHP. The path will be relative to Textpattern's installation directory (e.g. @./textpattern@). A backup directory path might look something like this:
+The path should point to an existing, empty directory that is both readable and writeable by PHP. The path will be relative to Textpattern's installation directory (e.g. @./textpattern@). A backup directory path might look something like this:
 
 bc. ../../backups
 
 h3. Directories to backup (comma-separated)
 
-p. Sets which directories are backed up and included in created TAR archives. Separate multiple paths with commas (@,@). As with backup directory, all paths are relative to the Textpattern installation directory. On a single site setup, following would back up the directory containing Textpattern (i.e. @textpattern@ directory and @index.php@ file):
+Sets which directories are backed up and included in created TAR archives. Separate multiple paths with commas (@,@). As with backup directory, all paths are relative to the Textpattern installation directory. On a single site setup, following would back up the directory containing Textpattern (i.e. @textpattern@ directory and @index.php@ file):
 
 bc. ../
 
 h3. Files excluded from backups (comma-separated)
 
-p. Sets files that are excluded from the filesystem backup. This setting can be useful for keeping sensitive files secure incase a backup is lost or leaks due to compromised backup server or a cloud file hosting account. Values used in the setting are searched from backed up files' paths. Any file that path contains any of the values, will be excluded from the backup. Multiple files can be separated with a comma (@,@).
+Sets files that are excluded from the filesystem backup. This setting can be useful for keeping sensitive files secure incase a backup is lost or leaks due to compromised backup server or a cloud file hosting account. Values used in the setting are searched from backed up files' paths. Any file that path contains any of the values, will be excluded from the backup. Multiple files can be separated with a comma (@,@).
 
-p. On a single site installation the following rule would exclude Textpattern's @config.php@ from the backup:
+On a single site installation the following rule would exclude Textpattern's @config.php@ from the backup:
 
 bc. textpattern/config.php
 
 h3. Ignore database tables (comma-separated)
 
-p. Sets database tables that will not be included in database backups. Separate multiple tables with commas (@,@). Note that since the tables are not included in backups, they won't be restored, created or populated either with the backup when restoring. Ignored tables need to be managed otherwise, and re-created manually.
+Sets database tables that will not be included in database backups. Separate multiple tables with commas (@,@). Note that since the tables are not included in backups, they won't be restored, created or populated either with the backup when restoring. Ignored tables need to be managed otherwise, and re-created manually.
 
-p. This setting can be used to exclude sensitive information or temporary data from a frequently taken backups. Following would exclude Textpattern's user accounts table containing email address and password hashes and visitor logs from backups:
+This setting can be used to exclude sensitive information or temporary data from a frequently taken backups. Following would exclude Textpattern's user accounts table containing email address and password hashes and visitor logs from backups:
 
 bc. txp_users, txp_log
 
 h3. Only keep the latest backup?
 
-p. If set to Yes, only newest backup files are kept. Each time site is backed up, older backups are rewritten. If the setting is set to No, each time new set of backup files are created.
+If set to Yes, only newest backup files are kept. Each time site is backed up, older backups are rewritten. If the setting is set to No, each time new set of backup files are created.
 
 h3. Security key for the public callback
 
-p. A key for that is used to restrict unwanted access to the callback URL. This should be set as a long, strong value, containing any kind of numbers, characters and symbols possible.
+A key for that is used to restrict unwanted access to the callback URL. This should be set as a long, strong value, containing any kind of numbers, characters and symbols possible.
 
 h2. Thanks to
 
