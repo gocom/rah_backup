@@ -147,14 +147,8 @@ class Rah_Backup
         @$tables = (array) getThings('SHOW TABLES');
 
         foreach (do_list($prefs['rah_backup_ignore_tables']) as $table) {
-            if (!$table) {
-                continue;
-            }
-
-            if (in_array(PFX.$table, $tables)) {
-                $this->ignore_tables[PFX.$tbl] = PFX.$tbl;
-            } else {
-                $this->warning[] = gTxt('rah_backup_invalid_ignored_table', array('{name}' => $table));
+            if ($table && in_array(PFX.$table, $tables)) {
+                $this->ignore_tables[PFX.$table] = PFX.$table;
             }
         }
 
@@ -162,7 +156,7 @@ class Rah_Backup
             if ($path) {
                 $path = txpath . '/' . $path;
 
-                if (&& file_exists($path) && is_readable($path)) {
+                if (file_exists($path) && is_readable($path)) {
                     $this->copy_paths[$path] = ' "'.addslashes($path).'"';
                 }
             }
