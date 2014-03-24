@@ -123,7 +123,7 @@ class Rah_Backup
 
     public function initialize()
     {
-        global $prefs, $txpcfg;
+        global $prefs;
 
         if (!$prefs['rah_backup_path']) {
             $this->message[] = gTxt('rah_backup_define_preferences', array(
