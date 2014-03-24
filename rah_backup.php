@@ -114,7 +114,7 @@ class Rah_Backup
         register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
         register_callback(array($this, 'pane'), 'rah_backup');
         register_callback(array($this, 'head'), 'admin_side', 'head_end');
-        register_callback(array($this, 'call_backup'), 'textpattern');
+        register_callback(array($this, 'route'), 'textpattern');
     }
 
     /**
@@ -187,7 +187,6 @@ class Rah_Backup
             'ignore_tables' => array('text_input', ''),
             'compress'      => array('yesnoradio', 0),
             'overwrite'     => array('yesnoradio', 0),
-            'callback'      => array('yesnoradio', 0),
             'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
         ) as $name => $val) {
             $n = 'rah_backup_'.$name;
@@ -447,18 +446,14 @@ EOF;
 
     /**
      * Public callback end-point for creating backups.
+     *
+     * Creates a new backup when ?rah_backup_key parameter
+     * is passed in the request.
      */
 
-    public function call_backup()
+    public function route()
     {
-        global $prefs;
-
-        if (
-            !gps('rah_backup') || 
-            empty($prefs['rah_backup_callback']) || 
-            empty($prefs['rah_backup_key']) || 
-            $prefs['rah_backup_key'] !== gps('rah_backup')
-        ) {
+        if (!gps('rah_backup_key') || get_pref('rah_backup_key') !== gps('rah_backup_key')) {
             return;
         }
 
