@@ -40,62 +40,6 @@ class Rah_Backup
     const BACKUP_DATABASE = 2;
 
     /**
-     * Path to directory storing backups.
-     *
-     * @var string 
-     */
-
-    private $backup_dir;
-
-    /**
-     * List of backed up files.
-     *
-     * @var array
-     */
-
-    private $copy_paths = array();
-
-    /**
-     * List of excluded files.
-     *
-     * @var array
-     */
-
-    private $exclude_files = array();
-
-    /**
-     * List of ignored tables.
-     *
-     * @var array
-     */
-
-    private $ignore_tables = array();
-
-    /**
-     * Timestamp append to backup archives.
-     *
-     * @var string
-     */
-
-    private $filestamp = '';
-
-    /**
-     * Paths to deleted backup files.
-     *
-     * @var array
-     */
-
-    public $deleted = array();
-
-    /**
-     * List of invoked messages.
-     *
-     * @var array
-     */
-
-    public $message = array();
-
-    /**
      * List of invoked errors/notices.
      *
      * @var array
@@ -124,61 +68,6 @@ class Rah_Backup
         register_callback(array($this, 'pane'), 'rah_backup');
         register_callback(array($this, 'head'), 'admin_side', 'head_end');
         register_callback(array($this, 'endpoint'), 'textpattern');
-    }
-
-    /**
-     * Initializes.
-     */
-
-    public function initialize()
-    {
-        global $prefs;
-
-        if (!$prefs['rah_backup_path']) {
-            $this->message[] = gTxt('rah_backup_define_preferences', array(
-                '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
-            ), false);
-        } else {
-            $dir = txpath.'/'.$prefs['rah_backup_path'];
-
-            if (!file_exists($dir) || !is_dir($dir)) {
-                $this->warning[] = gTxt('rah_backup_dir_not_found', array('{path}' => $dir));
-            } else if (!is_readable($dir)) {
-                $this->warning[] = gTxt('rah_backup_dir_not_readable', array('{path}' => $dir));
-            } else if (!is_writable($dir)) {
-                $this->warning[] = gTxt('rah_backup_dir_not_writable', array('{path}' => $dir));
-            } else {
-                $this->backup_dir = $dir;
-            }
-        }
-
-        @$tables = (array) getThings('SHOW TABLES');
-
-        foreach (do_list($prefs['rah_backup_ignore_tables']) as $table) {
-            if ($table && in_array(PFX.$table, $tables)) {
-                $this->ignore_tables[PFX.$table] = PFX.$table;
-            }
-        }
-
-        foreach (do_list($prefs['rah_backup_copy_paths']) as $path) {
-            if ($path) {
-                $path = txpath . '/' . $path;
-
-                if (file_exists($path) && is_readable($path)) {
-                    $this->copy_paths[$path] = ' "'.addslashes($path).'"';
-                }
-            }
-        }
-
-        foreach (do_list($prefs['rah_backup_exclude_files']) as $path) {
-            if ($path) {
-                $this->exclude_files[$path] = ' --exclude="'.addslashes($path).'"';
-            }
-        }
-
-        if (!$prefs['rah_backup_overwrite']) {
-            $this->filestamp = '_'.safe_strtotime('now');
-        }
     }
 
     /**
@@ -233,9 +122,7 @@ class Rah_Backup
             'multi_edit' => true,
         );
 
-        $this->initialize();
-
-        if ($this->message || $this->warning || !$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
+        if (!$step || !bouncer($step, $steps) || !has_privs('rah_backup_' . $step)) {
             $step = 'browser';
         }
 
@@ -308,7 +195,7 @@ EOF;
 
     protected function browser($message = '')
     {
-        global $event, $prefs, $app_mode, $theme;
+        global $event, $app_mode, $theme;
 
         extract(gpsa(array(
             'sort',
@@ -317,7 +204,10 @@ EOF;
 
         $methods = array();
 
-        if (has_privs('rah_backup_delete')) {
+        $dir = get_pref('rah_backup_path');
+        $writeable = $dir && file_exists($dir) && is_dir($dir) && is_writable($dir);
+
+        if (has_privs('rah_backup_delete') && $writeable) {
             $methods['delete'] = gTxt('rah_backup_delete');
         }
 
@@ -355,7 +245,7 @@ EOF;
         set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
         set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
 
-        if (!$this->message) {
+        try {
             $backups = $this->getBackups($sort, $dir);
 
             foreach ($backups as $backup) {
@@ -379,23 +269,18 @@ EOF;
             }
 
             if (!$backups) {
-                $this->message[] = gTxt('rah_backup_no_backups');
+                $out[] = tr(tda(gTxt('rah_backup_no_backups'), array('colspan' => count($column))));
             }
-        }
 
-        if ($this->message) {
-            $out[] = tr(tda($this->message[0], array('colspan' => count($column))));
+        } catch (Rah_Backup_Exception $e) {
+            $out[] = tr(tda($e->getMessage(), array('colspan' => count($column))));
         }
 
         $out = implode('', $out);
 
-        if ($app_mode == 'async') {
+        if ($app_mode === 'async') {
             send_script_response($theme->announce_async($message).n.'$("#rah_backup_list").html("'.escape_js($out).'");');
             return;
-        }
-
-        if ($this->warning) {
-            $pane[] = '<p class="alert-block warning">'.$this->warning[0].'</p>';
         }
 
         $pane[] =
@@ -425,7 +310,9 @@ EOF;
 
             n.tag_start('p', array('class' => 'txp-buttons'));
 
-        if (has_privs('rah_backup_create') && !$this->warning) {
+        
+
+        if (has_privs('rah_backup_create') && $writeable) {
             echo n.href(gTxt('rah_backup_create'), array(
                 'event'      => $event,
                 'step'       => 'create',
@@ -468,11 +355,7 @@ EOF;
         header('Content-Type: application/json; charset=utf-8');
 
         try {
-            $this->initialize();
-
-            if (!$this->message) {
-                $this->takeBackup();
-            }
+            $this->takeBackup();
         } catch (Exception $e) {
             txp_status_header('500 Internal Server Error');
 
@@ -514,12 +397,30 @@ EOF;
     {
         global $txpcfg, $prefs;
 
+        if (($directory = get_pref('rah_backup_path')) === '') {
+            throw new Rah_Backup_Exception(
+                gTxt('rah_backup_define_preferences', array(
+                    '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
+                ), false)
+            );
+        }
+
+        $directory = txpath . '/' . $directory;
+
+        if (!file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
+            throw new Rah_Backup_Exception(gTxt('rah_backup_dir_not_writable', array('{path}' => $dir)));
+        }
+
         @set_time_limit(0);
         @ignore_user_abort(true);
 
         callback_event('rah_backup.create');
 
-        $path = $this->backup_dir . '/' . $this->sanitize($txpcfg['db']) . $this->filestamp . '.sql.gz';
+        if (!get_pref('rah_backup_overwrite')) {
+            $filestamp = '_'.safe_strtotime('now');
+        }
+
+        $path = $directory . '/' . $this->sanitize($txpcfg['db']) . $filestamp . '.sql.gz';
         $created = array();
         $created[basename($path)] = $path;
 
@@ -531,15 +432,54 @@ EOF;
             ->pass($txpcfg['pass'])
             ->tmp(get_pref('tempdir'));
 
+        if (get_pref('rah_backup_ignore_tables')) {
+            $ignore = array();
+
+            foreach (do_list(get_pref('rah_backup_ignore_tables')) as $table) {
+                $ignore[] = PFX.$table;
+            }
+
+            $dump->ignore($ignore);
+        }
+
+        if (PFX) {
+            $dump->prefix(PFX);
+        }
+
         new \Rah\Danpu\Export($dump);
 
-        if ($this->copy_paths) {
-            $path = $this->backup_dir . '/filesystem' . $this->filestamp . '.tar.gz';
+        if (get_pref('rah_backup_copy_paths')) {
+
+            // Copied paths.
+
+            $copy = array();
+
+            foreach (do_list(get_pref('rah_backup_copy_paths')) as $path) {
+                if ($path) {
+                    $path = txpath . '/' . $path;
+
+                    if (file_exists($path) && is_readable($path)) {
+                        $copy[$path] = ' "'.addslashes($path).'"';
+                    }
+                }
+            }
+
+            // Excluded paths.
+
+            $exclude = array();
+
+            foreach (do_list(get_pref('rah_backup_exclude_files')) as $path) {
+                if ($path) {
+                    $exclude[$path] = ' --exclude="'.addslashes($path).'"';
+                }
+            }
+
+            $path = $directory . '/filesystem' . $filestamp . '.tar.gz';
 
             if (exec(
                 'tar -c -v -p -z -f "'.addslashes($path).'"'.
-                implode('', $this->exclude_files).
-                implode('', $this->copy_paths)
+                implode('', $exclude).
+                implode('', $copy)
             ) !== false) {
                 $created[basename($path)] = $path;
             }
@@ -558,8 +498,11 @@ EOF;
     {
         try {
             $this->takeBackup();
-        } catch (Exception $e) {
+        } catch (Rah_Backup_Exception $e) {
             $this->browser(array($e->getMessage(), E_ERROR));
+            return;
+        } catch (Exception $e) {
+            $this->browser(array(txpspecialchars($e->getMessage()), E_ERROR));
             return;
         }
 
@@ -574,7 +517,12 @@ EOF;
     {
         $file = (string) gps('file');
 
-        if (!($backups = $this->getBackups()) || !isset($backups[$file])) {
+        try {
+            $backups = $this->getBackups();
+        } catch (Exception $e) {
+        }
+
+        if (empty($backups) || !isset($backups[$file])) {
             $this->browser(array(gTxt('rah_backup_can_not_download'), E_ERROR));
             return;
         }
@@ -643,15 +591,22 @@ EOF;
     protected function multi_option_delete()
     {
         $selected = ps('selected');
+        $deleted = array();
 
-        foreach ($this->getBackups() as $name => $file) {
-            if (in_array($name, $selected)) {
-                $this->deleted[$name] = $file['path'];
-                @unlink($file['path']);
+        try {
+            foreach ($this->getBackups() as $name => $file) {
+                if (in_array($name, $selected, true)) {
+                    $deleted[$name] = $file['path'];
+                    @unlink($file['path']);
+                }
             }
+        } catch (Exception $e) {
         }
 
-        callback_event('rah_backup.deleted');
+        callback_event('rah_backup.deleted', '', 0, array(
+            'files' => $deleted,
+        ));
+
         $this->browser(gTxt('rah_backup_removed'));
     }
 
@@ -667,7 +622,21 @@ EOF;
 
     public function getBackups($sort = 'name', $direction = 'asc', $offset = 0, $limit = null)
     {
-        global $prefs;
+        if (($directory = get_pref('rah_backup_path')) === '') {
+            throw new Rah_Backup_Exception(
+                gTxt('rah_backup_define_preferences', array(
+                    '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
+                ), false)
+            );
+        }
+
+        $directory = txpath . '/' . $directory;
+
+        if (!file_exists($directory) || !is_dir($directory) || !is_readable($directory)) {
+            throw new Rah_Backup_Exception(
+                gTxt('rah_backup_dir_not_readable', array('{path}' => $dir))
+            );
+        }
 
         $order = $files = array();
 
@@ -685,11 +654,11 @@ EOF;
 
         foreach (
             (array) glob(
-                preg_replace('/(\*|\?|\[)/', '[$1]', $prefs['rah_backup_path']) . '/'.'*[.gz|.sql|.zip]',
+                preg_replace('/(\*|\?|\[)/', '[$1]', $directory) . '/'.'*[.gz|.sql|.zip]',
                 GLOB_NOSORT
             ) as $file
         ) {
-            if (!$file || !is_readable($file) || !is_file($file)) {
+            if (!$file || !is_file($file)) {
                 continue;
             }
 

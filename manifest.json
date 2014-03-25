@@ -9,6 +9,7 @@
     "flags": 3,
     "help": {"file" : "./README.textile"},
     "code": {"file" : [
-        "./src/Rah/Backup.php"
+        "./src/Rah/Backup.php",
+        "./src/Rah/Backup/Exception.php"
     ]}
 }
