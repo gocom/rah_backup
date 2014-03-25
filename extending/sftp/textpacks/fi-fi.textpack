@@ -1,8 +1,0 @@
-#@admin
-#@language fi-fi
-rah_backup__sftp_connection_error => Yhteys <strong>{host}</strong> ei onnistunut SFTP:n yli.
-rah_backup__sftp_login_error => Kirjautuminen <strong>{host}</strong> ei onnistunut käyttäjänä <strong>{user}</strong> SFTP:n yli
-rah_backup__sftp_chdir_error => Pääsy <strong>{path}</strong> hakemistoon ei onnistunut SFTP:llä osoitteessa <strong>{host}</strong>
-rah_backup__sftp_delete_error => Varmuuskopioiden poistaminen osoitteessa <strong>{host}</strong> epäonnistui SFTP:n yli.
-rah_backup__sftp_put_error => Varmuuskopioiden siirtäminen osoitteeseen <strong>{host}</strong> epäonnistui SFTP:n yli.
-rah_backup__sftp_unable_import_api => phpseclib:n tuonti hakemistosta <strong>{path}</strong> epäonnistui. Tarkasta API-hakemiston tila.
