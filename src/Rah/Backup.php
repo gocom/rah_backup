@@ -123,7 +123,7 @@ class Rah_Backup
         register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
         register_callback(array($this, 'pane'), 'rah_backup');
         register_callback(array($this, 'head'), 'admin_side', 'head_end');
-        register_callback(array($this, 'route'), 'textpattern');
+        register_callback(array($this, 'endpoint'), 'textpattern');
     }
 
     /**
@@ -306,7 +306,7 @@ EOF;
      * @param string|array $message The activity message
      */
 
-    private function browser($message = '')
+    protected function browser($message = '')
     {
         global $event, $prefs, $app_mode, $theme;
 
@@ -459,17 +459,32 @@ EOF;
      * is passed in the request.
      */
 
-    public function route()
+    public function endpoint()
     {
         if (!gps('rah_backup_key') || get_pref('rah_backup_key') !== gps('rah_backup_key')) {
             return;
         }
 
-        $this->initialize();
+        header('Content-Type: application/json; charset=utf-8');
 
-        if (!$this->message) {
-            $this->create();
+        try {
+            $this->initialize();
+
+            if (!$this->message) {
+                $this->takeBackup();
+            }
+        } catch (Exception $e) {
+            txp_status_header('500 Internal Server Error');
+
+            die(json_encode(array(
+                'success' => false,
+                'error'   => $e->getMessage(),
+            )));
         }
+
+        die(json_encode(array(
+            'success' => true,
+        )));
     }
 
     /**
@@ -486,10 +501,16 @@ EOF;
     }
 
     /**
-     * Creates a new backup.
+     * Takes a new set of backups.
+     *
+     * This method creates a new set of backups. It triggers
+     * two callback events 'rah_backup.create' and 'rah_backup.created',
+     * where the latter contains an data-map of create backup files.
+     *
+     * @throws Exception
      */
 
-    private function create()
+    public function takeBackup()
     {
         global $txpcfg, $prefs;
 
@@ -502,19 +523,15 @@ EOF;
         $created = array();
         $created[basename($path)] = $path;
 
-        try {
-            $dump = new \Rah\Danpu\Dump;
-            $dump
-                ->file($path)
-                ->dsn('mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'])
-                ->user($txpcfg['user'])
-                ->pass($txpcfg['pass'])
-                ->tmp(get_pref('tempdir'));
+        $dump = new \Rah\Danpu\Dump;
+        $dump
+            ->file($path)
+            ->dsn('mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'])
+            ->user($txpcfg['user'])
+            ->pass($txpcfg['pass'])
+            ->tmp(get_pref('tempdir'));
 
-            new \Rah\Danpu\Export($dump);
-        } catch (Exception $e) {
-            array_pop($created);
-        }
+        new \Rah\Danpu\Export($dump);
 
         if ($this->copy_paths) {
             $path = $this->backup_dir . '/filesystem' . $this->filestamp . '.tar.gz';
@@ -531,9 +548,19 @@ EOF;
         callback_event('rah_backup.created', '', 0, array(
             'files' => $created,
         ));
+    }
 
-        if (txpinterface == 'public') {
-            exit;
+    /**
+     * Creates a new backup.
+     */
+
+    protected function create()
+    {
+        try {
+            $this->takeBackup();
+        } catch (Exception $e) {
+            $this->browser(array($e->getMessage(), E_ERROR));
+            return;
         }
 
         $this->browser(gTxt('rah_backup_done'));
@@ -543,7 +570,7 @@ EOF;
      * Streams backups for downloading.
      */
 
-    private function download()
+    protected function download()
     {
         $file = (string) gps('file');
 
@@ -586,7 +613,7 @@ EOF;
      * Multi-edit handler.
      */
 
-    private function multi_edit()
+    protected function multi_edit()
     {
         extract(psa(array(
             'selected',
@@ -613,7 +640,7 @@ EOF;
      * Deletes selected backups.
      */
 
-    private function multi_option_delete()
+    protected function multi_option_delete()
     {
         $selected = ps('selected');
 
