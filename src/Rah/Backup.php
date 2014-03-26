@@ -379,8 +379,8 @@ EOF;
 
     public function sanitize($filename)
     {
-        $filename = preg_replace('/[^A-Za-z0-9-._]/', '.', (string) $filename);
-        return trim(preg_replace('/[_.-]{2,}/', '.', $filename), '. ');
+        $filename = preg_replace('/[^A-Za-z0-9\-\._]/', '.', (string) $filename);
+        return trim(preg_replace('/[_\.\-]{2,}/', '.', $filename), '. ');
     }
 
     /**
@@ -654,7 +654,7 @@ EOF;
 
         foreach (new DirectoryIterator($directory) as $file) {
 
-            if (!$file->isFile() || !preg_match('/^[a-z0-9\-_.]+\.(sql\.gz|tar\.gz)$/i', $file->getFilename())) {
+            if (!$file->isFile() || !preg_match('/^[a-z0-9\-_\.]+\.(sql\.gz|tar\.gz)$/i', $file->getFilename())) {
                 continue;
             }
 
