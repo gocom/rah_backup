@@ -17,7 +17,7 @@
         "source": "https://github.com/gocom/rah_backup"
     },
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.6",
         "textpattern/lock": ">=4.5.0,4.6.*@dev",
         "textpattern/installer": "*",
         "rah/danpu": "2.6.2",
