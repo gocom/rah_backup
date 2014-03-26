@@ -379,7 +379,7 @@ EOF;
 
     public function sanitize($filename)
     {
-        $filename = preg_replace('/[^A-Za-z0-9-._]/', '.', (string) $filename);
+        $filename = preg_replace('/[^A-Za-z0-9-._]/', '_', (string) $filename);
         return trim(preg_replace('/[_.-]{2,}/', '.', $filename), '. ');
     }
 
