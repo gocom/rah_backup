@@ -634,7 +634,7 @@ EOF;
 
         if (!file_exists($directory) || !is_dir($directory) || !is_readable($directory)) {
             throw new Rah_Backup_Exception(
-                gTxt('rah_backup_dir_not_readable', array('{path}' => $dir))
+                gTxt('rah_backup_dir_not_readable', array('{path}' => $directory))
             );
         }
 
