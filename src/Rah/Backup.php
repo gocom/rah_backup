@@ -256,7 +256,7 @@ EOF;
                     $td[] = td(fInput('checkbox', 'selected[]', $name), '', 'multi-edit');
                 }
 
-                if (has_privs('rah_backup_download')) {
+                if (has_privs('rah_backup_download') && $backup['readable']) {
                     $td[] = td('<a title="'.gTxt('rah_backup_download').'" href="?event='.$event.'&amp;step=download&amp;file='.urlencode($name).'&amp;_txp_token='.form_token().'">'.$name.'</a>');
                 } else {
                     $td[] = td($name);
@@ -652,32 +652,24 @@ EOF;
             $sort = 'name';
         }
 
-        foreach (
-            (array) glob(
-                preg_replace('/(\*|\?|\[)/', '[$1]', $directory) . '/'.'*[.gz|.sql|.zip]',
-                GLOB_NOSORT
-            ) as $file
-        ) {
-            if (!$file || !is_file($file)) {
-                continue;
-            }
+        foreach (new DirectoryIterator($directory) as $file) {
 
-            $name = basename($file);
-
-            if (!preg_match('/^[a-z0-9\._\-]$/i', $name)) {
+            if (!$file->isFile() || !preg_match('/^[a-z0-9\-_]\.(sql\.gz|tar\.gz)$/i', $file->getFilename())) {
                 continue;
             }
 
             $backup = array(
-                'path' => $file,
-                'name' => $name,
-                'ext' => pathinfo($file, PATHINFO_EXTENSION),
-                'date' => (int) filemtime($file),
-                'size' => (int) filesize($file),
+                'path' => $file->getPathname(),
+                'name' => $file->getFilename(),
+                'ext' => $file->getExtension(),
+                'date' => $file->getMTime(),
+                'size' => $file->getSize(),
                 'type' => self::BACKUP_FILESYSTEM,
+                'readable' => $file->isReadable(),
+                'writable' => $file->isWritable(),
             );
 
-            if (preg_match('/\.sql[\.zip|\.gz]?$/i', $backup['name'])) {
+            if (preg_match('/\.sql\.gz$/i', $backup['name'])) {
                 $backup['type'] = self::BACKUP_DATABASE;
             }
 
