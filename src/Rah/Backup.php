@@ -458,8 +458,8 @@ EOF;
                 if ($path) {
                     $path = txpath . '/' . $path;
 
-                    if (file_exists($path) && is_readable($path)) {
-                        $copy[$path] = ' "'.addslashes($path).'"';
+                    if (file_exists($path) && is_readable($path) && $path = escapeshellarg($path)) {
+                        $copy[$path] = ' '.$path;
                     }
                 }
             }
@@ -469,15 +469,15 @@ EOF;
             $exclude = array();
 
             foreach (do_list(get_pref('rah_backup_exclude_files')) as $path) {
-                if ($path) {
-                    $exclude[$path] = ' --exclude="'.addslashes($path).'"';
+                if ($path && $path = escapeshellarg($path)) {
+                    $exclude[$path] = ' --exclude='.$path;
                 }
             }
 
             $path = $directory . '/filesystem' . $filestamp . '.tar.gz';
 
             if (exec(
-                'tar -c -v -p -z -f "'.addslashes($path).'"'.
+                'tar -cvpzf '.escapeshellarg($path).
                 implode('', $exclude).
                 implode('', $copy)
             ) !== false) {
