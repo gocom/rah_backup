@@ -49,7 +49,7 @@ Sets files that are excluded from the filesystem backup. This setting can be use
 
 On a single site installation the following rule would exclude Textpattern's @config.php@ from the backup:
 
-bc. textpattern/config.php
+bc. config.php
 
 h3. Ignore database tables (comma-separated)
 

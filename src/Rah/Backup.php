@@ -469,7 +469,7 @@ EOF;
             $exclude = array();
 
             foreach (do_list(get_pref('rah_backup_exclude_files')) as $path) {
-                if ($path && $path = escapeshellarg($path)) {
+                if ($path && $path = escapeshellarg(txpath . '/' . $path)) {
                     $exclude[$path] = ' --exclude='.$path;
                 }
             }
