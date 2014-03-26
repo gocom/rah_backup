@@ -204,8 +204,8 @@ EOF;
 
         $methods = array();
 
-        $dir = get_pref('rah_backup_path');
-        $writeable = $dir && file_exists($dir) && is_dir($dir) && is_writable($dir);
+        $path = get_pref('rah_backup_path');
+        $writeable = $path && file_exists($path) && is_dir($path) && is_writable($path);
 
         if (has_privs('rah_backup_delete') && $writeable) {
             $methods['delete'] = gTxt('rah_backup_delete');
