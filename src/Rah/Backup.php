@@ -448,7 +448,7 @@ EOF;
 
         new \Rah\Danpu\Export($dump);
 
-        if (get_pref('rah_backup_copy_paths')) {
+        if (get_pref('rah_backup_copy_paths') && !is_disabled('exec') && is_callable('exec')) {
 
             // Copied paths.
 
