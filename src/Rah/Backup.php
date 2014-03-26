@@ -654,7 +654,7 @@ EOF;
 
         foreach (new DirectoryIterator($directory) as $file) {
 
-            if (!$file->isFile() || !preg_match('/^[a-z0-9\-_]\.(sql\.gz|tar\.gz)$/i', $file->getFilename())) {
+            if (!$file->isFile() || !preg_match('/^[a-z0-9\-_]+\.(sql\.gz|tar\.gz)$/i', $file->getFilename())) {
                 continue;
             }
 
