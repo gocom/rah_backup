@@ -4,8 +4,6 @@ h1. rah_backup
 
 Rah_backup keeps your important site safe from disastrous events. Rah_backup is an admin-side backup utility plugin for "Textpattern CMS":http://www.textpattern.com. Backs up both your files and databases with single click of button, and restores as easily. To support its features the plugin packs a clean, user-friendly interface that feels like it was part of Textpattern itself.
 
-The plugin also supports modules of it's own. Modules can be used to extend rah_backup's functionality, from uploading the files to offsite location to email notifications and beyond. We ourselves offer couple extra modules, including "Dropbox":https://dropbox.com, FTP uploading and more.
-
 h2. Install
 
 Using "Composer":http://getcomposer.org:
@@ -18,6 +16,15 @@ Rah_backups' minimum requirements:
 
 * Textpattern 4.5.0 or newer.
 * PHP 5.3.6 or newer.
+
+h2. Modules
+
+Rah_backup has set of modules that extend the plugin's functionality:
+
+* "rah_backup_clearlogs":https://github.com/gocom/rah_backup_clearlogs
+* "rah_backup_dropbox":https://github.com/gocom/rah_backup_dropbox
+* "rah_backup_optimize":https://github.com/gocom/rah_backup_optimize
+* "rah_backup_sftp":https://github.com/gocom/rah_backup_sftp
 
 h2. Configuration
 
