@@ -380,7 +380,7 @@ EOF;
     public function sanitize($filename)
     {
         $filename = preg_replace('/[^A-Za-z0-9\-\._]/', '.', (string) $filename);
-        return trim(preg_replace('/[_\.\-]{2,}/', '.', $filename), '. ');
+        return trim(substr(preg_replace('/[_\.\-]{2,}/', '.', $filename), 0, 40), '._-');
     }
 
     /**
@@ -420,7 +420,13 @@ EOF;
             $filestamp = '_'.safe_strtotime('now');
         }
 
-        $path = $directory . '/' . $this->sanitize($txpcfg['db']) . $filestamp . '.sql.gz';
+        $name = $this->sanitize($txpcfg['db']);
+
+        if (!$name) {
+            $name = 'database';
+        }
+
+        $path = $directory . '/' . $name . $filestamp . '.sql.gz';
         $created = array();
         $created[basename($path)] = $path;
 
@@ -474,7 +480,13 @@ EOF;
                 }
             }
 
-            $path = $directory . '/filesystem' . $filestamp . '.tar.gz';
+            $name = $this->sanitize(get_pref('siteurl'));
+
+            if (!$name) {
+                $name = 'filesystem';
+            }
+
+            $path = $directory . '/'. $name . $filestamp . '.tar.gz';
 
             if (exec(
                 'tar -cvpzf '.escapeshellarg($path).
