@@ -168,7 +168,11 @@ class Rah_Backup
                     href = obj.attr('href');
                     obj.addClass('disabled').attr('href', '#').after(spinner);
 
-                    sendAsyncEvent(href.substr(1), null, 'script').fail(function ()
+                    $.ajax('index.php', {
+                        data: href.substr(1) + '&app_mode=async',
+                        dataType: 'script',
+                        timeout: 1800000
+                    }).fail(function ()
                     {
                         $.globalEval('{$msg['error']}');
                     }).always(function ()
