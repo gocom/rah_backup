@@ -68,6 +68,7 @@ class Rah_Backup
         register_callback(array($this, 'pane'), 'rah_backup');
         register_callback(array($this, 'head'), 'admin_side', 'head_end');
         register_callback(array($this, 'endpoint'), 'textpattern');
+        register_callback(array($this, 'takeBackup'), 'rah_backup.backup');
     }
 
     /**
@@ -355,7 +356,7 @@ EOF;
         header('Content-Type: application/json; charset=utf-8');
 
         try {
-            $this->takeBackup();
+            callback_event('rah_backup.backup');
         } catch (Exception $e) {
             txp_status_header('500 Internal Server Error');
 
@@ -395,7 +396,7 @@ EOF;
 
     public function takeBackup()
     {
-        global $txpcfg, $prefs;
+        global $txpcfg;
 
         if (($directory = get_pref('rah_backup_path')) === '') {
             throw new Rah_Backup_Exception(
@@ -509,7 +510,7 @@ EOF;
     protected function create()
     {
         try {
-            $this->takeBackup();
+            callback_event('rah_backup.backup');
         } catch (Rah_Backup_Exception $e) {
             $this->browser(array($e->getMessage(), E_ERROR));
             return;
