@@ -166,7 +166,7 @@ class Rah_Backup
 
                     spinner = $('<span> <span class="spinner"></span> </span>');
                     href = obj.attr('href');
-                    obj.addClass('disabled').attr('href', '#').after('spinner');
+                    obj.addClass('disabled').attr('href', '#').after(spinner);
 
                     sendAsyncEvent(href.substr(1), null, 'script').fail(function ()
                     {
