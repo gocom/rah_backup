@@ -61,7 +61,7 @@ class Rah_Backup
         add_privs('rah_backup_preferences', '1');
         add_privs('plugin_prefs.rah_backup', '1,2');
         add_privs('prefs.rah_backup', '1');
-        register_tab('extensions', 'rah_backup', gTxt('rah_backup'));
+        register_tab('admin', 'rah_backup', gTxt('rah_backup'));
         register_callback(array($this, 'install'), 'plugin_lifecycle.rah_backup', 'installed');
         register_callback(array($this, 'uninstall'), 'plugin_lifecycle.rah_backup', 'deleted');
         register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
