@@ -168,10 +168,10 @@ class Rah_Backup
                     href = obj.attr('href');
                     obj.addClass('disabled').attr('href', '#').after('spinner');
 
-                    sendAsyncEvent(href.substr(1), null, 'script').error(function ()
+                    sendAsyncEvent(href.substr(1), null, 'script').fail(function ()
                     {
                         $.globalEval('{$msg['error']}');
-                    }).complete(function ()
+                    }).always(function ()
                     {
                         obj.removeClass('disabled').attr('href', href);
                         spinner.remove();
