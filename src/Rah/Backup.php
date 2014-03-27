@@ -151,34 +151,30 @@ class Rah_Backup
         );
 
         $js = <<<EOF
-            $(document).ready(function ()
+            $(function ()
             {
-                $('.rah_backup_take').on('click', function(e)
+                $('.rah_backup_take').on('click', function (e)
                 {
                     e.preventDefault();
-                    var obj = $(this);
+                    var obj = $(this), href, spinner;
 
-                    if (obj.hasClass('rah_backup_take')) {
-                        var message = textpattern.gTxt('rah_backup_confirm_backup');
-                    }
-
-                    if (obj.hasClass('disabled') || !verify(message)) {
+                    if (obj.hasClass('disabled') || !verify(textpattern.gTxt('rah_backup_confirm_backup'))) {
                         return false;
                     }
 
-                    if (obj.hasClass('rah_backup_take')) {
-                        $.globalEval('{$msg['backup']}');
-                        obj.parent().append(' <span class="spinner"></span>');
-                    }
+                    $.globalEval('{$msg['backup']}');
 
-                    var href = $(this).attr('href');
-                    obj.addClass('disabled').attr('href', '#');
+                    spinner = $('<span> <span class="spinner"></span> </span>');
+                    href = obj.attr('href');
+                    obj.addClass('disabled').attr('href', '#').after('spinner');
 
-                    sendAsyncEvent(href.substr(1), null, 'script').error(function() {
+                    sendAsyncEvent(href.substr(1), null, 'script').error(function ()
+                    {
                         $.globalEval('{$msg['error']}');
-                    }).complete(function() {
+                    }).complete(function ()
+                    {
                         obj.removeClass('disabled').attr('href', href);
-                        obj.parent().find('.spinner').remove();
+                        spinner.remove();
                     });
                 });
             });
