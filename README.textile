@@ -57,9 +57,9 @@ This setting can be used to exclude sensitive information or temporary data from
 
 bc. txp_users, txp_log
 
-h3. Only keep the latest backup?
+h3. Number of backup files to keep
 
-If set to Yes, only newest backup files are kept. Each time site is backed up, older backups are rewritten. If the setting is set to No, each time new set of backup files are created.
+Sets the number of backup files to keep, accepting an integer equal or greater than @1@. Files that go over limit are removed each a new set of backups is created. Set zero @0@ for unlimited.
 
 h3. Security key for the public callback
 

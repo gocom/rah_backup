@@ -83,7 +83,7 @@ class Rah_Backup
             'copy_paths'    => array('text_input', '../'),
             'exclude_files' => array('text_input', ''),
             'ignore_tables' => array('text_input', ''),
-            'overwrite'     => array('yesnoradio', 0),
+            'files_to_keep' => array('text_input', 0),
             'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
         ) as $name => $val) {
             $n = 'rah_backup_'.$name;
@@ -391,6 +391,7 @@ EOF;
         global $txpcfg;
 
         $directory = txpath . '/' . get_pref('rah_backup_path');
+        $fileMultiplier = 1;
 
         if (!get_pref('rah_backup_path') || !file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
             throw new Rah_Backup_Exception(gTxt('rah_backup_dir_not_writable', array('{path}' => $dir)));
@@ -401,10 +402,7 @@ EOF;
 
         callback_event('rah_backup.create');
 
-        if (!get_pref('rah_backup_overwrite')) {
-            $filestamp = '_'.safe_strtotime('now');
-        }
-
+        $filestamp = '_'.safe_strtotime('now');
         $name = $this->sanitize($txpcfg['db']);
 
         if (!$name) {
@@ -440,6 +438,8 @@ EOF;
         new \Rah\Danpu\Export($dump);
 
         if (get_pref('rah_backup_copy_paths') && !is_disabled('exec') && is_callable('exec')) {
+
+            $fileMultiplier++;
 
             // Copied paths.
 
@@ -479,6 +479,23 @@ EOF;
                 implode('', $copy)
             ) !== false) {
                 $created[basename($path)] = $path;
+            }
+        }
+
+        $offset = (int) get_pref('rah_backup_files_to_keep');
+
+        if ($offset) {
+            $offset = max($fileMultiplier, $offset * $fileMultiplier);
+            $deleted = array();
+
+            try {
+                foreach ($this->getBackups('date', 'desc', $offset) as $name => $backup) {
+                    $deleted[$name] = $backup['path'];
+                    @unlink($backup['path']);
+                }
+
+                callback_event('rah_backup.deleted', '', 0, array('files' => $deleted));
+            } catch (Exception $e) {
             }
         }
 
