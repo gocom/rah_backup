@@ -61,14 +61,6 @@ h3. Number of backup files to keep
 
 Sets the number of backup files to keep, accepting an integer equal or greater than @1@. Files that go over limit are removed each a new set of backups is created. Set zero @0@ for unlimited.
 
-h3. Security key for the public callback
-
-A key for that is used to restrict unwanted access to the callback URL. This should be set as a long, strong value, containing any kind of numbers, characters and symbols possible. A new backup is created if this callback URL is accessed. The URL follows the format of:
-
-bc. http://example.com/?rah_backup_key={key}
-
-Where @example.com@ is your site URL and @{key}@ is the security key.
-
 h2. Restoring
 
 The backups can be restored with any old archive utility and database import tool, either via some GUI utility or command line. The plugin itself doesn't offer restoring trough it admin-side panel for security reasons. On a normal, well-setup server you shouldn't be able to restore your site through public-facing HTTP process due to permissions, and even if you could, would you really want to protect that action with just your Textpattern login. Now, if you can wipe your files through HTTP initiated PHP, you should look into your filesystem permissions as there might be a misconfiguration.
