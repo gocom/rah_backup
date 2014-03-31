@@ -21,6 +21,12 @@
  * along with rah_backup. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * The plugin class.
+ *
+ * @internal
+ */
+
 class Rah_Backup
 {
     /**
