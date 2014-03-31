@@ -18,9 +18,9 @@
     },
     "require": {
         "php": ">=5.3.6",
-        "textpattern/lock": ">=4.5.0,4.6.*@dev",
+        "textpattern/lock": ">=4.5.0",
         "textpattern/installer": "*",
-        "rah/danpu": "2.6.2",
+        "rah/danpu": "2.6.*",
         "rah/rah_autoload": "*"
     }
 }
