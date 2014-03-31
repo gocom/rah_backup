@@ -15,7 +15,6 @@ rah_backup_download => Lataa
 rah_backup_exclude_files => Poislue varmuuskopioista tiedostot (pilkuin eroteltuna)
 rah_backup_files_to_keep => Kuinka monta varmuuskopiota säilytetään?
 rah_backup_ignore_tables => Poislue tietokanta taulut (pilkuin eroteltuna)
-rah_backup_key => Julkisen soittopyyntö-osoitteen käyttämä tietoturva-avain
 rah_backup_name => Tiedostonimi
 rah_backup_no_backups => Yhtään varmuuskopioita ei ole luotu.
 rah_backup_path => Absoluuttinen tiedostopolku hakemistoon johon varmuuskopiot tallennetaan

@@ -14,7 +14,6 @@ rah_backup_download => Download
 rah_backup_exclude_files => Files excluded from backups (comma-separated)
 rah_backup_files_to_keep => Number of backup files to keep
 rah_backup_ignore_tables => Ignore database tables (comma-separated)
-rah_backup_key => Security key for the public callback
 rah_backup_name => Filename
 rah_backup_no_backups => No backups created yet.
 rah_backup_path => Path to a directory used to store backups

@@ -65,7 +65,6 @@ class Rah_Backup
         register_callback(array($this, 'prefs'), 'plugin_prefs.rah_backup');
         register_callback(array($this, 'pane'), 'rah_backup');
         register_callback(array($this, 'head'), 'admin_side', 'head_end');
-        register_callback(array($this, 'endpoint'), 'textpattern');
         register_callback(array($this, 'takeBackup'), 'rah_backup.backup');
     }
 
@@ -84,7 +83,6 @@ class Rah_Backup
             'exclude_files' => array('text_input', ''),
             'ignore_tables' => array('text_input', ''),
             'files_to_keep' => array('text_input', 0),
-            'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
         ) as $name => $val) {
             $n = 'rah_backup_'.$name;
             $exists[] = $n;
@@ -330,37 +328,6 @@ EOF;
             n.implode('', $pane).
             n.'</form>'.
             n.'<div>';
-    }
-
-    /**
-     * Public callback end-point for creating backups.
-     *
-     * Creates a new backup when ?rah_backup_key parameter
-     * is passed in the request.
-     */
-
-    public function endpoint()
-    {
-        if (!gps('rah_backup_key') || get_pref('rah_backup_key') !== gps('rah_backup_key')) {
-            return;
-        }
-
-        header('Content-Type: application/json; charset=utf-8');
-
-        try {
-            callback_event('rah_backup.backup');
-        } catch (Exception $e) {
-            txp_status_header('500 Internal Server Error');
-
-            die(json_encode(array(
-                'success' => false,
-                'error'   => $e->getMessage(),
-            )));
-        }
-
-        die(json_encode(array(
-            'success' => true,
-        )));
     }
 
     /**
