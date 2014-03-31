@@ -40,14 +40,6 @@ class Rah_Backup
     const BACKUP_DATABASE = 2;
 
     /**
-     * List of invoked errors/notices.
-     *
-     * @var array
-     */
-
-    public $warning = array();
-
-    /**
      * Constructor.
      */
 
