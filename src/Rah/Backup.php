@@ -76,6 +76,7 @@ class Rah_Backup
     public function install()
     {
         $position = 250;
+        $exists = array();
 
         foreach (array(
             'path'          => array('text_input', '../../backups'),
@@ -86,6 +87,7 @@ class Rah_Backup
             'key'           => array('text_input', md5(uniqid(mt_rand(), TRUE))),
         ) as $name => $val) {
             $n = 'rah_backup_'.$name;
+            $exists[] = $n;
 
             if (get_pref($n, false) === false) {
                 set_pref($n, $val[1], 'rah_backup', PREF_ADVANCED, $val[0], $position);
@@ -93,6 +95,11 @@ class Rah_Backup
 
             $position++;
         }
+
+        safe_delete(
+            'txp_prefs',
+            "event = 'rah_backup' and name not in(".implode(',', quote_list($exists)).")"
+        );
     }
 
     /**
@@ -101,7 +108,7 @@ class Rah_Backup
 
     public function uninstall()
     {
-        safe_delete('txp_prefs', "name like 'rah\_backup\_%'");
+        safe_delete('txp_prefs', "event = 'rah_backup'");
     }
 
     /**
@@ -241,8 +248,8 @@ EOF;
             );
         }
 
-        set_pref($event.'_sort_column', $sort, $event, 2, '', 0, PREF_PRIVATE);
-        set_pref($event.'_sort_dir', $dir, $event, 2, '', 0, PREF_PRIVATE);
+        set_pref($event.'_sort_column', $sort, 'rah_backup', 2, '', 0, PREF_PRIVATE);
+        set_pref($event.'_sort_dir', $dir, 'rah_backup', 2, '', 0, PREF_PRIVATE);
 
         try {
             $backups = $this->getBackups($sort, $dir);
