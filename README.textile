@@ -22,7 +22,6 @@ h2. Modules
 Rah_backup has set of modules that extend the plugin's functionality:
 
 * "rah_backup_clearlogs":https://github.com/gocom/rah_backup_clearlogs
-* "rah_backup_dropbox":https://github.com/gocom/rah_backup_dropbox
 * "rah_backup_optimize":https://github.com/gocom/rah_backup_optimize
 * "rah_backup_sftp":https://github.com/gocom/rah_backup_sftp
 
