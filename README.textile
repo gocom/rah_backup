@@ -93,14 +93,9 @@ The site's files are backed up to a gzipped TAR archives. These archives can be 
 bc. $ cd /path/to/backups/directory
 $ tar -xzvf filestem.tar.gz
 
-h2. Thanks to
-
-* "Dropbox SDK":https://github.com/BenTheDesigner/Dropbox by Ben Tadiar.
-* "phpseclib":https://github.com/phpseclib/phpseclib
-* French translation by "Patrick Lefevre":https://twitter.com/lowel.
-
 h2. Changelog
 
 h3. Version 0.1.0 - upcoming
 
 * Initial release.
+* French translation by "Patrick Lefevre":https://twitter.com/lowel.
