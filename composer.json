@@ -22,5 +22,8 @@
         "textpattern/installer": "*",
         "rah/danpu": "2.6.*",
         "rah/rah_autoload": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "1.5.*"
     }
 }
