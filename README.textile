@@ -26,14 +26,6 @@ Rah_backup has set of modules that extend the plugin's functionality:
 * "rah_backup_optimize":https://github.com/gocom/rah_backup_optimize
 * "rah_backup_sftp":https://github.com/gocom/rah_backup_sftp
 
-h2. Configuration
-
-When you go to the plugin's panel for the first time, you will be greeted with a following message:
-
-bq. Some settings need to be set before backups can be made. Start by defining mandatory settings at Preferences pane.
-
-The message will direct you to "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences where you will be able to set set some mandatory settings.
-
 h2. Preferences
 
 Rah_backup offers number of preferences that can be used to configure the plugin. All settings can be found from "Advanced Preferences":http://textpattern.net/wiki/index.php?title=Advanced_Preferences, organized under *Backups* section. Preferences allow defining paths to used command line application and set up backed up directories among other things. Following settings will be present.
