@@ -270,11 +270,11 @@ EOF;
             }
 
             if (!$backups) {
-                $out[] = tr(tda(gTxt('rah_backup_no_backups'), array('colspan' => count($column))));
+                $out[] = tr(tda(gTxt('rah_backup_no_backups'), 'colspan="'.count($column).'"'));
             }
 
         } catch (Rah_Backup_Exception $e) {
-            $out[] = tr(tda($e->getMessage(), array('colspan' => count($column))));
+            $out[] = tr(tda($e->getMessage(), 'colspan="'.count($column).'"'));
         }
 
         $out = implode('', $out);
@@ -285,16 +285,16 @@ EOF;
         }
 
         $pane[] =
-            n.tag_start('div', array('class' => 'txp-listtables')).
-            n.tag_start('table', array('class' => 'txp-list')).
-            n.tag_start('thead').
+            n.'<div class="txp-listtables">'.
+            n.'<table class="txp-list">'.
+            n.'<thead>'.
             tr(implode('', $column)).
-            n.tag_end('thead').
-            n.tag_start('tbody', array('id' => 'rah_backup_list')).
+            n.'</thead>'.
+            n.'<tbody id="rah_backup_list">'.
             $out.
-            n.tag_end('tbody').
-            n.tag_end('table').
-            n.tag_end('div');
+            n.'</tbody>'.
+            n.'</table>'.
+            n.'</div>';
 
         if ($methods) {
             $pane[] = multi_edit($methods, $event, 'multi_edit');
@@ -303,41 +303,28 @@ EOF;
         pagetop(gTxt('rah_backup'), $message);
 
         echo
-            hed(gTxt('rah_backup'), 1, array('class' => 'txp-heading')).
+            hed(gTxt('rah_backup'), 1, 'class="txp-heading"').
 
-            n.tag_start('div', array(
-                'class' => 'txp-container',
-            )).
-
-            n.tag_start('p', array('class' => 'txp-buttons'));
-
-        
+            n.'<div class="txp-container">'.
+            n.'<p class="txp-buttons">';
 
         if (has_privs('rah_backup_create') && $writeable) {
-            echo n.href(gTxt('rah_backup_create'), array(
-                'event'      => $event,
-                'step'       => 'create',
-                '_txp_token' => form_token(),
-            ), array(
-                'class' => 'rah_backup_take',
-            ));
+            echo n.'<a class="rah_backup_take" href="?event='.$event.
+                '&amp;step=create&amp;_txp_token='.form_token().'">'.
+                gTxt('rah_backup_create').'</a>';
         }
 
         if (has_privs('prefs') && has_privs('rah_backup_preferences')) {
-            echo n.href(gTxt('rah_backup_preferences'), '?event=prefs#prefs-rah_backup_path');
+            echo n.'<a href="?event=prefs#prefs-rah_backup_path">'.gTxt('rah_backup_preferences').'</a>';
         }
 
         echo
-            n.tag_end('p').
-            n.tag_start('form', array(
-                'action' => 'index.php',
-                'method' => 'post',
-                'class'  => 'multi_edit_form',
-            )).
+            n.'</p>'.
+            n.'<form action="index.php" method="post" class="multi_edit_form">'.
             tInput().
             n.implode('', $pane).
-            n.tag_end('form').
-            n.tag_end('div');
+            n.'</form>'.
+            n.'<div>';
     }
 
     /**
@@ -712,7 +699,7 @@ EOF;
     public function prefs()
     {
         header('Location: ?event=rah_backup');
-        echo graf(href(gTxt('continue'), array('event' => 'rah_backup')));
+        echo '<p><a href="?event=rah_backup">'.gTxt('continue').'</a></p>';
     }
 }
 
