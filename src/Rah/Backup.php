@@ -383,17 +383,9 @@ EOF;
     {
         global $txpcfg;
 
-        if (($directory = get_pref('rah_backup_path')) === '') {
-            throw new Rah_Backup_Exception(
-                gTxt('rah_backup_define_preferences', array(
-                    '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
-                ), false)
-            );
-        }
+        $directory = txpath . '/' . get_pref('rah_backup_path');
 
-        $directory = txpath . '/' . $directory;
-
-        if (!file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
+        if (!get_pref('rah_backup_path') || !file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
             throw new Rah_Backup_Exception(gTxt('rah_backup_dir_not_writable', array('{path}' => $dir)));
         }
 
@@ -620,17 +612,9 @@ EOF;
 
     public function getBackups($sort = 'name', $direction = 'asc', $offset = 0, $limit = null)
     {
-        if (($directory = get_pref('rah_backup_path')) === '') {
-            throw new Rah_Backup_Exception(
-                gTxt('rah_backup_define_preferences', array(
-                    '{start_by}' => href(gTxt('rah_backup_start_by'), '?event=prefs#prefs-rah_backup_path'),
-                ), false)
-            );
-        }
+        $directory = txpath . '/' . get_pref('rah_backup_path');
 
-        $directory = txpath . '/' . $directory;
-
-        if (!file_exists($directory) || !is_dir($directory) || !is_readable($directory)) {
+        if (!get_pref('rah_backup_path') || !file_exists($directory) || !is_dir($directory) || !is_readable($directory)) {
             throw new Rah_Backup_Exception(
                 gTxt('rah_backup_dir_not_readable', array('{path}' => $directory))
             );
