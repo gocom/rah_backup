@@ -110,6 +110,163 @@ class Rah_Backup
     }
 
     /**
+     * Takes a new set of backups.
+     *
+     * This method creates a new set of backups and it
+     * can be run by triggering 'rah_backup.backup' event.
+     *
+     * <code>
+     * callback_event('rah_backup.backup');
+     * </code>
+     *
+     * On success it triggers two callback events 'rah_backup.create' and
+     * 'rah_backup.created', where the latter contains an data-map of created
+     * backup files:
+     *
+     * <code>
+     * register_callback('abc_my_handler', 'rah_backup.created');
+     *
+     * function abc_my_handler($event, $step, $pre, $data)
+     * {
+     *     print_r($data);
+     * }
+     * </code>
+     *
+     * @throws Exception
+     */
+
+    public function takeBackup()
+    {
+        global $txpcfg;
+
+        $directory = txpath . '/' . get_pref('rah_backup_path');
+        $fileMultiplier = 1;
+
+        if (!get_pref('rah_backup_path') || !file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
+            throw new Rah_Backup_Exception(gTxt('rah_backup_dir_not_writable', array('{path}' => $dir)));
+        }
+
+        @set_time_limit(0);
+        @ignore_user_abort(true);
+
+        callback_event('rah_backup.create');
+
+        $filestamp = '_'.safe_strtotime('now');
+        $name = $this->sanitize($txpcfg['db']);
+
+        if (!$name) {
+            $name = 'database';
+        }
+
+        $path = $directory . '/' . $name . $filestamp . '.sql.gz';
+        $created = array();
+        $created[basename($path)] = $path;
+
+        $dump = new \Rah\Danpu\Dump;
+        $dump
+            ->file($path)
+            ->dsn('mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'])
+            ->user($txpcfg['user'])
+            ->pass($txpcfg['pass'])
+            ->tmp(get_pref('tempdir'));
+
+        if (get_pref('rah_backup_ignore_tables')) {
+            $ignore = array();
+
+            foreach (do_list(get_pref('rah_backup_ignore_tables')) as $table) {
+                $ignore[] = PFX.$table;
+            }
+
+            $dump->ignore($ignore);
+        }
+
+        if (PFX) {
+            $dump->prefix(PFX);
+        }
+
+        new \Rah\Danpu\Export($dump);
+
+        if (get_pref('rah_backup_copy_paths') && !is_disabled('exec') && is_callable('exec')) {
+
+            $fileMultiplier++;
+
+            // Copied paths.
+
+            $copy = array();
+
+            foreach (do_list(get_pref('rah_backup_copy_paths')) as $path) {
+                if ($path) {
+                    $path = txpath . '/' . $path;
+
+                    if (file_exists($path) && is_readable($path) && $path = escapeshellarg($path)) {
+                        $copy[$path] = ' '.$path;
+                    }
+                }
+            }
+
+            // Excluded paths.
+
+            $exclude = array();
+
+            foreach (do_list(get_pref('rah_backup_exclude_files')) as $path) {
+                if ($path && $path = escapeshellarg(txpath . '/' . $path)) {
+                    $exclude[$path] = ' --exclude='.$path;
+                }
+            }
+
+            $name = $this->sanitize(get_pref('siteurl'));
+
+            if (!$name) {
+                $name = 'filesystem';
+            }
+
+            $path = $directory . '/'. $name . $filestamp . '.tar.gz';
+
+            if (exec(
+                'tar -cvpzf '.escapeshellarg($path).
+                implode('', $exclude).
+                implode('', $copy)
+            ) !== false) {
+                $created[basename($path)] = $path;
+            }
+        }
+
+        $offset = (int) get_pref('rah_backup_files_to_keep');
+
+        if ($offset) {
+            $offset = max($fileMultiplier, $offset * $fileMultiplier);
+            $deleted = array();
+
+            try {
+                foreach ($this->getBackups('date', 'desc', $offset) as $name => $backup) {
+                    $deleted[$name] = $backup['path'];
+                    @unlink($backup['path']);
+                }
+
+                callback_event('rah_backup.deleted', '', 0, array('files' => $deleted));
+            } catch (Exception $e) {
+            }
+        }
+
+        callback_event('rah_backup.created', '', 0, array(
+            'files' => $created,
+        ));
+    }
+
+    /**
+     * Sanitizes filename.
+     *
+     * @param  string $filename The filename
+     * @return string A safe filename
+     */
+
+    private function sanitize($filename)
+    {
+        $filename = preg_replace('/[^A-Za-z0-9\-\._]/', '.', (string) $filename);
+        return trim(substr(preg_replace('/[_\.\-]{2,}/', '.', $filename), 0, 40), '._-');
+    }
+
+    /**
      * Delivers panels.
      */
 
@@ -197,7 +354,7 @@ EOF;
      * @param string|array $message The activity message
      */
 
-    protected function browser($message = '')
+    private function browser($message = '')
     {
         global $event, $app_mode, $theme;
 
@@ -331,151 +488,10 @@ EOF;
     }
 
     /**
-     * Sanitizes filename.
-     *
-     * @param  string $filename The filename
-     * @return string A safe filename
+     * The panel that creates new backups.
      */
 
-    public function sanitize($filename)
-    {
-        $filename = preg_replace('/[^A-Za-z0-9\-\._]/', '.', (string) $filename);
-        return trim(substr(preg_replace('/[_\.\-]{2,}/', '.', $filename), 0, 40), '._-');
-    }
-
-    /**
-     * Takes a new set of backups.
-     *
-     * This method creates a new set of backups. It triggers
-     * two callback events 'rah_backup.create' and 'rah_backup.created',
-     * where the latter contains an data-map of create backup files.
-     *
-     * @throws Exception
-     */
-
-    public function takeBackup()
-    {
-        global $txpcfg;
-
-        $directory = txpath . '/' . get_pref('rah_backup_path');
-        $fileMultiplier = 1;
-
-        if (!get_pref('rah_backup_path') || !file_exists($directory) || !is_dir($directory) || !is_writable($directory)) {
-            throw new Rah_Backup_Exception(gTxt('rah_backup_dir_not_writable', array('{path}' => $dir)));
-        }
-
-        @set_time_limit(0);
-        @ignore_user_abort(true);
-
-        callback_event('rah_backup.create');
-
-        $filestamp = '_'.safe_strtotime('now');
-        $name = $this->sanitize($txpcfg['db']);
-
-        if (!$name) {
-            $name = 'database';
-        }
-
-        $path = $directory . '/' . $name . $filestamp . '.sql.gz';
-        $created = array();
-        $created[basename($path)] = $path;
-
-        $dump = new \Rah\Danpu\Dump;
-        $dump
-            ->file($path)
-            ->dsn('mysql:dbname='.$txpcfg['db'].';host='.$txpcfg['host'])
-            ->user($txpcfg['user'])
-            ->pass($txpcfg['pass'])
-            ->tmp(get_pref('tempdir'));
-
-        if (get_pref('rah_backup_ignore_tables')) {
-            $ignore = array();
-
-            foreach (do_list(get_pref('rah_backup_ignore_tables')) as $table) {
-                $ignore[] = PFX.$table;
-            }
-
-            $dump->ignore($ignore);
-        }
-
-        if (PFX) {
-            $dump->prefix(PFX);
-        }
-
-        new \Rah\Danpu\Export($dump);
-
-        if (get_pref('rah_backup_copy_paths') && !is_disabled('exec') && is_callable('exec')) {
-
-            $fileMultiplier++;
-
-            // Copied paths.
-
-            $copy = array();
-
-            foreach (do_list(get_pref('rah_backup_copy_paths')) as $path) {
-                if ($path) {
-                    $path = txpath . '/' . $path;
-
-                    if (file_exists($path) && is_readable($path) && $path = escapeshellarg($path)) {
-                        $copy[$path] = ' '.$path;
-                    }
-                }
-            }
-
-            // Excluded paths.
-
-            $exclude = array();
-
-            foreach (do_list(get_pref('rah_backup_exclude_files')) as $path) {
-                if ($path && $path = escapeshellarg(txpath . '/' . $path)) {
-                    $exclude[$path] = ' --exclude='.$path;
-                }
-            }
-
-            $name = $this->sanitize(get_pref('siteurl'));
-
-            if (!$name) {
-                $name = 'filesystem';
-            }
-
-            $path = $directory . '/'. $name . $filestamp . '.tar.gz';
-
-            if (exec(
-                'tar -cvpzf '.escapeshellarg($path).
-                implode('', $exclude).
-                implode('', $copy)
-            ) !== false) {
-                $created[basename($path)] = $path;
-            }
-        }
-
-        $offset = (int) get_pref('rah_backup_files_to_keep');
-
-        if ($offset) {
-            $offset = max($fileMultiplier, $offset * $fileMultiplier);
-            $deleted = array();
-
-            try {
-                foreach ($this->getBackups('date', 'desc', $offset) as $name => $backup) {
-                    $deleted[$name] = $backup['path'];
-                    @unlink($backup['path']);
-                }
-
-                callback_event('rah_backup.deleted', '', 0, array('files' => $deleted));
-            } catch (Exception $e) {
-            }
-        }
-
-        callback_event('rah_backup.created', '', 0, array(
-            'files' => $created,
-        ));
-    }
-
-    /**
-     * Creates a new backup.
-     */
-
-    protected function create()
+    private function create()
     {
         try {
             callback_event('rah_backup.backup');
@@ -494,7 +510,7 @@ EOF;
      * Streams backups for downloading.
      */
 
-    protected function download()
+    private function download()
     {
         $file = (string) gps('file');
 
@@ -542,7 +558,7 @@ EOF;
      * Multi-edit handler.
      */
 
-    protected function multi_edit()
+    private function multi_edit()
     {
         extract(psa(array(
             'selected',
@@ -569,7 +585,7 @@ EOF;
      * Deletes selected backups.
      */
 
-    protected function multi_option_delete()
+    private function multi_option_delete()
     {
         $selected = ps('selected');
         $deleted = array();
@@ -601,7 +617,7 @@ EOF;
      * @return array
      */
 
-    public function getBackups($sort = 'name', $direction = 'asc', $offset = 0, $limit = null)
+    private function getBackups($sort = 'name', $direction = 'asc', $offset = 0, $limit = null)
     {
         $directory = txpath . '/' . get_pref('rah_backup_path');
 
