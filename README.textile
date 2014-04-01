@@ -86,7 +86,7 @@ $ tar -xzvf filestem.tar.gz
 
 h2. Changelog
 
-h3. Version 0.1.0 - upcoming
+h3. Version 0.1.0 - 2014/04/01
 
 * Initial release.
 * French translation by "Patrick Lefevre":https://twitter.com/lowel.
